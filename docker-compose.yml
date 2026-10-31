@@ -42,6 +42,8 @@ services:
     image: postgres:17-alpine
     profiles: ["postgres"]
     restart: unless-stopped
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
     environment:
       POSTGRES_DB: ${DB_DATABASE:-ft_machry}
       POSTGRES_USER: ${DB_USERNAME:-machry}
