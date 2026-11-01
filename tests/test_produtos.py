@@ -61,6 +61,9 @@ def test_seeds(app):
         result = app.test_cli_runner().invoke(args=["init-db", "--seed"])
     assert result.exit_code == 0, result.output
     client = app.test_client()
+    assert client.post(
+        "/api/auth/login", json={"username": "dona", "password": "Teste@123"}
+    ).status_code == 200
     assert len(client.get(URL).get_json()) == 10
     assert client.get(f"{URL}/10").get_json()["nome"] == "Bolo de Nozes - Médio"
 

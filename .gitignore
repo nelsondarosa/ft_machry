@@ -7,6 +7,13 @@ data/
 *.db
 *.sqlite3
 .pytest_cache/
+.pytest-tmp/
+.preview-data/
+.test-deps/
+node_modules/
+.pnpm-store/
+frontend/dist/
+frontend/.vite/
 instance/
 .idea/
 .vscode/

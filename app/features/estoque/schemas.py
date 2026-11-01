@@ -216,29 +216,3 @@ class SugestaoSaidaOut(BaseModel):
     quantidade_faltante: float
     criterio: str = "FEFO: menor validade primeiro (somente lotes não vencidos)"
     aviso: str = "Sugestão de separação: não movimenta o estoque"
-
-
-class UsuarioOut(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-
-    id: int
-    nome: str
-    papel: str
-
-
-class TransformacaoCreate(BaseModel):
-    produto_origem_id: int = Field(gt=0, strict=True)
-    produto_destino_id: int = Field(gt=0, strict=True)
-
-    @model_validator(mode="after")
-    def _origem_diferente_destino(self):
-        if self.produto_origem_id == self.produto_destino_id:
-            raise ValueError("origem e destino precisam ser diferentes")
-        return self
-
-
-class TransformacaoOut(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-
-    produto_origem_id: int
-    produto_destino_id: int

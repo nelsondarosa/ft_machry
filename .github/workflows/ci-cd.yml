@@ -1,0 +1,74 @@
+name: CI e CD
+
+on:
+  pull_request:
+  push:
+    branches: [main, yuri]
+  workflow_dispatch:
+
+concurrency:
+  group: machry-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  api:
+    name: API Flask
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements-dev.txt
+      - run: pytest -q
+
+  frontend:
+    name: Frontend Vite
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.25.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec tsc --noEmit
+      - run: pnpm run build
+
+  containers:
+    name: Imagens Docker
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker compose build
+
+  deploy:
+    name: Publicar na VM
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [api, frontend, containers]
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Atualizar aplicação pela conexão SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.VM_SSH_KEY }}
+          port: ${{ secrets.VM_SSH_PORT || 22 }}
+          script_stop: true
+          script: |
+            cd "${{ secrets.VM_APP_PATH }}"
+            git pull --ff-only origin main
+            docker compose build
+            docker compose run --rm api flask --app app init-db
+            docker compose up -d --remove-orphans
+            docker image prune -f

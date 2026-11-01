@@ -1,5 +1,7 @@
 """Testes de entrada/saída dos endpoints de produção (somente leitura)."""
-from db.database_config import get_db
+from sqlalchemy import text
+
+from db.database_config import db
 
 
 def _criar_solicitacao_com_fase_e_componente(app):
@@ -7,20 +9,28 @@ def _criar_solicitacao_com_fase_e_componente(app):
     # fixture é montado direto no banco, usando dados já carregados pelo seed
     # (ficha_tecnica 1, usuario 1, fase 1, produto 8).
     with app.app_context():
-        db = get_db()
-        db.execute(
-            "INSERT INTO solicitacao_producao (id, ficha_tecnica_id, usuario_id, status) "
-            "VALUES (1, 1, 1, 'EM_PRODUCAO')"
+        db.session.execute(
+            text(
+                "INSERT INTO solicitacao_producao "
+                "(id, ficha_tecnica_id, usuario_id, status) "
+                "VALUES (1, 1, 1, 'EM_PRODUCAO')"
+            )
         )
-        db.execute(
-            "INSERT INTO sp_fase (id, solicitacao_producao_id, fase_id, ordem, tempo_previsto_min) "
-            "VALUES (1, 1, 1, 1, 10)"
+        db.session.execute(
+            text(
+                "INSERT INTO sp_fase "
+                "(id, solicitacao_producao_id, fase_id, ordem, tempo_previsto_min) "
+                "VALUES (1, 1, 1, 1, 10)"
+            )
         )
-        db.execute(
-            "INSERT INTO sp_componente (id, solicitacao_producao_id, produto_id, quantidade_prevista, sp_fase_id) "
-            "VALUES (1, 1, 8, 400, 1)"
+        db.session.execute(
+            text(
+                "INSERT INTO sp_componente "
+                "(id, solicitacao_producao_id, produto_id, quantidade_prevista, sp_fase_id) "
+                "VALUES (1, 1, 8, 400, 1)"
+            )
         )
-        db.commit()
+        db.session.commit()
 
 
 def test_lista_vazia(client):
@@ -32,12 +42,9 @@ def test_detalhe_inexistente(client):
     assert client.get('/api/producao/solicitacoes/999').status_code == 404
 
 
-def test_lista_e_detalhe_com_dados(app):
-    with app.app_context():
-        r = app.test_cli_runner().invoke(args=['init-db', '--seed'])
-        assert r.exit_code == 0, r.output
+def test_lista_e_detalhe_com_dados(app, seeded_client):
     _criar_solicitacao_com_fase_e_componente(app)
-    c = app.test_client()
+    c = seeded_client
 
     lista = c.get('/api/producao/solicitacoes')
     assert lista.status_code == 200

@@ -3,7 +3,21 @@ from __future__ import annotations
 
 from typing import Optional
 
-from pydantic import BaseModel, ConfigDict
+from typing import Literal
+
+from pydantic import BaseModel, ConfigDict, Field
+
+
+class SolicitacaoCreate(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    ficha_tecnica_id: int = Field(gt=0)
+
+
+class SolicitacaoStatusUpdate(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    status: Literal["ABERTA", "EM_SEPARACAO", "EM_PRODUCAO", "CONCLUIDA", "CANCELADA"]
 
 
 class SolicitacaoProducaoOut(BaseModel):

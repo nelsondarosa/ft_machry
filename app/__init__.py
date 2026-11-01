@@ -1,21 +1,17 @@
 import os
 
-from flask import Flask, render_template, send_from_directory
+from flask import Flask, send_from_directory
 
 from app.utils.config import config as app_config
-from app.features import estoque, producao, produtos
+from app.features import auth, estoque, fichas_tecnicas, producao, produtos, usuarios
+from app.middleware import registrar_middleware_autenticacao
 from db.database_config import init_app as init_db
 
 ROOT_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DOCS_PATH = os.path.join(ROOT_PATH, "docs")
-FRONTEND_PATH = os.path.join(ROOT_PATH, "frontend")
 
 def create_app(config: dict | None = None) -> Flask:
-    app = Flask(
-        __name__,
-        template_folder=os.path.join(FRONTEND_PATH, "templates"),
-        static_folder=os.path.join(FRONTEND_PATH, "static"),
-    )
+    app = Flask(__name__)
     prefixo_api = "/api"
     
     app.config.from_object(app_config)
@@ -24,13 +20,16 @@ def create_app(config: dict | None = None) -> Flask:
 
     init_db(app)
 
+    registrar_middleware_autenticacao(app)
+
+    app.register_blueprint(auth.bp, url_prefix=f"{prefixo_api}/auth")
+    app.register_blueprint(usuarios.bp, url_prefix=f"{prefixo_api}/usuarios")
     app.register_blueprint(produtos.bp, url_prefix=f"{prefixo_api}/produtos")
+    app.register_blueprint(
+        fichas_tecnicas.bp, url_prefix=f"{prefixo_api}/fichas-tecnicas"
+    )
     app.register_blueprint(estoque.bp, url_prefix=f"{prefixo_api}/estoque")
     app.register_blueprint(producao.bp, url_prefix=f"{prefixo_api}/producao")
-
-    @app.get("/painel")
-    def painel():
-        return render_template("painel.html")
 
     @app.get("/health")
     def health():

@@ -1,84 +1,38 @@
-"""GET /usuarios, GET /transformacoes e POST /transformacoes do blueprint de
-estoque. Implementados em estilo direto (SQL cru via get_db()), igual ao
-arquivo routes.py original, em vez de passar pelas camadas schemas/
-repository/services — são endpoints pequenos, só pra desbloquear o frontend.
-"""
-import sqlite3
+from flask import Blueprint, g
 
-from flask import request
+from app.utils.parsing import entrada
+from app.utils.permissoes import exigir_papeis
 
-from db.database_config import get_db
+from .repository import UsuarioRepository
+from .schemas import UsuarioCreate, UsuarioOut, UsuarioUpdate
+from .services import UsuarioService
 
-from ..estoque.routes import bp
+bp = Blueprint("usuarios", __name__)
 
 
-def _erro(msg, status=400):
-    return {"erro": str(msg)}, status
+def get_service() -> UsuarioService:
+    return UsuarioService(UsuarioRepository())
 
 
-def _corpo():
-    dados = request.get_json(silent=True)
-    if not isinstance(dados, dict):
-        raise ValueError("envie um objeto JSON")
-    return dados
+def _saida(usuario):
+    return UsuarioOut.model_validate(usuario).model_dump()
 
 
-def _inteiro(dados, nome):
-    valor = dados.get(nome)
-    if isinstance(valor, bool) or not isinstance(valor, int) or valor <= 0:
-        raise ValueError(f"{nome} deve ser inteiro positivo")
-    return valor
+@bp.get("")
+@exigir_papeis("OWNER")
+def listar():
+    return [_saida(usuario) for usuario in get_service().listar()]
 
 
-def _existe_produto_ativo(db, produto_id):
-    return db.execute(
-        "SELECT 1 FROM produto WHERE id = ? AND ativo = 1", (produto_id,)
-    ).fetchone() is not None
+@bp.post("")
+@exigir_papeis("OWNER")
+def criar():
+    usuario = get_service().criar(entrada(UsuarioCreate))
+    return _saida(usuario), 201
 
 
-@bp.get("/usuarios")
-def usuarios_ativos():
-    linhas = get_db().execute(
-        "SELECT id, nome, papel FROM usuario WHERE ativo = 1 ORDER BY nome"
-    ).fetchall()
-    return [dict(r) for r in linhas]
-
-
-@bp.get("/transformacoes")
-def listar_transformacoes():
-    linhas = get_db().execute(
-        "SELECT produto_origem_id, produto_destino_id FROM produto_transformacao "
-        "ORDER BY produto_origem_id, produto_destino_id"
-    ).fetchall()
-    return [dict(r) for r in linhas]
-
-
-@bp.post("/transformacoes")
-def autorizar_transformacao():
-    try:
-        dados = _corpo()
-        origem = _inteiro(dados, "produto_origem_id")
-        destino = _inteiro(dados, "produto_destino_id")
-        if origem == destino:
-            raise ValueError("origem e destino precisam ser diferentes")
-    except ValueError as exc:
-        return _erro(exc)
-
-    db = get_db()
-    try:
-        db.execute("BEGIN IMMEDIATE")
-        if not _existe_produto_ativo(db, origem) or not _existe_produto_ativo(db, destino):
-            raise ValueError("produtos ativos não encontrados")
-        db.execute(
-            "INSERT INTO produto_transformacao (produto_origem_id, produto_destino_id) VALUES (?, ?)",
-            (origem, destino),
-        )
-        db.commit()
-    except (ValueError, sqlite3.IntegrityError) as exc:
-        db.rollback()
-        return _erro(exc)
-    except Exception:
-        db.rollback()
-        raise
-
-    return {"produto_origem_id": origem, "produto_destino_id": destino}, 201
+@bp.put("/<int:usuario_id>")
+@exigir_papeis("OWNER")
+def atualizar(usuario_id: int):
+    usuario = get_service().atualizar(usuario_id, entrada(UsuarioUpdate), g.usuario.id)
+    return _saida(usuario)

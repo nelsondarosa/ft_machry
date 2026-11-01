@@ -1,9 +1,6 @@
 """Executar no repositório completo: pytest -q tests/test_estoque.py"""
-def test_estoque_com_seeds(app):
-    with app.app_context():
-        r = app.test_cli_runner().invoke(args=['init-db', '--seed'])
-        assert r.exit_code == 0, r.output
-    c = app.test_client()
+def test_estoque_com_seeds(seeded_client):
+    c = seeded_client
     loc = c.get('/api/estoque/localizacoes')
     assert loc.status_code == 200 and len(loc.json) >= 1
     novo = c.post('/api/estoque/lotes', json={'produto_id':1,'localizacao_id':1})
@@ -18,11 +15,8 @@ def test_estoque_com_seeds(app):
     assert c.get('/api/estoque/sugestao-saida/1?quantidade=5').json['quantidade_faltante'] == 0
 
 
-def test_transformacao_e_transferencia(app):
-    with app.app_context():
-        r=app.test_cli_runner().invoke(args=['init-db','--seed'])
-        assert r.exit_code==0, r.output
-    c=app.test_client()
+def test_transformacao_e_transferencia(seeded_client):
+    c = seeded_client
     def lote(produto,local,validade):
         r=c.post('/api/estoque/lotes',json={'produto_id':produto,'localizacao_id':local,'data_validade':validade})
         assert r.status_code==201,r.json
@@ -42,22 +36,16 @@ def test_validacoes(client):
     assert client.post('/api/estoque/localizacoes',json={'nome':'Novo','tipo':'INVALIDO'}).status_code==400
 
 
-def test_localizacao_nao_pode_invalidar_lote(app):
-    with app.app_context():
-        r=app.test_cli_runner().invoke(args=['init-db','--seed'])
-        assert r.exit_code==0,r.output
-    c=app.test_client()
+def test_localizacao_nao_pode_invalidar_lote(seeded_client):
+    c = seeded_client
     lote=c.post('/api/estoque/lotes',json={'produto_id':1,'localizacao_id':1})
     assert lote.status_code==201,lote.json
     alteracao=c.put('/api/estoque/localizacoes/1',json={'tipo':'CONGELADO'})
     assert alteracao.status_code==400,alteracao.json
     assert next(l for l in c.get('/api/estoque/localizacoes').json if l['id']==1)['tipo']=='SECO'
 
-def test_dados_invalidos_e_rollback(app):
-    with app.app_context():
-        r=app.test_cli_runner().invoke(args=['init-db','--seed'])
-        assert r.exit_code==0,r.output
-    c=app.test_client()
+def test_dados_invalidos_e_rollback(seeded_client):
+    c = seeded_client
     lote=c.post('/api/estoque/lotes',json={'produto_id':1,'localizacao_id':1})
     assert lote.status_code==201,lote.json
     id_=lote.json['id']
@@ -72,11 +60,8 @@ def test_dados_invalidos_e_rollback(app):
     assert c.get(f'/api/estoque/lotes/{id_}').json['quantidade']==5
 
 
-def test_inventario(app):
-    with app.app_context():
-        r = app.test_cli_runner().invoke(args=['init-db', '--seed'])
-        assert r.exit_code == 0, r.output
-    c = app.test_client()
+def test_inventario(seeded_client):
+    c = seeded_client
     lote = c.post('/api/estoque/lotes', json={'produto_id': 1, 'localizacao_id': 1}).get_json()['id']
     c.post('/api/estoque/movimentacoes', json={'tipo': 'ENTRADA', 'lote_id': lote, 'usuario_id': 1, 'quantidade': 10})
 
@@ -92,11 +77,8 @@ def test_inventario(app):
     assert c.get('/api/estoque/inventario?produto_id=abc').status_code == 400
 
 
-def test_movimentacoes_listagem_e_filtros(app):
-    with app.app_context():
-        r = app.test_cli_runner().invoke(args=['init-db', '--seed'])
-        assert r.exit_code == 0, r.output
-    c = app.test_client()
+def test_movimentacoes_listagem_e_filtros(seeded_client):
+    c = seeded_client
     lote = c.post('/api/estoque/lotes', json={'produto_id': 1, 'localizacao_id': 1}).get_json()['id']
     c.post('/api/estoque/movimentacoes', json={'tipo': 'ENTRADA', 'lote_id': lote, 'usuario_id': 1, 'quantidade': 10})
     c.post('/api/estoque/movimentacoes',
@@ -147,11 +129,8 @@ def test_localizacao_validacoes(client):
                        json={'campo_invalido': 1}).status_code == 400  # campo não editável
 
 
-def test_lotes_listagem_e_detalhe(app):
-    with app.app_context():
-        r = app.test_cli_runner().invoke(args=['init-db', '--seed'])
-        assert r.exit_code == 0, r.output
-    c = app.test_client()
+def test_lotes_listagem_e_detalhe(seeded_client):
+    c = seeded_client
     lote1 = c.post('/api/estoque/lotes', json={'produto_id': 1, 'localizacao_id': 1}).get_json()['id']
     lote2 = c.post('/api/estoque/lotes', json={'produto_id': 4, 'localizacao_id': 1}).get_json()['id']
 
@@ -168,11 +147,8 @@ def test_lotes_listagem_e_detalhe(app):
     assert c.get('/api/estoque/lotes/9999').status_code == 404
 
 
-def test_atualizar_lote(app):
-    with app.app_context():
-        r = app.test_cli_runner().invoke(args=['init-db', '--seed'])
-        assert r.exit_code == 0, r.output
-    c = app.test_client()
+def test_atualizar_lote(seeded_client):
+    c = seeded_client
     lote = c.post('/api/estoque/lotes', json={'produto_id': 1, 'localizacao_id': 1}).get_json()['id']
 
     atualizado = c.put(f'/api/estoque/lotes/{lote}',

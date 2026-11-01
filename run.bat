@@ -26,20 +26,17 @@ echo [1/4] Criando ambiente virtual...
 echo [2/4] Instalando dependencias...
 ".venv\Scripts\python.exe" -m pip install -r requirements.txt || goto error
 if not defined DATABASE_PATH set "DATABASE_PATH=%CD%\data\app.db"
-if not exist "%DATABASE_PATH%" (
-  echo [3/4] Criando banco SQLite...
-  if /i "%~1"=="--seed" (
-    ".venv\Scripts\python.exe" -m flask --app app init-db --seed || goto error
-  ) else (
-    ".venv\Scripts\python.exe" -m flask --app app init-db || goto error
-  )
+echo [3/4] Verificando banco SQLite...
+if /i "%~1"=="--seed" (
+  ".venv\Scripts\python.exe" -m flask --app app init-db --seed || goto error
 ) else (
-  echo [3/4] Banco existente preservado: %DATABASE_PATH%
+  ".venv\Scripts\python.exe" -m flask --app app init-db || goto error
 )
 echo [4/4] Iniciando servidor...
 echo.
-echo Painel:  http://127.0.0.1:5000/painel
+echo API:     http://127.0.0.1:5000
 echo Swagger: http://127.0.0.1:5000/docs
+echo Frontend: execute "pnpm dev" dentro da pasta frontend
 echo Parar: Ctrl+C
 echo.
 ".venv\Scripts\python.exe" -m flask --app app run --host 127.0.0.1 --port 5000

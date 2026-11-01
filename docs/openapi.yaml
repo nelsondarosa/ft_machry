@@ -1,8 +1,61 @@
 openapi: 3.0.3
 info:
   title: ft_machry API
-  version: "1.0"
+  version: "2.0"
+security:
+  - cookieAuth: []
 paths:
+  /api/auth/login:
+    post:
+      summary: Inicia uma sessão
+      tags: [autenticacao]
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, password]
+              properties:
+                username: {type: string}
+                password: {type: string, format: password}
+      responses:
+        "200":
+          description: Usuário autenticado
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/Usuario"}
+        "401": {description: Usuário ou senha inválidos}
+  /api/auth/logout:
+    post:
+      summary: Encerra a sessão atual
+      tags: [autenticacao]
+      responses:
+        "204": {description: Sessão encerrada}
+  /api/auth/me:
+    get:
+      summary: Retorna o usuário da sessão
+      tags: [autenticacao]
+      responses:
+        "200":
+          description: Usuário autenticado
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/Usuario"}
+        "401": {description: Autenticação necessária}
+  /api/usuarios:
+    get:
+      summary: Lista usuários; exclusivo da proprietária
+      tags: [autenticacao]
+      responses:
+        "200": {description: Lista de usuários}
+    post:
+      summary: Cria usuário; exclusivo da proprietária
+      tags: [autenticacao]
+      responses:
+        "201": {description: Usuário criado}
+
   /api/produtos:
     get:
       summary: Lista produtos ativos (ordenados por nome)
@@ -66,6 +119,81 @@ paths:
         "204": {description: Produto desativado}
         "404": {$ref: "#/components/responses/NaoEncontrado"}
 
+  /api/fichas-tecnicas:
+    get:
+      summary: Lista fichas técnicas completas
+      tags: [fichas tecnicas]
+      responses:
+        "200":
+          description: Fichas ordenadas pelo nome do produto resultante
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {$ref: "#/components/schemas/FichaTecnica"}
+    post:
+      summary: Cria ficha técnica com fases e componentes
+      tags: [fichas tecnicas]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: "#/components/schemas/FichaTecnicaEntrada"}
+      responses:
+        "201":
+          description: Ficha criada
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/FichaTecnica"}
+        "400": {$ref: "#/components/responses/Invalido"}
+        "409": {description: O produto já possui uma ficha}
+
+  /api/fichas-tecnicas/fases:
+    get:
+      summary: Lista o catálogo de fases de produção
+      tags: [fichas tecnicas]
+      responses:
+        "200":
+          description: Fases disponíveis
+
+  /api/fichas-tecnicas/{id}:
+    parameters:
+      - {name: id, in: path, required: true, schema: {type: integer}}
+    get:
+      summary: Detalha uma ficha técnica
+      tags: [fichas tecnicas]
+      responses:
+        "200":
+          description: Ficha completa
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/FichaTecnica"}
+        "404": {$ref: "#/components/responses/NaoEncontrado"}
+    put:
+      summary: Substitui dados, fases e componentes da ficha em uma transação
+      tags: [fichas tecnicas]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: "#/components/schemas/FichaTecnicaEntrada"}
+      responses:
+        "200":
+          description: Ficha atualizada
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/FichaTecnica"}
+        "400": {$ref: "#/components/responses/Invalido"}
+        "404": {$ref: "#/components/responses/NaoEncontrado"}
+        "409": {description: Conflito com outra ficha}
+    delete:
+      summary: Exclui ficha sem histórico de produção
+      tags: [fichas tecnicas]
+      responses:
+        "204": {description: Ficha excluída}
+        "404": {$ref: "#/components/responses/NaoEncontrado"}
+        "409": {description: A ficha já possui solicitações de produção}
+
   /api/estoque/inventario:
     get:
       summary: Lista o inventário atual (view vw_inventario, só lotes com saldo > 0)
@@ -102,7 +230,7 @@ paths:
                 items: {$ref: "#/components/schemas/Movimentacao"}
         "400": {$ref: "#/components/responses/Invalido"}
     post:
-      summary: Registra uma movimentação de estoque (saldo é recalculado por trigger)
+      summary: Registra uma movimentação e atualiza o saldo na mesma transação
       tags: [estoque]
       requestBody:
         required: true
@@ -262,6 +390,24 @@ paths:
               schema:
                 type: array
                 items: {$ref: "#/components/schemas/SolicitacaoProducao"}
+    post:
+      summary: Adiciona uma ficha técnica à fila de produção
+      tags: [producao]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ficha_tecnica_id]
+              properties:
+                ficha_tecnica_id: {type: integer, minimum: 1}
+      responses:
+        "201":
+          description: Solicitação criada
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/SolicitacaoProducao"}
 
   /api/producao/solicitacoes/{id}:
     parameters:
@@ -277,8 +423,43 @@ paths:
               schema: {$ref: "#/components/schemas/SolicitacaoDetalhe"}
         "404": {$ref: "#/components/responses/NaoEncontrado"}
 
+  /api/producao/solicitacoes/{id}/status:
+    parameters:
+      - {name: id, in: path, required: true, schema: {type: integer}}
+    put:
+      summary: Atualiza o estado de uma solicitação
+      tags: [producao]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status]
+              properties:
+                status: {type: string, enum: [ABERTA, EM_SEPARACAO, EM_PRODUCAO, CONCLUIDA, CANCELADA]}
+      responses:
+        "200":
+          description: Solicitação atualizada
+          content:
+            application/json:
+              schema: {$ref: "#/components/schemas/SolicitacaoProducao"}
+
 components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: session
   schemas:
+    Usuario:
+      type: object
+      properties:
+        id: {type: integer}
+        nome: {type: string}
+        username: {type: string}
+        papel: {type: string, enum: [OWNER, ADMIN, USER]}
+        ativo: {type: integer, enum: [0, 1]}
     ProdutoCampos:
       type: object
       properties:
@@ -302,6 +483,44 @@ components:
             id: {type: integer}
             ativo: {type: integer, enum: [0, 1]}
             criado_em: {type: string, example: "2026-10-16 15:46:39"}
+
+    FichaFaseEntrada:
+      type: object
+      required: [fase_id, ordem, tempo_previsto_min]
+      properties:
+        fase_id: {type: integer, minimum: 1}
+        ordem: {type: integer, minimum: 1}
+        tempo_previsto_min: {type: integer, minimum: 1}
+    FichaComponenteEntrada:
+      type: object
+      required: [produto_id, quantidade]
+      properties:
+        produto_id: {type: integer, minimum: 1}
+        quantidade: {type: number, exclusiveMinimum: 0}
+        fase_ordem: {type: integer, minimum: 1, nullable: true}
+    FichaTecnicaEntrada:
+      type: object
+      required: [produto_id, rendimento, fases, componentes]
+      properties:
+        produto_id: {type: integer, minimum: 1, description: Produto intermediário ou final}
+        rendimento: {type: number, exclusiveMinimum: 0}
+        observacao: {type: string, nullable: true}
+        fases:
+          type: array
+          minItems: 1
+          items: {$ref: "#/components/schemas/FichaFaseEntrada"}
+        componentes:
+          type: array
+          minItems: 1
+          items: {$ref: "#/components/schemas/FichaComponenteEntrada"}
+    FichaTecnica:
+      allOf:
+        - $ref: "#/components/schemas/FichaTecnicaEntrada"
+        - type: object
+          properties:
+            id: {type: integer}
+            produto: {type: string}
+            unidade_rendimento: {type: string}
 
     LocalizacaoCampos:
       type: object
@@ -346,7 +565,7 @@ components:
         - type: object
           properties:
             id: {type: integer}
-            quantidade: {type: number, description: Mantida pela trigger trg_mov_aplica a partir das movimentações}
+            quantidade: {type: number, description: Atualizada na mesma transação da movimentação}
             criado_em: {type: string, example: "2026-10-16 15:46:39"}
     LoteListado:
       description: Lote com o nome do produto e da localização (retornado por GET /api/estoque/lotes)

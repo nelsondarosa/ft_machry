@@ -13,6 +13,10 @@ class RegistroNaoEncontrado(Exception):
     """A entidade identificada pela URL (path) não existe."""
 
 
+class Conflito(Exception):
+    """A operação conflita com outro registro ou com o histórico."""
+
+
 def _resposta(msg, status=400):
     return {"erro": str(msg)}, status
 
@@ -32,7 +36,14 @@ def registrar_tratadores_erro(bp: Blueprint) -> None:
     def _tratar_nao_encontrado(exc):
         return _resposta(str(exc), 404)
 
+    @bp.errorhandler(Conflito)
+    def _tratar_conflito(exc):
+        return _resposta(str(exc), 409)
+
     @bp.errorhandler(ValueError)
-    @bp.errorhandler(IntegrityError)
     def _tratar_valor_invalido(exc):
         return _resposta(str(exc))
+
+    @bp.errorhandler(IntegrityError)
+    def _tratar_integridade(exc):
+        return _resposta("operação incompatível com registros existentes", 409)

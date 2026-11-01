@@ -8,7 +8,9 @@ from sqlalchemy import text
 
 from db.database_config import db
 
-from .models import Localizacao, Lote, MovimentacaoEstoque, Produto, ProdutoTransformacao, Usuario
+from app.features.usuarios.models import Usuario
+
+from .models import Localizacao, Lote, MovimentacaoEstoque, Produto, ProdutoTransformacao
 
 _TIPOS_SOMAM_NA_ORIGEM = {"ENTRADA", "PRODUCAO", "AJUSTE_ENTRADA"}
 _TIPOS_SUBTRAEM_DA_ORIGEM = {"SAIDA", "CONSUMO_PRODUCAO", "TRANSFERENCIA",
