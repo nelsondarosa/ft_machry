@@ -57,7 +57,7 @@ def _migrar_autenticacao() -> None:
 
 
 def _provisionar_usuarios_iniciais() -> None:
-    from app.features.estoque.models import Usuario
+    from app.features.usuarios.models import Usuario
     from flask import current_app
 
     configuracoes = [

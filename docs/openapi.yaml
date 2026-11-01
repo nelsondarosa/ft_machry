@@ -44,7 +44,7 @@ paths:
             application/json:
               schema: {$ref: "#/components/schemas/Usuario"}
         "401": {description: Autenticação necessária}
-  /api/auth/usuarios:
+  /api/usuarios:
     get:
       summary: Lista usuários; exclusivo da proprietária
       tags: [autenticacao]

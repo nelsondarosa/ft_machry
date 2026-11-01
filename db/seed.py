@@ -1,6 +1,7 @@
 """Dados mínimos de demonstração, inseridos via ORM em qualquer banco suportado."""
 
-from app.features.estoque.models import Localizacao, ProdutoTransformacao, Usuario
+from app.features.estoque.models import Localizacao, ProdutoTransformacao
+from app.features.usuarios.models import Usuario
 from app.features.fichas_tecnicas.models import (
     FaseProducao,
     FichaTecnica,
