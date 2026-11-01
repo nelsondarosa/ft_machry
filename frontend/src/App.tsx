@@ -3,6 +3,7 @@ import { api, ApiError } from './api'
 import { Shell } from './components'
 import { ProductModal, SheetModal, StockModal } from './forms'
 import { LoginPage } from './LoginPage'
+import { HistoryPage, LocationsPage, UsersPage, TransferPage, LotDetails } from './management'
 import { DashboardPage, ProductionPage, ProductsPage, SheetsPage, StockPage } from './pages'
 import type { FaseCatalogo, FichaTecnica, ItemInventario, Localizacao, Lote, Produto, SolicitacaoProducao, Usuario, View } from './types'
 
@@ -61,7 +62,7 @@ export function App() {
     catch (reason) { setToast({ text: reason instanceof Error ? reason.message : 'Não foi possível atualizar o preparo.', error: true }) }
   }
 
-  if (usuario === undefined) return <div className="app-loading"><div className="brand-mark">M</div><span>Carregando Machry…</span></div>
+  if (usuario === undefined) return <div className="app-loading"><div className="brand-mark">C+</div><span>Carregando Cozinha Mais…</span></div>
   if (usuario === null) return <LoginPage onLogin={loggedIn} />
   const canManageCatalog = usuario.papel === 'OWNER'
 
@@ -71,7 +72,10 @@ export function App() {
   else if (view === 'inicio') page = <DashboardPage produtos={produtos} fichas={fichas} inventario={inventario} canManage={canManageCatalog} onNewSheet={() => setSheetModal('new')} onEditSheet={setSheetModal} />
   else if (view === 'produtos') page = <ProductsPage produtos={produtos} onNew={() => setProductModal('new')} onEdit={setProductModal} />
   else if (view === 'fichas') page = <SheetsPage fichas={fichas} canManage={canManageCatalog} onNew={() => setSheetModal('new')} onEdit={setSheetModal} />
-  else if (view === 'estoque') page = <StockPage inventario={inventario} lotes={lotes} onNew={() => setStockModal('new')} onMove={setStockModal} />
+  else if (view === 'estoque') page = <><StockPage inventario={inventario} lotes={lotes} onNew={() => setStockModal('new')} onMove={setStockModal} /><TransferPage lotes={lotes} produtos={produtos} usuarioId={usuario.id} onChanged={() => load(usuario)} /><LotDetails lotes={lotes} onChanged={() => load(usuario)} /></>
+  else if (view === 'historico') page = <HistoryPage lotes={lotes} produtos={produtos} reload={() => void load(usuario)} />
+  else if (view === 'locais') page = <LocationsPage locations={localizacoes} onChanged={() => load(usuario)} />
+  else if (view === 'usuarios') page = usuario.papel === 'OWNER' ? <UsersPage current={usuario} /> : <section className="panel">Acesso restrito.</section>
   else if (view === 'producao') page = <ProductionPage solicitacoes={solicitacoes} fichas={fichas} canPlan={usuario.papel !== 'USER'} onCreate={createProduction} onStatus={updateProduction} />
   else page = <ProductionPage solicitacoes={solicitacoes} fichas={fichas} canPlan={usuario.papel !== 'USER'} onCreate={createProduction} onStatus={updateProduction} />
 

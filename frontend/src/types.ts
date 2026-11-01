@@ -105,3 +105,6 @@ export type View =
   | 'fichas'
   | 'estoque'
   | 'producao'
+  | 'historico'
+  | 'locais'
+  | 'usuarios'

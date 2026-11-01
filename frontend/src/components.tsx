@@ -3,18 +3,18 @@ import type { Usuario, View } from './types'
 
 const primaryNavigation: Array<[View, string, string]> = [
   ['inicio', '⌂', 'Visão geral'], ['produtos', '◫', 'Produtos'], ['fichas', '≡', 'Fichas técnicas'],
-  ['estoque', '▦', 'Estoque'], ['producao', '◉', 'Produção'],
+  ['estoque', '▦', 'Estoque'], ['producao', '◉', 'Produção'], ['historico', '↺', 'Movimentações'], ['locais', '▤', 'Localizações'], ['usuarios', '♙', 'Usuários'],
 ]
 const titles: Record<View, string> = {
-  inicio: 'Visão geral', produtos: 'Produtos', fichas: 'Fichas técnicas', estoque: 'Estoque', producao: 'Produção',
+  inicio: 'Visão geral', produtos: 'Produtos', fichas: 'Fichas técnicas', estoque: 'Estoque', producao: 'Produção', historico: 'Movimentações', locais: 'Localizações', usuarios: 'Usuários',
 }
 
 export function Shell({ view, menuOpen, apiOnline, usuario, onNavigate, onMenuToggle, onLogout, children }: {
   view: View; menuOpen: boolean; apiOnline: boolean; usuario: Usuario; onNavigate: (view: View) => void; onMenuToggle: () => void; onLogout: () => void; children: ReactNode
 }) {
   const allowedViews: Record<Usuario['papel'], View[]> = {
-    OWNER: ['inicio', 'produtos', 'fichas', 'estoque', 'producao'],
-    ADMIN: ['inicio', 'fichas', 'estoque', 'producao'],
+    OWNER: ['inicio', 'produtos', 'fichas', 'estoque', 'producao', 'historico', 'locais', 'usuarios'],
+    ADMIN: ['inicio', 'fichas', 'estoque', 'producao', 'historico', 'locais'],
     USER: ['fichas', 'producao'],
   }
   const visibleNavigation = primaryNavigation.filter(([target]) => allowedViews[usuario.papel].includes(target))
@@ -22,7 +22,7 @@ export function Shell({ view, menuOpen, apiOnline, usuario, onNavigate, onMenuTo
   const navButton = ([target, icon, label]: [View, string, string]) => <button className={`nav ${view === target ? 'active' : ''}`} key={target} onClick={() => onNavigate(target)} type="button"><span aria-hidden="true">{icon}</span>{label}</button>
   return <div className="layout">
     <aside className={`sidebar ${menuOpen ? 'open' : ''}`}>
-      <div className="brand"><div className="brand-mark">M</div><div><strong>Machry</strong><small>GESTÃO DE COZINHA</small></div></div>
+      <div className="brand"><div className="brand-mark">C+</div><div><strong>Cozinha Mais</strong><small>GESTÃO DE COZINHA</small></div></div>
       <p className="nav-caption">OPERAÇÃO</p><nav>{visibleNavigation.map((item) => navButton(item))}</nav>
       <div className="account"><div className="account-avatar">{usuario.nome.charAt(0).toUpperCase()}</div><div><strong>{usuario.nome}</strong><small>{roleLabel}</small></div><button onClick={onLogout} type="button">Sair</button></div>
       <div className={`api-state ${apiOnline ? '' : 'offline'}`}><i /><div><strong>{apiOnline ? 'API conectada' : 'API indisponível'}</strong><small>Flask · banco integrado</small></div></div>
