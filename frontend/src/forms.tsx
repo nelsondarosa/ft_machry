@@ -85,6 +85,7 @@ export function StockModal({ lote, produtos, localizacoes, usuarioId, onClose, o
   const [observacao, setObservacao] = useState('')
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
+  const [createdLotId, setCreatedLotId] = useState<number | null>(null)
 
   function changeProduct(id: number) {
     setProdutoId(id)
@@ -95,16 +96,17 @@ export function StockModal({ lote, produtos, localizacoes, usuarioId, onClose, o
   async function save(event: FormEvent) {
     event.preventDefault(); setSaving(true); setError('')
     try {
-      let loteId = lote?.id
+      let loteId = lote?.id ?? createdLotId
       if (!loteId) {
         const created = await api<{ id: number }>('/api/estoque/lotes', { method: 'POST', body: JSON.stringify({ produto_id: produtoId, localizacao_id: localizacaoId, data_producao: dataProducao || null, data_validade: dataValidade || null, custo_unitario: custo === '' ? null : Number(custo) }) })
         loteId = created.id
+        setCreatedLotId(created.id)
       }
       await api('/api/estoque/movimentacoes', { method: 'POST', body: JSON.stringify({ tipo: lote ? tipo : 'ENTRADA', lote_id: loteId, usuario_id: usuarioId, quantidade, motivo: lote ? (motivo.trim() || null) : null, observacao: observacao.trim() || null }) })
       onSaved()
     } catch (reason) { setError(reason instanceof Error ? reason.message : 'Não foi possível movimentar o estoque.') } finally { setSaving(false) }
   }
-  const needsReason = Boolean(lote && tipo !== 'ENTRADA')
+  const needsReason = Boolean(lote && ['SAIDA', 'AJUSTE_ENTRADA', 'AJUSTE_SAIDA'].includes(tipo))
   return <Modal eyebrow="ESTOQUE GERAL" title={lote ? `Movimentar lote #${lote.id}` : 'Nova entrada de estoque'} onClose={onClose} footer={<><button className="secondary" onClick={onClose} type="button">Cancelar</button><button className="primary" form="stock-form" disabled={saving || !localizacaoId}>{saving ? 'Salvando…' : lote ? 'Registrar movimento' : 'Criar lote e dar entrada'}</button></>}>
     <form className="dialog-body" id="stock-form" onSubmit={save}>{error && <p className="form-error">{error}</p>}{lote ? <div className="stock-lot-summary"><span className={`badge ${produto?.tipo.toLowerCase()}`}>{produto?.tipo === 'FINAL' ? 'Produto final' : produto?.tipo === 'INTERMEDIARIO' ? 'Intermediário' : 'Insumo'}</span><strong>{lote.produto}</strong><small>{lote.quantidade} {produto?.unidade_medida} em {lote.localizacao}</small></div> : <><label>Produto<select required value={produtoId} onChange={(event) => changeProduct(Number(event.target.value))}>{produtos.map((item) => <option key={item.id} value={item.id}>{item.nome} · {item.tipo === 'FINAL' ? 'Produto final' : item.tipo === 'INTERMEDIARIO' ? 'Intermediário' : 'Insumo'}</option>)}</select></label><label>Localização<select required value={localizacaoId} onChange={(event) => setLocalizacaoId(Number(event.target.value))}>{locaisCompativeis.map((item) => <option key={item.id} value={item.id}>{item.nome}</option>)}</select></label><div className="form-grid"><label>Data de produção<input type="date" value={dataProducao} onChange={(event) => setDataProducao(event.target.value)} /></label><label>Data de validade<input type="date" required={Boolean(produto?.validade_obrigatoria)} value={dataValidade} onChange={(event) => setDataValidade(event.target.value)} /></label><label>Custo unitário<input type="number" min="0" step="0.01" value={custo} onChange={(event) => setCusto(event.target.value)} placeholder="Opcional" /></label></div></>}{lote && <label>Movimento<select value={tipo} onChange={(event) => setTipo(event.target.value as typeof tipo)}><option value="ENTRADA">Entrada</option><option value="SAIDA">Saída</option><option value="AJUSTE_ENTRADA">Ajuste de entrada</option><option value="AJUSTE_SAIDA">Ajuste de saída</option></select></label>}<label>Quantidade ({produto?.unidade_medida || 'unidade'})<input required type="number" min="0.001" step="0.001" value={quantidade} onChange={(event) => setQuantidade(Number(event.target.value))} /></label>{needsReason && <label>Motivo<input required value={motivo} onChange={(event) => setMotivo(event.target.value)} placeholder="Ex.: uso na cozinha, perda ou correção" /></label>}<label>Observação<textarea rows={2} value={observacao} onChange={(event) => setObservacao(event.target.value)} placeholder="Opcional" /></label></form>
   </Modal>

@@ -1,26 +1,16 @@
 #!/usr/bin/env bash
-set -Eeuo pipefail
+set -euo pipefail
 cd "$(dirname "$0")"
-PYTHON=""
-if [[ ! -x .venv/bin/python ]]; then
-  for candidate in python3.13 python3.12 python3; do
-    if command -v "$candidate" >/dev/null 2>&1 && "$candidate" -c 'import sys; assert sys.version_info >= (3,12)' >/dev/null 2>&1; then
-      PYTHON="$candidate"; break
-    fi
-  done
-  if [[ -z "$PYTHON" ]]; then echo '[ERRO] Python 3.12+ necessario.' >&2; exit 1; fi
-  echo '[1/4] Criando ambiente virtual...'
-  "$PYTHON" -m venv .venv
-fi
-echo '[2/4] Instalando dependencias...'
+export DB_CONNECTION=sqlite
+export DATABASE_PATH="${DATABASE_PATH:-$PWD/data/app.db}"
+if ! command -v python3 >/dev/null; then echo 'Instale Python 3.12+.'; exit 1; fi
+if [ ! -f .venv/bin/python ]; then python3 -m venv .venv; fi
 .venv/bin/python -m pip install -r requirements.txt
-export DATABASE_PATH="${DATABASE_PATH:-$(pwd)/data/app.db}"
-echo '[3/4] Verificando banco SQLite...'
-if [[ "${1:-}" == '--seed' ]]; then
-  .venv/bin/python -m flask --app app init-db --seed
-else
-  .venv/bin/python -m flask --app app init-db
-fi
-echo '[4/4] Iniciando API em http://127.0.0.1:5000 (Ctrl+C para parar)'
-echo 'Frontend: execute "pnpm dev" dentro da pasta frontend'
-exec .venv/bin/python -m flask --app app run --host 127.0.0.1 --port 5000
+if [ "${1:-}" = '--seed' ]; then .venv/bin/python -m flask --app app init-db --seed; else .venv/bin/python -m flask --app app init-db; fi
+command -v npm >/dev/null || { echo 'Instale Node.js 22+.'; exit 1; }
+if [ ! -d frontend/node_modules/vite ]; then (cd frontend && npm install --no-audit --no-fund); fi
+.venv/bin/python -m flask --app app run --host 127.0.0.1 --port 5000 &
+API_PID=$!
+trap 'kill "$API_PID" 2>/dev/null || true' EXIT
+printf 'Cozinha Mais: http://localhost:8080 (LAN: http://IP_DO_PC:8080)\n'
+(cd frontend && npm run dev)
