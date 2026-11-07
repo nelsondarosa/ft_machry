@@ -3,6 +3,7 @@ from contextlib import contextmanager
 from sqlalchemy.orm import selectinload
 
 from app.features.produtos.models import Produto
+from app.utils.paginacao import PaginacaoQuery, paginar
 from db.database_config import db
 
 from .models import (
@@ -24,8 +25,9 @@ class FichaTecnicaRepository:
         else:
             db.session.commit()
 
-    def _consulta_completa(self):
-        return db.session.query(FichaTecnica).options(
+    @staticmethod
+    def _carregamento_completo():
+        return (
             selectinload(FichaTecnica.produto),
             selectinload(FichaTecnica.fases).selectinload(FichaTecnicaFase.fase),
             selectinload(FichaTecnica.componentes).selectinload(
@@ -36,8 +38,17 @@ class FichaTecnicaRepository:
             ),
         )
 
-    def listar(self) -> list[FichaTecnica]:
-        return self._consulta_completa().join(FichaTecnica.produto).order_by(Produto.nome).all()
+    def _consulta_completa(self):
+        return db.session.query(FichaTecnica).options(*self._carregamento_completo())
+
+    def listar(self, paginacao: PaginacaoQuery):
+        return paginar(
+            db.select(FichaTecnica)
+            .options(*self._carregamento_completo())
+            .join(FichaTecnica.produto)
+            .order_by(Produto.nome, FichaTecnica.id),
+            paginacao,
+        )
 
     def obter(self, ficha_id: int) -> FichaTecnica | None:
         return self._consulta_completa().filter(FichaTecnica.id == ficha_id).first()
@@ -48,8 +59,10 @@ class FichaTecnicaRepository:
     def ficha_do_produto(self, produto_id: int) -> FichaTecnica | None:
         return db.session.query(FichaTecnica).filter_by(produto_id=produto_id).first()
 
-    def fases_catalogo(self) -> list[FaseProducao]:
-        return db.session.query(FaseProducao).order_by(FaseProducao.nome).all()
+    def fases_catalogo(self, paginacao: PaginacaoQuery):
+        return paginar(
+            db.select(FaseProducao).order_by(FaseProducao.nome, FaseProducao.id), paginacao
+        )
 
     def fases_catalogo_por_ids(self, ids: set[int]) -> dict[int, FaseProducao]:
         if not ids:

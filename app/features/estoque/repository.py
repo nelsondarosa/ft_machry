@@ -9,6 +9,7 @@ from sqlalchemy import text
 from db.database_config import db
 
 from app.features.usuarios.models import Usuario
+from app.utils.paginacao import PaginacaoQuery, paginar, paginar_sql
 
 from .models import Localizacao, Lote, MovimentacaoEstoque, Produto, ProdutoTransformacao
 
@@ -32,7 +33,12 @@ class EstoqueRepository:
 
     # -- inventário / movimentações -----------------------------------------
 
-    def listar_inventario(self, produto_id: Optional[int] = None, lote_id: Optional[int] = None):
+    def listar_inventario(
+        self,
+        paginacao: PaginacaoQuery,
+        produto_id: Optional[int] = None,
+        lote_id: Optional[int] = None,
+    ):
         sql = "SELECT * FROM vw_inventario WHERE 1=1"
         params: dict = {}
         if produto_id is not None:
@@ -42,17 +48,17 @@ class EstoqueRepository:
             sql += " AND lote_id = :lote_id"
             params["lote_id"] = lote_id
         sql += " ORDER BY produto, data_validade, lote_id"
-        return db.session.execute(text(sql), params).mappings().all()
+        return paginar_sql(sql, params, paginacao)
 
     def listar_movimentacoes(
         self,
-        limite: int = 100,
+        paginacao: PaginacaoQuery,
         lote_id: Optional[int] = None,
         usuario_id: Optional[int] = None,
         tipo: Optional[str] = None,
     ):
         sql = "SELECT * FROM movimentacao_estoque WHERE 1=1"
-        params: dict = {"limite": limite}
+        params: dict = {}
         if lote_id is not None:
             sql += " AND lote_id = :lote_id"
             params["lote_id"] = lote_id
@@ -62,8 +68,8 @@ class EstoqueRepository:
         if tipo is not None:
             sql += " AND tipo = :tipo"
             params["tipo"] = tipo
-        sql += " ORDER BY id DESC LIMIT :limite"
-        return db.session.execute(text(sql), params).mappings().all()
+        sql += " ORDER BY id DESC"
+        return paginar_sql(sql, params, paginacao)
 
     def obter_movimentacao(self, mov_id: int) -> Optional[MovimentacaoEstoque]:
         return db.session.get(MovimentacaoEstoque, mov_id)
@@ -106,8 +112,10 @@ class EstoqueRepository:
 
     # -- localização -----------------------------------------------------------
 
-    def listar_localizacoes(self) -> list[Localizacao]:
-        return db.session.query(Localizacao).order_by(Localizacao.nome).all()
+    def listar_localizacoes(self, paginacao: PaginacaoQuery):
+        return paginar(
+            db.select(Localizacao).order_by(Localizacao.nome, Localizacao.id), paginacao
+        )
 
     def obter_localizacao(self, loc_id: int) -> Optional[Localizacao]:
         return db.session.get(Localizacao, loc_id)
@@ -141,7 +149,12 @@ class EstoqueRepository:
 
     # -- lote --------------------------------------------------------------------
 
-    def listar_lotes(self, produto_id: Optional[int] = None, localizacao_id: Optional[int] = None):
+    def listar_lotes(
+        self,
+        paginacao: PaginacaoQuery,
+        produto_id: Optional[int] = None,
+        localizacao_id: Optional[int] = None,
+    ):
         sql = """SELECT l.*, p.nome AS produto, loc.nome AS localizacao FROM lote l
                  JOIN produto p ON p.id = l.produto_id
                  JOIN localizacao loc ON loc.id = l.localizacao_id WHERE 1=1"""
@@ -153,7 +166,7 @@ class EstoqueRepository:
             sql += " AND l.localizacao_id = :localizacao_id"
             params["localizacao_id"] = localizacao_id
         sql += " ORDER BY l.data_validade IS NULL, l.data_validade, l.id"
-        return db.session.execute(text(sql), params).mappings().all()
+        return paginar_sql(sql, params, paginacao)
 
     def obter_lote(self, lote_id: int, para_atualizacao: bool = False) -> Optional[Lote]:
         return db.session.get(Lote, lote_id, with_for_update=para_atualizacao)

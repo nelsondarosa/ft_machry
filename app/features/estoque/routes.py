@@ -5,6 +5,7 @@ Controller puro: delega a leitura para o service e serializa com schemas.py
 from flask import Blueprint
 
 from app.utils.errors import RegistroNaoEncontrado
+from app.utils.paginacao import PaginacaoQuery, resposta_paginada
 from app.utils.parsing import consulta, entrada
 
 from . import schemas
@@ -21,23 +22,23 @@ def get_service() -> EstoqueService:
 @bp.get("/inventario")
 def inventario():
     filtro = consulta(schemas.InventarioQuery)
-    itens = get_service().listar_inventario(filtro.produto_id, filtro.lote_id)
-    return [schemas.ItemInventarioOut.model_validate(i).model_dump() for i in itens]
+    pagina = get_service().listar_inventario(filtro, filtro.produto_id, filtro.lote_id)
+    return resposta_paginada(pagina, schemas.ItemInventarioOut)
 
 
 @bp.get("/movimentacoes")
 def movimentacoes():
     filtro = consulta(schemas.MovimentacaoQuery)
-    itens = get_service().listar_movimentacoes(
-        filtro.limite, filtro.lote_id, filtro.usuario_id, filtro.tipo
+    pagina = get_service().listar_movimentacoes(
+        filtro, filtro.lote_id, filtro.usuario_id, filtro.tipo
     )
-    return [schemas.MovimentacaoOut.model_validate(i).model_dump() for i in itens]
+    return resposta_paginada(pagina, schemas.MovimentacaoOut)
 
 
 @bp.get("/localizacoes")
 def listar_localizacoes():
-    itens = get_service().listar_localizacoes()
-    return [schemas.LocalizacaoOut.model_validate(i).model_dump() for i in itens]
+    pagina = get_service().listar_localizacoes(consulta(PaginacaoQuery))
+    return resposta_paginada(pagina, schemas.LocalizacaoOut)
 
 
 @bp.post("/localizacoes")
@@ -63,8 +64,8 @@ def remover_localizacao(loc_id):
 @bp.get("/lotes")
 def listar_lotes():
     filtro = consulta(schemas.LoteQuery)
-    itens = get_service().listar_lotes(filtro.produto_id, filtro.localizacao_id)
-    return [schemas.LoteListadoOut.model_validate(i).model_dump() for i in itens]
+    pagina = get_service().listar_lotes(filtro, filtro.produto_id, filtro.localizacao_id)
+    return resposta_paginada(pagina, schemas.LoteListadoOut)
 
 
 @bp.get("/lotes/<int:lote_id>")

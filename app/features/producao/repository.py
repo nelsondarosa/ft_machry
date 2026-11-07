@@ -5,16 +5,20 @@ from sqlalchemy import text
 from db.database_config import db
 
 from app.features.fichas_tecnicas.models import FichaTecnica
+from app.utils.paginacao import PaginacaoQuery, paginar
 
 from .models import SolicitacaoProducao, SpComponente, SpFase
 
 
 class ProducaoRepository:
 
-    def listar_solicitacoes(self) -> list[SolicitacaoProducao]:
-        return db.session.query(SolicitacaoProducao).order_by(
-            SolicitacaoProducao.criado_em.desc()
-        ).all()
+    def listar_solicitacoes(self, paginacao: PaginacaoQuery):
+        return paginar(
+            db.select(SolicitacaoProducao).order_by(
+                SolicitacaoProducao.criado_em.desc(), SolicitacaoProducao.id.desc()
+            ),
+            paginacao,
+        )
 
     def obter_solicitacao(self, sp_id: int):
         return db.session.get(SolicitacaoProducao, sp_id)

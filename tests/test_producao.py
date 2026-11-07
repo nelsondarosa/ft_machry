@@ -35,7 +35,7 @@ def _criar_solicitacao_com_fase_e_componente(app):
 
 def test_lista_vazia(client):
     r = client.get('/api/producao/solicitacoes')
-    assert r.status_code == 200 and r.get_json() == []
+    assert r.status_code == 200 and r.get_json()['items'] == []
 
 
 def test_detalhe_inexistente(client):
@@ -48,8 +48,8 @@ def test_lista_e_detalhe_com_dados(app, seeded_client):
 
     lista = c.get('/api/producao/solicitacoes')
     assert lista.status_code == 200
-    assert [s['id'] for s in lista.get_json()] == [1]
-    assert lista.get_json()[0]['status'] == 'EM_PRODUCAO'
+    assert [s['id'] for s in lista.get_json()['items']] == [1]
+    assert lista.get_json()['items'][0]['status'] == 'EM_PRODUCAO'
 
     detalhe = c.get('/api/producao/solicitacoes/1')
     assert detalhe.status_code == 200

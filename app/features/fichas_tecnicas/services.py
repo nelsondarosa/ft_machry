@@ -1,4 +1,7 @@
+from flask_sqlalchemy.pagination import Pagination
+
 from app.utils.errors import Conflito, RegistroNaoEncontrado
+from app.utils.paginacao import PaginacaoQuery
 
 from .models import FichaTecnica
 from .repository import FichaTecnicaRepository
@@ -9,8 +12,8 @@ class FichaTecnicaService:
     def __init__(self, repository: FichaTecnicaRepository) -> None:
         self.repository = repository
 
-    def listar(self) -> list[FichaTecnica]:
-        return self.repository.listar()
+    def listar(self, paginacao: PaginacaoQuery) -> Pagination:
+        return self.repository.listar(paginacao)
 
     def obter(self, ficha_id: int) -> FichaTecnica:
         ficha = self.repository.obter(ficha_id)
@@ -18,8 +21,8 @@ class FichaTecnicaService:
             raise RegistroNaoEncontrado("ficha técnica não encontrada")
         return ficha
 
-    def listar_fases(self):
-        return self.repository.fases_catalogo()
+    def listar_fases(self, paginacao: PaginacaoQuery) -> Pagination:
+        return self.repository.fases_catalogo(paginacao)
 
     def criar(self, dados: FichaTecnicaInput) -> FichaTecnica:
         with self.repository.transacao():

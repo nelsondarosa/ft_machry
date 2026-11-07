@@ -1,5 +1,6 @@
 from contextlib import contextmanager
 
+from app.utils.paginacao import PaginacaoQuery, paginar
 from db.database_config import db
 
 from .models import GrupoProduto, Produto
@@ -16,12 +17,10 @@ class ProdutoRepository:
         else:
             db.session.commit()
 
-    def listar_ativos(self) -> list[Produto]:
-        return (
-            db.session.query(Produto)
-            .filter(Produto.ativo == 1)
-            .order_by(Produto.nome)
-            .all()
+    def listar_ativos(self, paginacao: PaginacaoQuery):
+        return paginar(
+            db.select(Produto).where(Produto.ativo == 1).order_by(Produto.nome, Produto.id),
+            paginacao,
         )
 
     def obter_ativo(self, produto_id: int) -> Produto | None:

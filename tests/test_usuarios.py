@@ -30,7 +30,7 @@ def test_crud_usuario(client):
 
     assert client.post("/api/usuarios", json=NOVO).status_code == 409
 
-    usernames = [u["username"] for u in client.get("/api/usuarios").get_json()]
+    usernames = [u["username"] for u in client.get("/api/usuarios").get_json()["items"]]
     assert "maria.souza" in usernames
 
     atualizado = client.put(f"/api/usuarios/{corpo['id']}", json={"papel": "ADMIN", "ativo": 0})
