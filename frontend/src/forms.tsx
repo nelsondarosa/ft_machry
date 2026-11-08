@@ -3,10 +3,24 @@ import { api } from './api'
 import { Modal } from './components'
 import type { Conservacao, FaseCatalogo, FichaTecnica, Localizacao, Lote, Produto, TipoProduto } from './types'
 
+const unidadesMedida = [
+  { valor: 'kg', nome: 'Quilograma (kg)' },
+  { valor: 'g', nome: 'Grama (g)' },
+  { valor: 'mg', nome: 'Miligrama (mg)' },
+  { valor: 'L', nome: 'Litro (L)' },
+  { valor: 'ml', nome: 'Mililitro (ml)' },
+  { valor: 'un', nome: 'Unidade (un)' },
+  { valor: 'pct', nome: 'Pacote (pct)' },
+  { valor: 'cx', nome: 'Caixa (cx)' },
+  { valor: 'dz', nome: 'Dúzia (dz)' },
+  { valor: 'pç', nome: 'Peça (pç)' },
+] as const
+
 export function ProductModal({ produto, onClose, onSaved, onDeleted }: { produto: Produto | null; onClose: () => void; onSaved: () => void; onDeleted: () => void }) {
   const [nome, setNome] = useState(produto?.nome ?? '')
   const [tipo, setTipo] = useState<TipoProduto>(produto?.tipo ?? 'INSUMO')
   const [unidade, setUnidade] = useState(produto?.unidade_medida ?? 'kg')
+  const [subdivisao, setSubdivisao] = useState(produto?.subdivisao ?? '')
   const [conservacao, setConservacao] = useState<Conservacao>(produto?.conservacao ?? 'SECO')
   const [validadeObrigatoria, setValidadeObrigatoria] = useState(Boolean(produto?.validade_obrigatoria))
   const [validadeDias, setValidadeDias] = useState(produto?.validade_padrao_dias?.toString() ?? '')
@@ -16,7 +30,7 @@ export function ProductModal({ produto, onClose, onSaved, onDeleted }: { produto
   async function save(event: FormEvent) {
     event.preventDefault(); setSaving(true); setError('')
     try {
-      await api(produto ? `/api/produtos/${produto.id}` : '/api/produtos', { method: produto ? 'PUT' : 'POST', body: JSON.stringify({ nome, tipo, unidade_medida: unidade, conservacao, validade_obrigatoria: validadeObrigatoria ? 1 : 0, validade_padrao_dias: validadeDias === '' ? null : Number(validadeDias) }) })
+      await api(produto ? `/api/produtos/${produto.id}` : '/api/produtos', { method: produto ? 'PUT' : 'POST', body: JSON.stringify({ nome: nome.trim(), tipo, unidade_medida: unidade, subdivisao: subdivisao.trim() || null, conservacao, validade_obrigatoria: validadeObrigatoria ? 1 : 0, validade_padrao_dias: validadeDias === '' ? null : Number(validadeDias) }) })
       onSaved()
     } catch (reason) { setError(reason instanceof Error ? reason.message : 'Não foi possível salvar o produto.') } finally { setSaving(false) }
   }
@@ -26,7 +40,10 @@ export function ProductModal({ produto, onClose, onSaved, onDeleted }: { produto
     try { await api(`/api/produtos/${produto.id}`, { method: 'DELETE' }); onDeleted() } catch (reason) { setError(reason instanceof Error ? reason.message : 'Não foi possível excluir o produto.'); setSaving(false) }
   }
   return <Modal eyebrow="CATÁLOGO" title={produto ? 'Editar produto' : 'Novo produto'} onClose={onClose} footer={<>{produto && <button className="danger-link" onClick={remove} disabled={saving}>Excluir produto</button>}<button className="secondary" onClick={onClose} type="button">Cancelar</button><button className="primary" form="product-form" disabled={saving}>{saving ? 'Salvando…' : 'Salvar produto'}</button></>}>
-    <form className="dialog-body" id="product-form" onSubmit={save}>{error && <p className="form-error">{error}</p>}<label>Nome<input required maxLength={150} value={nome} onChange={(event) => setNome(event.target.value)} /></label><div className="form-grid"><label>Tipo<select value={tipo} onChange={(event) => setTipo(event.target.value as TipoProduto)}><option value="INSUMO">Insumo</option><option value="INTERMEDIARIO">Intermediário</option><option value="FINAL">Produto final</option></select></label><label>Unidade de medida<input required maxLength={20} value={unidade} onChange={(event) => setUnidade(event.target.value)} /></label><label>Conservação<select value={conservacao} onChange={(event) => setConservacao(event.target.value as Conservacao)}><option value="SECO">Seco</option><option value="RESFRIADO">Resfriado</option><option value="CONGELADO">Congelado</option></select></label><label>Validade padrão (dias)<input type="number" min="0" value={validadeDias} onChange={(event) => setValidadeDias(event.target.value)} placeholder="Opcional" /></label></div><label className="checkbox"><input type="checkbox" checked={validadeObrigatoria} onChange={(event) => setValidadeObrigatoria(event.target.checked)} /> Exigir data de validade nos lotes</label></form>
+    <form className="dialog-body" id="product-form" onSubmit={save}>{error && <p className="form-error">{error}</p>}<label>Nome<input required maxLength={150} value={nome} onChange={(event) => setNome(event.target.value)} /></label><div className="form-grid"><label>Tipo<select value={tipo} onChange={(event) => setTipo(event.target.value as TipoProduto)}><option value="INSUMO">Insumo</option><option value="INTERMEDIARIO">Intermediário</option><option value="FINAL">Produto final</option></select></label><label>Unidade de medida<select required value={unidade} onChange={(event) => setUnidade(event.target.value)}>
+        {!unidadesMedida.some((item) => item.valor === unidade) && unidade && <option value={unidade}>{unidade} (cadastrada anteriormente)</option>}
+        {unidadesMedida.map((item) => <option key={item.valor} value={item.valor}>{item.nome}</option>)}
+      </select></label><label>Conservação<select value={conservacao} onChange={(event) => setConservacao(event.target.value as Conservacao)}><option value="SECO">Seco</option><option value="RESFRIADO">Resfriado</option><option value="CONGELADO">Congelado</option></select></label><label>Validade padrão (dias)<input type="number" min="0" value={validadeDias} onChange={(event) => setValidadeDias(event.target.value)} placeholder="Opcional" /></label></div><label>Subdivisão (opcional)<input maxLength={100} value={subdivisao} onChange={(event) => setSubdivisao(event.target.value)} placeholder="Ex.: sal fino, sal grosso, sal parrillero" /><small>Especifique a variação do produto para facilitar a busca e a organização.</small></label><label className="checkbox"><input type="checkbox" checked={validadeObrigatoria} onChange={(event) => setValidadeObrigatoria(event.target.checked)} /> Exigir data de validade nos lotes</label></form>
   </Modal>
 }
 
