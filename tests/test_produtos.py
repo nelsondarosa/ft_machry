@@ -72,3 +72,18 @@ def test_docs(client):
     r = client.get("/openapi.yaml")
     assert r.status_code == 200 and b"/api/produtos" in r.data
     assert b"swagger-ui" in client.get("/docs").data
+
+
+def test_subdivisao(client):
+    r = criar(client, subdivisao="Farinhas")
+    assert r.status_code == 201
+    p = r.get_json()
+    assert p["subdivisao"] == "Farinhas"
+
+    r = client.put(f"{URL}/{p['id']}", json={"subdivisao": "Trigo"})
+    assert r.get_json()["subdivisao"] == "Trigo"
+
+    r = client.put(f"{URL}/{p['id']}", json={"subdivisao": None})
+    assert r.get_json()["subdivisao"] is None
+
+    assert criar(client).get_json()["subdivisao"] is None

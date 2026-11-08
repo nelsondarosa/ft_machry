@@ -26,6 +26,7 @@ class Produto(db.Model):
     tipo = db.Column(db.Text, nullable=False)
     unidade_medida = db.Column(db.Text, nullable=False)
     grupo_id = db.Column(db.Integer, db.ForeignKey("grupo_produto.id"))
+    subdivisao = db.Column(db.Text)
     conservacao = db.Column(db.Text, nullable=False, default="SECO", server_default="SECO")
     validade_obrigatoria = db.Column(db.Integer, nullable=False, default=0, server_default="0")
     validade_padrao_dias = db.Column(db.Integer)

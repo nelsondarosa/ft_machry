@@ -14,6 +14,7 @@ class ProdutoCreate(BaseModel):
     tipo: TipoProduto
     unidade_medida: str = Field(min_length=1, max_length=20)
     grupo_id: int | None = Field(default=None, gt=0)
+    subdivisao: str | None = Field(default=None, max_length=100)
     conservacao: TipoConservacao = "SECO"
     validade_obrigatoria: int = Field(default=0, ge=0, le=1)
     validade_padrao_dias: int | None = Field(default=None, ge=0)
@@ -35,6 +36,7 @@ class ProdutoUpdate(BaseModel):
     tipo: TipoProduto | None = None
     unidade_medida: str | None = Field(default=None, min_length=1, max_length=20)
     grupo_id: int | None = Field(default=None, gt=0)
+    subdivisao: str | None = Field(default=None, max_length=100)
     conservacao: TipoConservacao | None = None
     validade_obrigatoria: int | None = Field(default=None, ge=0, le=1)
     validade_padrao_dias: int | None = Field(default=None, ge=0)
@@ -65,6 +67,7 @@ class ProdutoOut(BaseModel):
     tipo: str
     unidade_medida: str
     grupo_id: int | None
+    subdivisao: str | None
     conservacao: str
     validade_obrigatoria: int
     validade_padrao_dias: int | None

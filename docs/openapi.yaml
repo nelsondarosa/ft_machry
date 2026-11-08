@@ -541,6 +541,7 @@ components:
         tipo: {type: string, enum: [INSUMO, INTERMEDIARIO, FINAL]}
         unidade_medida: {type: string, example: g}
         grupo_id: {type: integer, nullable: true, description: FK para grupo_produto}
+        subdivisao: {type: string, nullable: true, maxLength: 100, example: Farinhas}
         conservacao: {type: string, enum: [CONGELADO, RESFRIADO, SECO], default: SECO}
         validade_obrigatoria: {type: integer, enum: [0, 1], default: 0}
         validade_padrao_dias: {type: integer, nullable: true}
