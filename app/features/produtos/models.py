@@ -1,3 +1,4 @@
+from app.utils.constantes import Constantes
 from db.database_config import db
 
 
@@ -12,11 +13,11 @@ class Produto(db.Model):
     __tablename__ = "produto"
     __table_args__ = (
         db.CheckConstraint(
-            "tipo IN ('INSUMO', 'INTERMEDIARIO', 'FINAL')",
+            Constantes.sql_in("tipo", Constantes.TIPOS_PRODUTO),
             name="ck_produto_tipo",
         ),
         db.CheckConstraint(
-            "conservacao IN ('CONGELADO', 'RESFRIADO', 'SECO')",
+            Constantes.sql_in("conservacao", Constantes.TIPOS_CONSERVACAO),
             name="ck_produto_conservacao",
         ),
     )

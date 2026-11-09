@@ -6,18 +6,14 @@ from typing import Literal, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from app.utils.constantes import Constantes
 from app.utils.paginacao import PaginacaoQuery
 
-TipoLocalizacao = Literal["SECO", "RESFRIADO", "CONGELADO"]
-TipoMovimentacao = Literal[
-    "ENTRADA", "SAIDA", "AJUSTE_ENTRADA", "AJUSTE_SAIDA",
-    "TRANSFERENCIA", "TRANSFORMACAO",
-]
 
 
 class LocalizacaoCreate(BaseModel):
     nome: str
-    tipo: TipoLocalizacao = "SECO"
+    tipo: Constantes.TipoConservacao = "SECO"
     parent_id: Optional[int] = Field(default=None, gt=0, strict=True)
     foto_url: Optional[str] = None
 
@@ -33,7 +29,7 @@ class LocalizacaoUpdate(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     nome: Optional[str] = None
-    tipo: Optional[TipoLocalizacao] = None
+    tipo: Optional[Constantes.TipoConservacao] = None
     parent_id: Optional[int] = Field(default=None, gt=0, strict=True)
     foto_url: Optional[str] = None
 
@@ -118,7 +114,7 @@ class LoteListadoOut(LoteOut):
 
 
 class MovimentacaoCreate(BaseModel):
-    tipo: TipoMovimentacao
+    tipo: Constantes.TipoMovimentacaoManual
     lote_id: int = Field(gt=0, strict=True)
     usuario_id: int = Field(gt=0, strict=True)
     quantidade: float = Field(gt=0, allow_inf_nan=False, strict=True)

@@ -1,8 +1,6 @@
-from typing import Literal
-
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-Papel = Literal["OWNER", "ADMIN", "USER"]
+from app.utils.constantes import Constantes
 
 
 class UsuarioCreate(BaseModel):
@@ -11,7 +9,7 @@ class UsuarioCreate(BaseModel):
     nome: str = Field(min_length=2, max_length=120)
     username: str = Field(pattern=r"^[a-zA-Z0-9._-]+$", min_length=3, max_length=80)
     password: str = Field(min_length=8, max_length=200)
-    papel: Papel
+    papel: Constantes.Papel
 
     @field_validator("nome", "username")
     @classmethod
@@ -24,7 +22,7 @@ class UsuarioUpdate(BaseModel):
 
     nome: str | None = Field(default=None, min_length=2, max_length=120)
     password: str | None = Field(default=None, min_length=8, max_length=200)
-    papel: Papel | None = None
+    papel: Constantes.Papel | None = None
     ativo: int | None = Field(default=None, ge=0, le=1)
 
 

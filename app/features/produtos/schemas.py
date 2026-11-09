@@ -1,21 +1,19 @@
-from typing import Literal
-
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
+from app.utils.constantes import Constantes
 
-TipoProduto = Literal["INSUMO", "INTERMEDIARIO", "FINAL"]
-TipoConservacao = Literal["CONGELADO", "RESFRIADO", "SECO"]
+
 
 
 class ProdutoCreate(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     nome: str = Field(min_length=1, max_length=150)
-    tipo: TipoProduto
+    tipo: Constantes.TipoProduto
     unidade_medida: str = Field(min_length=1, max_length=20)
     grupo_id: int | None = Field(default=None, gt=0)
     subdivisao: str | None = Field(default=None, max_length=100)
-    conservacao: TipoConservacao = "SECO"
+    conservacao: Constantes.TipoConservacao = "SECO"
     validade_obrigatoria: int = Field(default=0, ge=0, le=1)
     validade_padrao_dias: int | None = Field(default=None, ge=0)
     foto_url: str | None = None
@@ -33,11 +31,11 @@ class ProdutoUpdate(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     nome: str | None = Field(default=None, min_length=1, max_length=150)
-    tipo: TipoProduto | None = None
+    tipo: Constantes.TipoProduto | None = None
     unidade_medida: str | None = Field(default=None, min_length=1, max_length=20)
     grupo_id: int | None = Field(default=None, gt=0)
     subdivisao: str | None = Field(default=None, max_length=100)
-    conservacao: TipoConservacao | None = None
+    conservacao: Constantes.TipoConservacao | None = None
     validade_obrigatoria: int | None = Field(default=None, ge=0, le=1)
     validade_padrao_dias: int | None = Field(default=None, ge=0)
     foto_url: str | None = None

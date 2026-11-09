@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from flask_sqlalchemy.pagination import Pagination
 
+from app.utils.constantes import Constantes
 from app.utils.errors import RegistroNaoEncontrado
 from app.utils.paginacao import PaginacaoQuery
 
@@ -27,14 +28,7 @@ class ProducaoService:
         solicitacao = self.repository.obter_solicitacao(sp_id)
         if solicitacao is None:
             raise RegistroNaoEncontrado("solicitação não encontrada")
-        permitidos = {
-            "ABERTA": {"EM_SEPARACAO", "EM_PRODUCAO", "CANCELADA"},
-            "EM_SEPARACAO": {"EM_PRODUCAO", "CANCELADA"},
-            "EM_PRODUCAO": {"CONCLUIDA", "CANCELADA"},
-            "CONCLUIDA": set(),
-            "CANCELADA": set(),
-        }
-        if status not in permitidos[solicitacao.status]:
+        if status not in Constantes.TRANSICOES_SOLICITACAO[solicitacao.status]:
             raise ValueError(f"não é possível alterar de {solicitacao.status} para {status}")
         return self.repository.atualizar_status(solicitacao, status)
 
