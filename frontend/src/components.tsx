@@ -44,6 +44,17 @@ export function EmptyState({ title, text }: { title: string; text: string }) {
   return <div className="empty"><strong>{title}</strong><p>{text}</p></div>
 }
 
+export function Pagination({ page, perPage, total, label, onChange }: { page: number; perPage: number; total: number; label: string; onChange: (page: number) => void }) {
+  const pages = Math.max(1, Math.ceil(total / perPage))
+  if (total <= perPage) return null
+  return <nav className="catalog-pagination" aria-label={label}>
+    <span>Mostrando {(page - 1) * perPage + 1}–{Math.min(page * perPage, total)} de {total}</span>
+    <div><button type="button" className="secondary" disabled={page === 1} onClick={() => onChange(Math.max(1, page - 1))}>Anterior</button>
+      <span>Página {page} de {pages}</span>
+      <button type="button" className="secondary" disabled={page === pages} onClick={() => onChange(Math.min(pages, page + 1))}>Próxima</button></div>
+  </nav>
+}
+
 export function Modal({ title, eyebrow, wide, children, footer, onClose }: { title: string; eyebrow: string; wide?: boolean; children: ReactNode; footer: ReactNode; onClose: () => void }) {
   return <div className="modal-backdrop" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && onClose()}><section className={`dialog modal-card ${wide ? 'wide' : ''}`} role="dialog" aria-modal="true" aria-label={title}><div className="dialog-head"><div><span className="eyebrow">{eyebrow}</span><h2>{title}</h2></div><button className="icon-button" onClick={onClose} aria-label="Fechar" type="button">×</button></div>{children}<div className="dialog-actions">{footer}</div></section></div>
 }
