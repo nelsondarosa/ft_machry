@@ -13,8 +13,67 @@ export function DashboardPage({ produtos, fichas, inventario, canManage, onNewSh
 
 export function ProductsPage({ produtos, onNew, onEdit }: { produtos: Produto[]; onNew: () => void; onEdit: (produto: Produto) => void }) {
   const [query, setQuery] = useState('')
-  const filtered = useMemo(() => produtos.filter((item) => `${item.nome} ${item.tipo}`.toLowerCase().includes(query.toLowerCase())), [produtos, query])
-  return <><PageHeading eyebrow="CATÁLOGO" title="Produtos" description="Insumos, preparos intermediários e itens finais usados pela operação." action={<button className="primary" onClick={onNew}>Novo produto</button>} /><section className="panel"><div className="toolbar"><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Buscar por nome ou tipo" /><span>{filtered.length} registros</span></div><div className="table-wrap"><table><thead><tr><th>Produto</th><th>Tipo</th><th>Unidade</th><th>Conservação</th><th>Validade padrão</th><th /></tr></thead><tbody>{filtered.map((produto) => <tr key={produto.id}><td><strong>{produto.nome}</strong></td><td><span className={`badge ${produto.tipo.toLowerCase()}`}>{labels[produto.tipo]}</span></td><td>{produto.unidade_medida}</td><td>{produto.conservacao.toLowerCase()}</td><td>{produto.validade_padrao_dias === null ? '—' : `${produto.validade_padrao_dias} dias`}</td><td><button className="text-button" onClick={() => onEdit(produto)}>Editar</button></td></tr>)}</tbody></table></div>{!filtered.length && <EmptyState title="Nenhum produto encontrado" text="Ajuste a busca ou cadastre um novo produto." />}</section></>
+  const [tipo, setTipo] = useState<TipoProduto | 'TODOS'>('TODOS')
+  const [subdivisao, setSubdivisao] = useState('')
+  const [pagina, setPagina] = useState(1)
+  const porPagina = 20
+  const counts = useMemo(() => ({
+    TODOS: produtos.length,
+    INSUMO: produtos.filter((item) => item.tipo === 'INSUMO').length,
+    INTERMEDIARIO: produtos.filter((item) => item.tipo === 'INTERMEDIARIO').length,
+    FINAL: produtos.filter((item) => item.tipo === 'FINAL').length,
+  }), [produtos])
+  const subdivisoes = useMemo(() => [...new Set(produtos
+    .filter((item) => tipo === 'TODOS' || item.tipo === tipo)
+    .map((item) => item.subdivisao?.trim())
+    .filter((value): value is string => Boolean(value)))]
+    .sort((a, b) => a.localeCompare(b, 'pt-BR')), [produtos, tipo])
+  const filtered = useMemo(() => {
+    const search = query.trim().toLocaleLowerCase('pt-BR')
+    return produtos.filter((item) => {
+      if (tipo !== 'TODOS' && item.tipo !== tipo) return false
+      if (subdivisao && item.subdivisao !== subdivisao) return false
+      return !search || `${item.nome} ${item.subdivisao ?? ''} ${item.unidade_medida}`.toLocaleLowerCase('pt-BR').includes(search)
+    }).sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'))
+  }, [produtos, tipo, subdivisao, query])
+  const totalPaginas = Math.max(1, Math.ceil(filtered.length / porPagina))
+  const paginaAtual = Math.min(pagina, totalPaginas)
+  const visiveis = filtered.slice((paginaAtual - 1) * porPagina, paginaAtual * porPagina)
+  const alterarTipo = (novo: TipoProduto | 'TODOS') => { setTipo(novo); setSubdivisao(''); setPagina(1) }
+
+  return <>
+    <PageHeading eyebrow="CATÁLOGO" title="Produtos" description="Catálogo organizado por insumos, preparos intermediários e produtos finais." action={<button className="primary" onClick={onNew}>Novo produto</button>} />
+    <section className="panel catalog-panel">
+      <div className="catalog-tabs" role="group" aria-label="Tipo de produto">
+        {([['TODOS', 'Todos'], ['INSUMO', 'Insumos'], ['INTERMEDIARIO', 'Intermediários'], ['FINAL', 'Produtos finais']] as const).map(([value, label]) => (
+          <button key={value} type="button" aria-pressed={tipo === value} className={tipo === value ? 'active' : ''} onClick={() => alterarTipo(value)}>
+            {label}<span>{counts[value]}</span>
+          </button>
+        ))}
+      </div>
+      <div className="catalog-filters">
+        <label>Pesquisar produto<input value={query} onChange={(event) => { setQuery(event.target.value); setPagina(1) }} placeholder="Nome, subdivisão ou unidade" /></label>
+        <label>Subdivisão<select value={subdivisao} onChange={(event) => { setSubdivisao(event.target.value); setPagina(1) }}><option value="">Todas</option>{subdivisoes.map((value) => <option key={value} value={value}>{value}</option>)}</select></label>
+        <span className="catalog-total" aria-live="polite">{filtered.length} produto(s)</span>
+      </div>
+      <div className="table-wrap"><table><thead><tr><th>Produto</th><th>Tipo</th><th>Subdivisão</th><th>Unidade</th><th>Conservação</th><th>Validade padrão</th><th>Ação</th></tr></thead>
+        <tbody>{visiveis.map((produto) => <tr key={produto.id}>
+          <td><strong>{produto.nome}</strong><small className="catalog-id">#{produto.id}</small></td>
+          <td><span className={`badge ${produto.tipo.toLowerCase()}`}>{labels[produto.tipo]}</span></td>
+          <td>{produto.subdivisao || '—'}</td><td>{produto.unidade_medida}</td>
+          <td>{produto.conservacao.toLowerCase()}</td><td>{produto.validade_padrao_dias == null ? '—' : `${produto.validade_padrao_dias} dias`}</td>
+          <td><button className="text-button" onClick={() => onEdit(produto)}>Editar</button></td>
+        </tr>)}</tbody>
+      </table></div>
+      {!filtered.length && <EmptyState title="Nenhum produto encontrado" text={produtos.length ? 'Ajuste a busca, a categoria ou a subdivisão.' : 'Cadastre o primeiro produto para começar.'} />}
+      {filtered.length > porPagina && <nav className="catalog-pagination" aria-label="Paginação de produtos">
+        <span>Mostrando {(paginaAtual - 1) * porPagina + 1}–{Math.min(paginaAtual * porPagina, filtered.length)} de {filtered.length}</span>
+        <div><button type="button" className="secondary" disabled={paginaAtual === 1} onClick={() => setPagina((value) => Math.max(1, value - 1))}>Anterior</button>
+          <span>Página {paginaAtual} de {totalPaginas}</span>
+          <button type="button" className="secondary" disabled={paginaAtual === totalPaginas} onClick={() => setPagina((value) => Math.min(totalPaginas, value + 1))}>Próxima</button></div>
+      </nav>}
+    </section>
+  </>
 }
 
 export function SheetsPage({ fichas, canManage, onNew, onEdit }: { fichas: FichaTecnica[]; canManage: boolean; onNew: () => void; onEdit: (ficha: FichaTecnica) => void }) {
