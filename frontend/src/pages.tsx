@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { EmptyState, Metric, PageHeading } from './components'
+import { EmptyState, Metric, PageHeading, Pagination } from './components'
 import type { FichaTecnica, ItemInventario, Lote, Produto, SolicitacaoProducao, TipoProduto } from './types'
 
 const number = new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 3 })
@@ -66,18 +66,18 @@ export function ProductsPage({ produtos, onNew, onEdit }: { produtos: Produto[];
         </tr>)}</tbody>
       </table></div>
       {!filtered.length && <EmptyState title="Nenhum produto encontrado" text={produtos.length ? 'Ajuste a busca, a categoria ou a subdivisão.' : 'Cadastre o primeiro produto para começar.'} />}
-      {filtered.length > porPagina && <nav className="catalog-pagination" aria-label="Paginação de produtos">
-        <span>Mostrando {(paginaAtual - 1) * porPagina + 1}–{Math.min(paginaAtual * porPagina, filtered.length)} de {filtered.length}</span>
-        <div><button type="button" className="secondary" disabled={paginaAtual === 1} onClick={() => setPagina((value) => Math.max(1, value - 1))}>Anterior</button>
-          <span>Página {paginaAtual} de {totalPaginas}</span>
-          <button type="button" className="secondary" disabled={paginaAtual === totalPaginas} onClick={() => setPagina((value) => Math.min(totalPaginas, value + 1))}>Próxima</button></div>
-      </nav>}
+      <Pagination page={paginaAtual} perPage={porPagina} total={filtered.length} label="Paginação de produtos" onChange={setPagina} />
     </section>
   </>
 }
 
 export function SheetsPage({ fichas, canManage, onNew, onEdit }: { fichas: FichaTecnica[]; canManage: boolean; onNew: () => void; onEdit: (ficha: FichaTecnica) => void }) {
-  return <><PageHeading eyebrow="PADRONIZAÇÃO" title="Fichas técnicas" description="Rendimento, etapas e componentes de cada preparo da cozinha." action={canManage ? <button className="primary" onClick={onNew}>Nova ficha</button> : undefined} />{fichas.length ? <div className="recipe-grid">{fichas.map((ficha) => <article className="recipe-card panel" key={ficha.id}><span className="type">#{ficha.id}</span><h3>{ficha.produto}</h3><p>{ficha.observacao || 'Sem observações.'}</p><div><span>{number.format(ficha.rendimento)} {ficha.unidade_rendimento}</span><span>{ficha.fases.length} fases</span></div><ol className="phase-list">{ficha.fases.map((fase) => <li key={fase.id}><span>{fase.ordem}</span>{fase.fase}<small>{fase.tempo_previsto_min} min</small></li>)}</ol>{canManage && <button className="text-button" onClick={() => onEdit(ficha)}>Editar ficha →</button>}</article>)}</div> : <section className="panel"><EmptyState title="Nenhuma ficha cadastrada" text="Crie a primeira ficha técnica da cozinha." /></section>}</>
+  const [pagina, setPagina] = useState(1)
+  const porPagina = 12
+  const totalPaginas = Math.max(1, Math.ceil(fichas.length / porPagina))
+  const paginaAtual = Math.min(pagina, totalPaginas)
+  const visiveis = fichas.slice((paginaAtual - 1) * porPagina, paginaAtual * porPagina)
+  return <><PageHeading eyebrow="PADRONIZAÇÃO" title="Fichas técnicas" description="Rendimento, etapas e componentes de cada preparo da cozinha." action={canManage ? <button className="primary" onClick={onNew}>Nova ficha</button> : undefined} />{fichas.length ? <><div className="recipe-grid">{visiveis.map((ficha) => <article className="recipe-card panel" key={ficha.id}><span className="type">#{ficha.id}</span><h3>{ficha.produto}</h3><p>{ficha.observacao || 'Sem observações.'}</p><div><span>{number.format(ficha.rendimento)} {ficha.unidade_rendimento}</span><span>{ficha.fases.length} fases</span></div><ol className="phase-list">{ficha.fases.map((fase) => <li key={fase.id}><span>{fase.ordem}</span>{fase.fase}<small>{fase.tempo_previsto_min} min</small></li>)}</ol>{canManage && <button className="text-button" onClick={() => onEdit(ficha)}>Editar ficha →</button>}</article>)}</div><Pagination page={paginaAtual} perPage={porPagina} total={fichas.length} label="Paginação de fichas técnicas" onChange={(value) => { setPagina(value); window.scrollTo({ top: 0, behavior: 'smooth' }) }} /></> : <section className="panel"><EmptyState title="Nenhuma ficha cadastrada" text="Crie a primeira ficha técnica da cozinha." /></section>}</>
 }
 
 export function StockPage({ inventario, lotes, onNew, onMove }: { inventario: ItemInventario[]; lotes: Lote[]; onNew: () => void; onMove: (lote: Lote) => void }) {
