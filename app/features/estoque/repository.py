@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from contextlib import contextmanager
 from datetime import date
 from typing import Optional
 
@@ -9,28 +8,14 @@ from sqlalchemy import text
 from db.database_config import db
 
 from app.features.usuarios.models import Usuario
+from app.utils.constantes import Constantes
 from app.utils.paginacao import PaginacaoQuery, paginar, paginar_sql
+from app.utils.interfaces.repository import RepositorioBase
 
 from .models import Localizacao, Lote, MovimentacaoEstoque, Produto, ProdutoTransformacao
 
-_TIPOS_SOMAM_NA_ORIGEM = {"ENTRADA", "PRODUCAO", "AJUSTE_ENTRADA"}
-_TIPOS_SUBTRAEM_DA_ORIGEM = {"SAIDA", "CONSUMO_PRODUCAO", "TRANSFERENCIA",
-                             "TRANSFORMACAO", "AJUSTE_SAIDA"}
-_TIPOS_COM_DESTINO = {"TRANSFERENCIA", "TRANSFORMACAO"}
 
-
-class EstoqueRepository:
-
-    @contextmanager
-    def transacao(self):
-        try:
-            yield db.session
-        except Exception:
-            db.session.rollback()
-            raise
-        else:
-            db.session.commit()
-
+class EstoqueRepository(RepositorioBase):
     # -- inventário / movimentações -----------------------------------------
 
     def listar_inventario(
@@ -93,18 +78,18 @@ class EstoqueRepository:
             tipo=tipo, lote_origem=lote_origem, lote_destino=lote_destino,
             quantidade=quantidade, quantidade_destino=quantidade_destino,
         )
-        db.session.flush()
+        db.session.commit()
         db.session.refresh(mov)
         return mov
 
     def _aplicar_saldo(self, *, tipo, lote_origem: Lote, lote_destino: Optional[Lote],
                         quantidade, quantidade_destino) -> None:
-        if tipo in _TIPOS_SOMAM_NA_ORIGEM:
+        if tipo in Constantes.TIPOS_SOMAM_NA_ORIGEM:
             lote_origem.quantidade += quantidade
-        elif tipo in _TIPOS_SUBTRAEM_DA_ORIGEM:
+        elif tipo in Constantes.TIPOS_SUBTRAEM_DA_ORIGEM:
             lote_origem.quantidade -= quantidade
 
-        if tipo in _TIPOS_COM_DESTINO:
+        if tipo in Constantes.TIPOS_COM_DESTINO:
             lote_destino.quantidade += quantidade_destino if quantidade_destino is not None else quantidade
 
     def transformacao_cadastrada(self, produto_origem_id: int, produto_destino_id: int) -> bool:
@@ -123,7 +108,7 @@ class EstoqueRepository:
     def inserir_localizacao(self, *, nome, tipo, parent_id, foto_url) -> Localizacao:
         localizacao = Localizacao(nome=nome, tipo=tipo, parent_id=parent_id, foto_url=foto_url)
         db.session.add(localizacao)
-        db.session.flush()
+        db.session.commit()
         return localizacao
 
     def atualizar_localizacao(self, loc_id: int, campos: dict) -> None:
@@ -183,7 +168,7 @@ class EstoqueRepository:
             custo_unitario=custo_unitario,
         )
         db.session.add(lote)
-        db.session.flush()
+        db.session.commit()
         db.session.refresh(lote)
         return lote
 

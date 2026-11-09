@@ -1,22 +1,11 @@
-from contextlib import contextmanager
-
 from app.utils.paginacao import PaginacaoQuery, paginar
+from app.utils.interfaces.repository import RepositorioBase
 from db.database_config import db
 
 from .models import Usuario
 
 
-class UsuarioRepository:
-    @contextmanager
-    def transacao(self):
-        try:
-            yield db.session
-        except Exception:
-            db.session.rollback()
-            raise
-        else:
-            db.session.commit()
-
+class UsuarioRepository(RepositorioBase):
     def listar(self, paginacao: PaginacaoQuery):
         return paginar(db.select(Usuario).order_by(Usuario.nome, Usuario.id), paginacao)
 

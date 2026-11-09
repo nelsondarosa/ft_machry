@@ -6,12 +6,12 @@ from db.database_config import db
 
 from app.features.fichas_tecnicas.models import FichaTecnica
 from app.utils.paginacao import PaginacaoQuery, paginar
+from app.utils.interfaces.repository import RepositorioBase
 
 from .models import SolicitacaoProducao, SpComponente, SpFase
 
 
-class ProducaoRepository:
-
+class ProducaoRepository(RepositorioBase):
     def listar_solicitacoes(self, paginacao: PaginacaoQuery):
         return paginar(
             db.select(SolicitacaoProducao).order_by(

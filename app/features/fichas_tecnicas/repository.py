@@ -1,9 +1,8 @@
-from contextlib import contextmanager
-
 from sqlalchemy.orm import selectinload
 
 from app.features.produtos.models import Produto
 from app.utils.paginacao import PaginacaoQuery, paginar
+from app.utils.interfaces.repository import RepositorioBase
 from db.database_config import db
 
 from .models import (
@@ -14,17 +13,7 @@ from .models import (
 )
 
 
-class FichaTecnicaRepository:
-    @contextmanager
-    def transacao(self):
-        try:
-            yield db.session
-        except Exception:
-            db.session.rollback()
-            raise
-        else:
-            db.session.commit()
-
+class FichaTecnicaRepository(RepositorioBase):
     @staticmethod
     def _carregamento_completo():
         return (

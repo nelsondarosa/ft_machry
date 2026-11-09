@@ -5,13 +5,12 @@ from typing import Optional
 
 from flask_sqlalchemy.pagination import Pagination
 
+from app.utils.constantes import Constantes
 from app.utils.errors import RegistroNaoEncontrado
 from app.utils.paginacao import PaginacaoQuery
 
 from . import models, schemas
 from .repository import EstoqueRepository
-
-TIPOS_QUE_EXIGEM_SAIDA = {"SAIDA", "AJUSTE_SAIDA", "TRANSFERENCIA", "TRANSFORMACAO"}
 
 
 class EstoqueService:
@@ -94,7 +93,7 @@ class EstoqueService:
             raise ValueError("usuário não encontrado ou inativo")
 
     def _validar_saldo_suficiente(self, origem, dados: schemas.MovimentacaoCreate) -> None:
-        if dados.tipo in TIPOS_QUE_EXIGEM_SAIDA and origem.quantidade < dados.quantidade:
+        if dados.tipo in Constantes.TIPOS_QUE_EXIGEM_SAIDA and origem.quantidade < dados.quantidade:
             raise ValueError("saldo insuficiente")
 
     def _validar_lote_destino(self, origem, dados: schemas.MovimentacaoCreate):

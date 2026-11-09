@@ -11,15 +11,13 @@ from flask_sqlalchemy.pagination import Pagination
 from pydantic import BaseModel, Field
 from sqlalchemy import Select, text
 
+from app.utils.constantes import Constantes
 from db.database_config import db
-
-POR_PAGINA_PADRAO = 20
-POR_PAGINA_MAXIMO = 100
 
 
 class PaginacaoQuery(BaseModel):
     page: int = Field(default=1, ge=1)
-    per_page: int = Field(default=POR_PAGINA_PADRAO, ge=1, le=POR_PAGINA_MAXIMO)
+    per_page: int = Field(default=Constantes.POR_PAGINA_PADRAO, ge=1, le=Constantes.POR_PAGINA_MAXIMO)
 
 
 def paginar(consulta: Select, paginacao: PaginacaoQuery) -> Pagination:
@@ -28,7 +26,7 @@ def paginar(consulta: Select, paginacao: PaginacaoQuery) -> Pagination:
         consulta,
         page=paginacao.page,
         per_page=paginacao.per_page,
-        max_per_page=POR_PAGINA_MAXIMO,
+        max_per_page=Constantes.POR_PAGINA_MAXIMO,
         error_out=False,
     )
 
@@ -59,7 +57,7 @@ def paginar_sql(sql: str, params: dict, paginacao: PaginacaoQuery) -> Pagination
     return SQLPagination(
         page=paginacao.page,
         per_page=paginacao.per_page,
-        max_per_page=POR_PAGINA_MAXIMO,
+        max_per_page=Constantes.POR_PAGINA_MAXIMO,
         error_out=False,
         sql=sql,
         params=params,

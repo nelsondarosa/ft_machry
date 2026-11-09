@@ -1,10 +1,8 @@
 from flask import Flask, g, request, session
 
 from app.features.usuarios.models import Usuario
+from app.utils.constantes import Constantes
 from db.database_config import db
-
-ROTAS_PUBLICAS = {"/api/auth/login"}
-ROTAS_DE_SESSAO = {"/api/auth/me", "/api/auth/logout"}
 
 
 def _carregar_usuario() -> None:
@@ -41,10 +39,10 @@ def registrar_middleware_autenticacao(app: Flask) -> None:
     @app.before_request
     def autenticar_e_autorizar():
         _carregar_usuario()
-        if not request.path.startswith("/api/") or request.path in ROTAS_PUBLICAS:
+        if not request.path.startswith("/api/") or request.path in Constantes.ROTAS_PUBLICAS:
             return None
         if g.usuario is None:
             return {"erro": "autenticação necessária"}, 401
-        if request.path in ROTAS_DE_SESSAO:
+        if request.path in Constantes.ROTAS_DE_SESSAO:
             return None
         return _autorizar(g.usuario.papel, request.method, request.path)

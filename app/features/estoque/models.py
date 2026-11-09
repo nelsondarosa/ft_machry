@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Optional
 
+from app.utils.constantes import Constantes
 from db.database_config import db
 from app.features.produtos.models import Produto
 
@@ -11,7 +12,7 @@ class Localizacao(db.Model):
     __tablename__ = "localizacao"
     __table_args__ = (
         db.CheckConstraint(
-            "tipo IN ('CONGELADO', 'RESFRIADO', 'SECO')",
+            Constantes.sql_in("tipo", Constantes.TIPOS_CONSERVACAO),
             name="ck_localizacao_tipo",
         ),
     )
@@ -48,8 +49,7 @@ class MovimentacaoEstoque(db.Model):
     __tablename__ = "movimentacao_estoque"
     __table_args__ = (
         db.CheckConstraint(
-            "tipo IN ('ENTRADA', 'PRODUCAO', 'SAIDA', 'CONSUMO_PRODUCAO', "
-            "'TRANSFERENCIA', 'TRANSFORMACAO', 'AJUSTE_ENTRADA', 'AJUSTE_SAIDA')",
+            Constantes.sql_in("tipo", Constantes.TIPOS_MOVIMENTACAO),
             name="ck_movimentacao_tipo",
         ),
         db.CheckConstraint("quantidade > 0", name="ck_movimentacao_quantidade"),

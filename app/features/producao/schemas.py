@@ -3,9 +3,9 @@ from __future__ import annotations
 
 from typing import Optional
 
-from typing import Literal
-
 from pydantic import BaseModel, ConfigDict, Field
+
+from app.utils.constantes import Constantes
 
 
 class SolicitacaoCreate(BaseModel):
@@ -17,7 +17,7 @@ class SolicitacaoCreate(BaseModel):
 class SolicitacaoStatusUpdate(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    status: Literal["ABERTA", "EM_SEPARACAO", "EM_PRODUCAO", "CONCLUIDA", "CANCELADA"]
+    status: Constantes.StatusSolicitacao
 
 
 class SolicitacaoProducaoOut(BaseModel):

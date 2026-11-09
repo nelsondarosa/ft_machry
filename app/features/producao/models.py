@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Optional
 
+from app.utils.constantes import Constantes
 from db.database_config import db
 
 
@@ -10,7 +11,7 @@ class SolicitacaoProducao(db.Model):
     __tablename__ = "solicitacao_producao"
     __table_args__ = (
         db.CheckConstraint(
-            "status IN ('ABERTA', 'EM_SEPARACAO', 'EM_PRODUCAO', 'CONCLUIDA', 'CANCELADA')",
+            Constantes.sql_in("status", Constantes.STATUS_SOLICITACAO),
             name="ck_solicitacao_status",
         ),
     )
