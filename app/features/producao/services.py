@@ -1,7 +1,10 @@
 """Regras de negócio de produção, orquestrando o repository."""
 from __future__ import annotations
 
+from flask_sqlalchemy.pagination import Pagination
+
 from app.utils.errors import RegistroNaoEncontrado
+from app.utils.paginacao import PaginacaoQuery
 
 from . import models
 from .repository import ProducaoRepository
@@ -11,8 +14,8 @@ class ProducaoService:
     def __init__(self, repository: ProducaoRepository) -> None:
         self.repository = repository
 
-    def listar_solicitacoes(self) -> list[models.SolicitacaoProducao]:
-        return self.repository.listar_solicitacoes()
+    def listar_solicitacoes(self, paginacao: PaginacaoQuery) -> Pagination:
+        return self.repository.listar_solicitacoes(paginacao)
 
     def criar_solicitacao(self, ficha_id: int, usuario_id: int) -> models.SolicitacaoProducao:
         solicitacao = self.repository.criar_solicitacao(ficha_id, usuario_id)

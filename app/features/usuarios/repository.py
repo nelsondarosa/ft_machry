@@ -1,5 +1,6 @@
 from contextlib import contextmanager
 
+from app.utils.paginacao import PaginacaoQuery, paginar
 from db.database_config import db
 
 from .models import Usuario
@@ -16,8 +17,8 @@ class UsuarioRepository:
         else:
             db.session.commit()
 
-    def listar(self) -> list[Usuario]:
-        return list(db.session.execute(db.select(Usuario).order_by(Usuario.nome)).scalars())
+    def listar(self, paginacao: PaginacaoQuery):
+        return paginar(db.select(Usuario).order_by(Usuario.nome, Usuario.id), paginacao)
 
     def obter(self, usuario_id: int) -> Usuario | None:
         return db.session.get(Usuario, usuario_id)

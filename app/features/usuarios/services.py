@@ -1,6 +1,8 @@
+from flask_sqlalchemy.pagination import Pagination
 from werkzeug.security import generate_password_hash
 
 from app.utils.errors import Conflito, RegistroNaoEncontrado
+from app.utils.paginacao import PaginacaoQuery
 
 from .models import Usuario
 from .repository import UsuarioRepository
@@ -11,8 +13,8 @@ class UsuarioService:
     def __init__(self, repository: UsuarioRepository) -> None:
         self.repository = repository
 
-    def listar(self) -> list[Usuario]:
-        return self.repository.listar()
+    def listar(self, paginacao: PaginacaoQuery) -> Pagination:
+        return self.repository.listar(paginacao)
 
     def obter(self, usuario_id: int) -> Usuario:
         usuario = self.repository.obter(usuario_id)

@@ -16,6 +16,7 @@ export interface Produto {
   tipo: TipoProduto
   unidade_medida: string
   grupo_id: number | null
+  subdivisao: string | null
   conservacao: Conservacao
   validade_obrigatoria: number
   validade_padrao_dias: number | null

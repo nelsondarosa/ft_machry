@@ -1,6 +1,7 @@
 from flask import Blueprint
 
-from app.utils.parsing import entrada
+from app.utils.paginacao import PaginacaoQuery, resposta_paginada
+from app.utils.parsing import consulta, entrada
 
 from .repository import ProdutoRepository
 from .schemas import ProdutoCreate, ProdutoOut, ProdutoUpdate
@@ -19,7 +20,7 @@ def _saida(produto):
 
 @bp.get("")
 def listar():
-    return [_saida(produto) for produto in get_service().listar()]
+    return resposta_paginada(get_service().listar(consulta(PaginacaoQuery)), ProdutoOut)
 
 
 @bp.get("/<int:produto_id>")

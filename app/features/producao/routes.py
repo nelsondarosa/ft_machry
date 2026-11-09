@@ -5,7 +5,8 @@ Controller puro: delega a leitura para o service e serializa com schemas.py
 """
 from flask import Blueprint, g
 
-from app.utils.parsing import entrada
+from app.utils.paginacao import PaginacaoQuery, resposta_paginada
+from app.utils.parsing import consulta, entrada
 
 from . import schemas
 from .repository import ProducaoRepository
@@ -20,8 +21,8 @@ def get_service() -> ProducaoService:
 
 @bp.get("/solicitacoes")
 def listar_solicitacoes():
-    itens = get_service().listar_solicitacoes()
-    return [schemas.SolicitacaoProducaoOut.model_validate(i).model_dump() for i in itens]
+    pagina = get_service().listar_solicitacoes(consulta(PaginacaoQuery))
+    return resposta_paginada(pagina, schemas.SolicitacaoProducaoOut)
 
 
 @bp.post("/solicitacoes")

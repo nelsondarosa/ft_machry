@@ -16,7 +16,7 @@ def test_crud_completo(client):
     assert p["ativo"] == 1
 
     assert client.get(f"{URL}/{p['id']}").get_json() == p
-    assert client.get(URL).get_json() == [p]
+    assert client.get(URL).get_json()['items'] == [p]
 
     r = client.put(f"{URL}/{p['id']}", json={"conservacao": "RESFRIADO"})
     assert r.status_code == 200
@@ -25,14 +25,14 @@ def test_crud_completo(client):
 
     assert client.delete(f"{URL}/{p['id']}").status_code == 204
     assert client.get(f"{URL}/{p['id']}").status_code == 404
-    assert client.get(URL).get_json() == []
+    assert client.get(URL).get_json()['items'] == []
     assert client.delete(f"{URL}/{p['id']}").status_code == 404
 
 
 def test_lista_ordenada_por_nome(client):
     criar(client, nome="b")
     criar(client, nome="a")
-    assert [p["nome"] for p in client.get(URL).get_json()] == ["a", "b"]
+    assert [p["nome"] for p in client.get(URL).get_json()['items']] == ["a", "b"]
 
 
 def test_validacao(client):
@@ -64,7 +64,7 @@ def test_seeds(app):
     assert client.post(
         "/api/auth/login", json={"username": "dona", "password": "Teste@123"}
     ).status_code == 200
-    assert len(client.get(URL).get_json()) == 10
+    assert len(client.get(URL).get_json()['items']) == 10
     assert client.get(f"{URL}/10").get_json()["nome"] == "Bolo de Nozes - Médio"
 
 
@@ -72,3 +72,18 @@ def test_docs(client):
     r = client.get("/openapi.yaml")
     assert r.status_code == 200 and b"/api/produtos" in r.data
     assert b"swagger-ui" in client.get("/docs").data
+
+
+def test_subdivisao(client):
+    r = criar(client, subdivisao="Farinhas")
+    assert r.status_code == 201
+    p = r.get_json()
+    assert p["subdivisao"] == "Farinhas"
+
+    r = client.put(f"{URL}/{p['id']}", json={"subdivisao": "Trigo"})
+    assert r.get_json()["subdivisao"] == "Trigo"
+
+    r = client.put(f"{URL}/{p['id']}", json={"subdivisao": None})
+    assert r.get_json()["subdivisao"] is None
+
+    assert criar(client).get_json()["subdivisao"] is None

@@ -6,6 +6,8 @@ from typing import Literal, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from app.utils.paginacao import PaginacaoQuery
+
 TipoLocalizacao = Literal["SECO", "RESFRIADO", "CONGELADO"]
 TipoMovimentacao = Literal[
     "ENTRADA", "SAIDA", "AJUSTE_ENTRADA", "AJUSTE_SAIDA",
@@ -92,7 +94,7 @@ class LoteUpdate(BaseModel):
         return dados
 
 
-class LoteQuery(BaseModel):
+class LoteQuery(PaginacaoQuery):
     produto_id: Optional[int] = Field(default=None, gt=0)
     localizacao_id: Optional[int] = Field(default=None, gt=0)
 
@@ -147,8 +149,7 @@ class MovimentacaoCreate(BaseModel):
         return self
 
 
-class MovimentacaoQuery(BaseModel):
-    limite: int = Field(default=100, ge=1, le=500)
+class MovimentacaoQuery(PaginacaoQuery):
     lote_id: Optional[int] = Field(default=None, gt=0)
     usuario_id: Optional[int] = Field(default=None, gt=0)
     tipo: Optional[str] = None
@@ -177,7 +178,7 @@ class MovimentacaoOut(BaseModel):
     criado_em: str
 
 
-class InventarioQuery(BaseModel):
+class InventarioQuery(PaginacaoQuery):
     produto_id: Optional[int] = Field(default=None, gt=0)
     lote_id: Optional[int] = Field(default=None, gt=0)
 

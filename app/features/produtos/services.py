@@ -1,4 +1,7 @@
+from flask_sqlalchemy.pagination import Pagination
+
 from app.utils.errors import RegistroNaoEncontrado
+from app.utils.paginacao import PaginacaoQuery
 
 from .models import Produto
 from .repository import ProdutoRepository
@@ -9,8 +12,8 @@ class ProdutoService:
     def __init__(self, repository: ProdutoRepository) -> None:
         self.repository = repository
 
-    def listar(self) -> list[Produto]:
-        return self.repository.listar_ativos()
+    def listar(self, paginacao: PaginacaoQuery) -> Pagination:
+        return self.repository.listar_ativos(paginacao)
 
     def obter(self, produto_id: int) -> Produto:
         produto = self.repository.obter_ativo(produto_id)

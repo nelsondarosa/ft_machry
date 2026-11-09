@@ -1,6 +1,7 @@
 from flask import Blueprint, g
 
-from app.utils.parsing import entrada
+from app.utils.paginacao import PaginacaoQuery, resposta_paginada
+from app.utils.parsing import consulta, entrada
 from app.utils.permissoes import exigir_papeis
 
 from .repository import UsuarioRepository
@@ -21,7 +22,7 @@ def _saida(usuario):
 @bp.get("")
 @exigir_papeis("OWNER")
 def listar():
-    return [_saida(usuario) for usuario in get_service().listar()]
+    return resposta_paginada(get_service().listar(consulta(PaginacaoQuery)), UsuarioOut)
 
 
 @bp.post("")

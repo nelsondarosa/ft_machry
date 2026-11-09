@@ -3,7 +3,10 @@ from __future__ import annotations
 
 from typing import Optional
 
+from flask_sqlalchemy.pagination import Pagination
+
 from app.utils.errors import RegistroNaoEncontrado
+from app.utils.paginacao import PaginacaoQuery
 
 from . import models, schemas
 from .repository import EstoqueRepository
@@ -16,20 +19,25 @@ class EstoqueService:
         self.repository = repository
 
     def listar_inventario(
-        self, produto_id: Optional[int] = None, lote_id: Optional[int] = None
-    ) -> list[models.ItemInventario]:
-        linhas = self.repository.listar_inventario(produto_id, lote_id)
-        return [models.ItemInventario.from_row(r) for r in linhas]
+        self,
+        paginacao: PaginacaoQuery,
+        produto_id: Optional[int] = None,
+        lote_id: Optional[int] = None,
+    ) -> Pagination:
+        pagina = self.repository.listar_inventario(paginacao, produto_id, lote_id)
+        pagina.items = [models.ItemInventario.from_row(r) for r in pagina.items]
+        return pagina
 
     def listar_movimentacoes(
         self,
-        limite: int = 100,
+        paginacao: PaginacaoQuery,
         lote_id: Optional[int] = None,
         usuario_id: Optional[int] = None,
         tipo: Optional[str] = None,
-    ) -> list[models.MovimentacaoEstoque]:
-        linhas = self.repository.listar_movimentacoes(limite, lote_id, usuario_id, tipo)
-        return [models.MovimentacaoEstoque.from_row(r) for r in linhas]
+    ) -> Pagination:
+        pagina = self.repository.listar_movimentacoes(paginacao, lote_id, usuario_id, tipo)
+        pagina.items = [models.MovimentacaoEstoque.from_row(r) for r in pagina.items]
+        return pagina
 
     def registrar_movimentacao(
         self, dados: schemas.MovimentacaoCreate
@@ -107,8 +115,8 @@ class EstoqueService:
             raise ValueError("transformação não cadastrada entre os produtos")
         return destino
 
-    def listar_localizacoes(self) -> list[models.Localizacao]:
-        return self.repository.listar_localizacoes()
+    def listar_localizacoes(self, paginacao: PaginacaoQuery) -> Pagination:
+        return self.repository.listar_localizacoes(paginacao)
 
     def criar_localizacao(self, dados: schemas.LocalizacaoCreate) -> models.Localizacao:
         with self.repository.transacao():
@@ -164,10 +172,14 @@ class EstoqueService:
             atual = self.repository.obter_localizacao(atual).parent_id
 
     def listar_lotes(
-        self, produto_id: Optional[int] = None, localizacao_id: Optional[int] = None
-    ) -> list[models.LoteListado]:
-        linhas = self.repository.listar_lotes(produto_id, localizacao_id)
-        return [models.LoteListado.from_row(r) for r in linhas]
+        self,
+        paginacao: PaginacaoQuery,
+        produto_id: Optional[int] = None,
+        localizacao_id: Optional[int] = None,
+    ) -> Pagination:
+        pagina = self.repository.listar_lotes(paginacao, produto_id, localizacao_id)
+        pagina.items = [models.LoteListado.from_row(r) for r in pagina.items]
+        return pagina
 
     def obter_lote(self, lote_id: int) -> Optional[models.Lote]:
         return self.repository.obter_lote(lote_id)

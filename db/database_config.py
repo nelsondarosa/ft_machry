@@ -56,6 +56,14 @@ def _migrar_autenticacao() -> None:
     db.session.commit()
 
 
+
+def _migrar_produto() -> None:
+    colunas = {coluna["name"] for coluna in inspect(db.engine).get_columns("produto")}
+    if "subdivisao" not in colunas:
+        db.session.execute(text("ALTER TABLE produto ADD COLUMN subdivisao TEXT"))
+    db.session.commit()
+
+
 def _provisionar_usuarios_iniciais() -> None:
     from app.features.usuarios.models import Usuario
     from flask import current_app
@@ -140,6 +148,7 @@ def _criar_views() -> None:
 def init_db_command(seed: bool):
     if _tabelas_existem(db.engine):
         _migrar_autenticacao()
+        _migrar_produto()
         _provisionar_usuarios_iniciais()
         click.echo("Banco já criado e atualizado")
         return

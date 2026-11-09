@@ -1,6 +1,7 @@
 from flask import Blueprint
 
-from app.utils.parsing import entrada
+from app.utils.paginacao import PaginacaoQuery, resposta_paginada
+from app.utils.parsing import consulta, entrada
 
 from .repository import FichaTecnicaRepository
 from .schemas import FaseCatalogoOut, FichaTecnicaInput
@@ -48,15 +49,14 @@ def _serializar(ficha):
 
 @bp.get("/fases")
 def listar_fases():
-    return [
-        FaseCatalogoOut.model_validate(fase).model_dump()
-        for fase in get_service().listar_fases()
-    ]
+    return resposta_paginada(
+        get_service().listar_fases(consulta(PaginacaoQuery)), FaseCatalogoOut
+    )
 
 
 @bp.get("")
 def listar():
-    return [_serializar(ficha) for ficha in get_service().listar()]
+    return resposta_paginada(get_service().listar(consulta(PaginacaoQuery)), _serializar)
 
 
 @bp.get("/<int:ficha_id>")

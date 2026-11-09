@@ -2,7 +2,7 @@
 def test_estoque_com_seeds(seeded_client):
     c = seeded_client
     loc = c.get('/api/estoque/localizacoes')
-    assert loc.status_code == 200 and len(loc.json) >= 1
+    assert loc.status_code == 200 and len(loc.json['items']) >= 1
     novo = c.post('/api/estoque/lotes', json={'produto_id':1,'localizacao_id':1})
     assert novo.status_code == 201, novo.json
     lote = novo.json['id']
@@ -42,7 +42,7 @@ def test_localizacao_nao_pode_invalidar_lote(seeded_client):
     assert lote.status_code==201,lote.json
     alteracao=c.put('/api/estoque/localizacoes/1',json={'tipo':'CONGELADO'})
     assert alteracao.status_code==400,alteracao.json
-    assert next(l for l in c.get('/api/estoque/localizacoes').json if l['id']==1)['tipo']=='SECO'
+    assert next(l for l in c.get('/api/estoque/localizacoes').json['items'] if l['id']==1)['tipo']=='SECO'
 
 def test_dados_invalidos_e_rollback(seeded_client):
     c = seeded_client
@@ -67,12 +67,12 @@ def test_inventario(seeded_client):
 
     todos = c.get('/api/estoque/inventario')
     assert todos.status_code == 200
-    item = next(i for i in todos.get_json() if i['lote_id'] == lote)
+    item = next(i for i in todos.get_json()['items'] if i['lote_id'] == lote)
     assert item['produto_id'] == 1 and item['quantidade'] == 10 and item['localizacao'] == 'Estoque Seco'
 
     filtrado = c.get('/api/estoque/inventario?produto_id=1')
     assert filtrado.status_code == 200
-    assert all(i['produto_id'] == 1 for i in filtrado.get_json())
+    assert all(i['produto_id'] == 1 for i in filtrado.get_json()['items'])
 
     assert c.get('/api/estoque/inventario?produto_id=abc').status_code == 400
 
@@ -86,13 +86,13 @@ def test_movimentacoes_listagem_e_filtros(seeded_client):
 
     todas = c.get('/api/estoque/movimentacoes')
     assert todas.status_code == 200
-    assert [m['tipo'] for m in todas.get_json()] == ['SAIDA', 'ENTRADA']  # mais recente primeiro
+    assert [m['tipo'] for m in todas.get_json()['items']] == ['SAIDA', 'ENTRADA']  # mais recente primeiro
 
     so_entrada = c.get('/api/estoque/movimentacoes?tipo=entrada')
-    assert [m['tipo'] for m in so_entrada.get_json()] == ['ENTRADA']  # tipo é comparado em maiúsculas
+    assert [m['tipo'] for m in so_entrada.get_json()['items']] == ['ENTRADA']  # tipo é comparado em maiúsculas
 
-    assert len(c.get(f'/api/estoque/movimentacoes?lote_id={lote}').get_json()) == 2
-    assert c.get('/api/estoque/movimentacoes?limite=0').status_code == 400
+    assert len(c.get(f'/api/estoque/movimentacoes?lote_id={lote}').get_json()['items']) == 2
+    assert c.get('/api/estoque/movimentacoes?per_page=0').status_code == 400
 
 
 def test_crud_localizacao(client):
@@ -100,7 +100,7 @@ def test_crud_localizacao(client):
     assert nova.status_code == 201
     loc = nova.get_json()
     assert loc['nome'] == 'Depósito' and loc['tipo'] == 'SECO'
-    assert loc in client.get('/api/estoque/localizacoes').get_json()
+    assert loc in client.get('/api/estoque/localizacoes').get_json()['items']
 
     atualizada = client.put(f"/api/estoque/localizacoes/{loc['id']}", json={'nome': 'Depósito 2'})
     assert atualizada.status_code == 200
@@ -135,12 +135,12 @@ def test_lotes_listagem_e_detalhe(seeded_client):
     lote2 = c.post('/api/estoque/lotes', json={'produto_id': 4, 'localizacao_id': 1}).get_json()['id']
 
     todos = c.get('/api/estoque/lotes')
-    assert todos.status_code == 200 and len(todos.get_json()) == 2
-    assert {'produto', 'localizacao'} <= todos.get_json()[0].keys()
+    assert todos.status_code == 200 and len(todos.get_json()['items']) == 2
+    assert {'produto', 'localizacao'} <= todos.get_json()['items'][0].keys()
 
     so_produto1 = c.get('/api/estoque/lotes?produto_id=1')
-    assert [l['id'] for l in so_produto1.get_json()] == [lote1]
-    assert next(l for l in todos.get_json() if l['id'] == lote2)['produto'] == 'Nozes'
+    assert [l['id'] for l in so_produto1.get_json()['items']] == [lote1]
+    assert next(l for l in todos.get_json()['items'] if l['id'] == lote2)['produto'] == 'Nozes'
 
     # GET /lotes/<id> devolve só os campos da tabela lote, sem nomes de produto/localizacao
     assert c.get(f'/api/estoque/lotes/{lote2}').get_json()['produto_id'] == 4

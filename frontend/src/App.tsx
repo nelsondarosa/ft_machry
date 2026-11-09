@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { api, ApiError } from './api'
+import { api, apiListAll, ApiError } from './api'
 import { Shell } from './components'
 import { ProductModal, SheetModal, StockModal } from './forms'
 import { LoginPage } from './LoginPage'
@@ -32,12 +32,12 @@ export function App() {
       const canSeeCatalog = loggedUser.papel !== 'USER'
       const canSeeStock = loggedUser.papel !== 'USER'
       const [loadedProducts, loadedSheets, loadedPhases, loadedStock, loadedLots, loadedLocations, loadedProduction] = await Promise.all([
-        canSeeCatalog ? api<Produto[]>('/api/produtos') : Promise.resolve([]),
-        api<FichaTecnica[]>('/api/fichas-tecnicas'), api<FaseCatalogo[]>('/api/fichas-tecnicas/fases'),
-        canSeeStock ? api<ItemInventario[]>('/api/estoque/inventario') : Promise.resolve([]),
-        canSeeStock ? api<Lote[]>('/api/estoque/lotes') : Promise.resolve([]),
-        canSeeStock ? api<Localizacao[]>('/api/estoque/localizacoes') : Promise.resolve([]),
-        api<SolicitacaoProducao[]>('/api/producao/solicitacoes'),
+        canSeeCatalog ? apiListAll<Produto>('/api/produtos') : Promise.resolve([]),
+        apiListAll<FichaTecnica>('/api/fichas-tecnicas'), apiListAll<FaseCatalogo>('/api/fichas-tecnicas/fases'),
+        canSeeStock ? apiListAll<ItemInventario>('/api/estoque/inventario') : Promise.resolve([]),
+        canSeeStock ? apiListAll<Lote>('/api/estoque/lotes') : Promise.resolve([]),
+        canSeeStock ? apiListAll<Localizacao>('/api/estoque/localizacoes') : Promise.resolve([]),
+        apiListAll<SolicitacaoProducao>('/api/producao/solicitacoes'),
       ])
       setProdutos(loadedProducts); setFichas(loadedSheets); setFases(loadedPhases); setInventario(loadedStock); setLotes(loadedLots); setLocalizacoes(loadedLocations); setSolicitacoes(loadedProduction)
     } catch (reason) {

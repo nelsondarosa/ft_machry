@@ -29,3 +29,21 @@ main{min-width:0}header{height:78px;border-bottom:1px solid var(--line);display:
 .panel+.panel{margin-top:20px}
 @media(max-width:700px){.filter-grid{grid-template-columns:1fr}.inline-form{display:grid;grid-template-columns:1fr}.inline-form label{min-width:0}}
 @media print{.sidebar,header,.no-print,.production-planner,button{display:none!important}.layout{display:block}.content{padding:0}.panel{border:0;box-shadow:none}.page-heading{margin-bottom:12px}body{background:#fff}}
+
+/* Catálogo de produtos — navegação por grupos e paginação no frontend. */
+.catalog-panel{padding-top:19px}
+.catalog-tabs{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:20px;border-bottom:1px solid var(--line);padding-bottom:16px}
+.catalog-tabs button{border:1px solid var(--line);border-radius:10px;padding:10px 14px;background:#f7f8f3;color:#53665d;font-weight:700;display:flex;align-items:center;gap:10px}
+.catalog-tabs button.active{background:var(--green);border-color:var(--green);color:#fff}
+.catalog-tabs button span{border-radius:999px;padding:2px 7px;background:#dfe5d9;color:#365245;font-size:11px}
+.catalog-tabs button.active span{background:var(--lime);color:var(--green)}
+.catalog-filters{display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;margin-bottom:18px}
+.catalog-filters label{display:grid;gap:7px;min-width:190px;flex:1;font-size:12px;color:#596b64;font-weight:700}
+.catalog-filters input,.catalog-filters select{width:100%;padding:11px;border:1px solid #ccd2c9;border-radius:8px;background:#fff;color:#20342f}
+.catalog-filters .catalog-total{font-size:12px;color:var(--muted);padding-bottom:11px;white-space:nowrap}
+.catalog-id{display:block;color:var(--muted);font-size:10px;margin-top:4px}
+.catalog-pagination{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:22px;font-size:12px;color:var(--muted)}
+.catalog-pagination>div{display:flex;gap:10px;align-items:center}
+.catalog-pagination .secondary{padding:9px 12px}
+.catalog-pagination button:disabled{opacity:.45;cursor:not-allowed}
+@media(max-width:650px){.catalog-filters label{flex-basis:100%}.catalog-tabs{display:grid;grid-template-columns:1fr 1fr}.catalog-tabs button{justify-content:space-between}.catalog-pagination{align-items:stretch;flex-direction:column}.catalog-pagination>div{justify-content:space-between}}
