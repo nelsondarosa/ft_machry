@@ -27,7 +27,7 @@ export function Shell({ view, menuOpen, apiOnline, usuario, onNavigate, onMenuTo
       <div className="account"><div className="account-avatar">{usuario.nome.charAt(0).toUpperCase()}</div><div><strong>{usuario.nome}</strong><small>{roleLabel}</small></div><button onClick={onLogout} type="button">Sair</button></div>
       <div className={`api-state ${apiOnline ? '' : 'offline'}`}><i /><div><strong>{apiOnline ? 'API conectada' : 'API indisponível'}</strong><small>Flask · banco integrado</small></div></div>
     </aside>
-    <main><header><button className="menu" onClick={onMenuToggle} aria-label="Abrir menu" type="button">☰</button><div><small>ÁREA ATUAL</small><strong>{titles[view]}</strong></div><span className="environment">Ambiente local</span></header><div className="content">{children}</div></main>
+    <main><header><button className="menu" onClick={onMenuToggle} aria-label="Abrir menu" type="button">☰</button><div><small>ÁREA ATUAL</small><strong>{titles[view]}</strong></div></header><div className="content">{children}</div></main>
     {menuOpen && <button className="sidebar-scrim" onClick={onMenuToggle} aria-label="Fechar menu" type="button" />}
   </div>
 }
