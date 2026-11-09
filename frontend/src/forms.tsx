@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { api } from './api'
-import { Modal } from './components'
+import { Modal, MoneyInput, SearchSelect } from './components'
 import type { Conservacao, FaseCatalogo, FichaTecnica, Localizacao, Lote, Produto, TipoProduto } from './types'
 
 const unidadesMedida = [
@@ -40,10 +40,7 @@ export function ProductModal({ produto, onClose, onSaved, onDeleted }: { produto
     try { await api(`/api/produtos/${produto.id}`, { method: 'DELETE' }); onDeleted() } catch (reason) { setError(reason instanceof Error ? reason.message : 'Não foi possível excluir o produto.'); setSaving(false) }
   }
   return <Modal eyebrow="CATÁLOGO" title={produto ? 'Editar produto' : 'Novo produto'} onClose={onClose} footer={<>{produto && <button className="danger-link" onClick={remove} disabled={saving}>Excluir produto</button>}<button className="secondary" onClick={onClose} type="button">Cancelar</button><button className="primary" form="product-form" disabled={saving}>{saving ? 'Salvando…' : 'Salvar produto'}</button></>}>
-    <form className="dialog-body" id="product-form" onSubmit={save}>{error && <p className="form-error">{error}</p>}<label>Nome<input required maxLength={150} value={nome} onChange={(event) => setNome(event.target.value)} /></label><div className="form-grid"><label>Tipo<select value={tipo} onChange={(event) => setTipo(event.target.value as TipoProduto)}><option value="INSUMO">Insumo</option><option value="INTERMEDIARIO">Intermediário</option><option value="FINAL">Produto final</option></select></label><label>Unidade de medida<select required value={unidade} onChange={(event) => setUnidade(event.target.value)}>
-        {!unidadesMedida.some((item) => item.valor === unidade) && unidade && <option value={unidade}>{unidade} (cadastrada anteriormente)</option>}
-        {unidadesMedida.map((item) => <option key={item.valor} value={item.valor}>{item.nome}</option>)}
-      </select></label><label>Conservação<select value={conservacao} onChange={(event) => setConservacao(event.target.value as Conservacao)}><option value="SECO">Seco</option><option value="RESFRIADO">Resfriado</option><option value="CONGELADO">Congelado</option></select></label><label>Validade padrão (dias)<input type="number" min="0" value={validadeDias} onChange={(event) => setValidadeDias(event.target.value)} placeholder="Opcional" /></label></div><label>Subdivisão (opcional)<input maxLength={100} value={subdivisao} onChange={(event) => setSubdivisao(event.target.value)} placeholder="Ex.: sal fino, sal grosso, sal parrillero" /><small>Especifique a variação do produto para facilitar a busca e a organização.</small></label><label className="checkbox"><input type="checkbox" checked={validadeObrigatoria} onChange={(event) => setValidadeObrigatoria(event.target.checked)} /> Exigir data de validade nos lotes</label></form>
+    <form className="dialog-body" id="product-form" onSubmit={save}>{error && <p className="form-error">{error}</p>}<label>Nome<input required maxLength={150} value={nome} onChange={(event) => setNome(event.target.value)} /></label><div className="form-grid"><label>Tipo<SearchSelect ariaLabel="Tipo" value={tipo} onChange={setTipo} options={[{ value: 'INSUMO', label: 'Insumo' }, { value: 'INTERMEDIARIO', label: 'Intermediário' }, { value: 'FINAL', label: 'Produto final' }]} /></label><label>Unidade de medida<SearchSelect required ariaLabel="Unidade de medida" value={unidade} onChange={setUnidade} options={[...(!unidadesMedida.some((item) => item.valor === unidade) && unidade ? [{ value: unidade, label: `${unidade} (cadastrada anteriormente)` }] : []), ...unidadesMedida.map((item) => ({ value: item.valor, label: item.nome }))]} /></label><label>Conservação<SearchSelect ariaLabel="Conservação" value={conservacao} onChange={setConservacao} options={[{ value: 'SECO', label: 'Seco' }, { value: 'RESFRIADO', label: 'Resfriado' }, { value: 'CONGELADO', label: 'Congelado' }]} /></label><label>Validade padrão (dias)<input type="number" min="0" value={validadeDias} onChange={(event) => setValidadeDias(event.target.value)} placeholder="Opcional" /></label></div><label>Subdivisão (opcional)<input maxLength={100} value={subdivisao} onChange={(event) => setSubdivisao(event.target.value)} placeholder="Ex.: sal fino, sal grosso, sal parrillero" /><small>Especifique a variação do produto para facilitar a busca e a organização.</small></label><label className="checkbox"><input type="checkbox" checked={validadeObrigatoria} onChange={(event) => setValidadeObrigatoria(event.target.checked)} /> Exigir data de validade nos lotes</label></form>
   </Modal>
 }
 
@@ -58,6 +55,7 @@ const key = () => {
 
 export function SheetModal({ ficha, produtos, catalogoFases, onClose, onSaved, onDeleted }: { ficha: FichaTecnica | null; produtos: Produto[]; catalogoFases: FaseCatalogo[]; onClose: () => void; onSaved: () => void; onDeleted: () => void }) {
   const productsForSheet = produtos.filter((produto) => produto.tipo !== 'INSUMO')
+  const componentOptions = produtos.map((produto) => ({ value: produto.id, label: `${produto.nome} (${produto.unidade_medida})` }))
   const [produtoId, setProdutoId] = useState(ficha?.produto_id ?? productsForSheet[0]?.id ?? 0)
   const [rendimento, setRendimento] = useState(ficha?.rendimento ?? 1)
   const [observacao, setObservacao] = useState(ficha?.observacao ?? '')
@@ -80,10 +78,109 @@ export function SheetModal({ ficha, produtos, catalogoFases, onClose, onSaved, o
     setSaving(true); setError('')
     try { await api(`/api/fichas-tecnicas/${ficha.id}`, { method: 'DELETE' }); onDeleted() } catch (reason) { setError(reason instanceof Error ? reason.message : 'Não foi possível excluir a ficha.'); setSaving(false) }
   }
-  return <Modal eyebrow="PADRONIZAÇÃO" title={ficha ? 'Editar ficha técnica' : 'Nova ficha técnica'} wide onClose={onClose} footer={<>{ficha && <button className="danger-link" onClick={remove} disabled={saving}>Excluir ficha</button>}<button className="secondary" onClick={onClose} type="button">Cancelar</button><button className="primary" form="sheet-form" disabled={saving}>{saving ? 'Salvando…' : 'Salvar ficha'}</button></>}>
-    <form className="dialog-body" id="sheet-form" onSubmit={save}>{error && <p className="form-error">{error}</p>}{!productsForSheet.length && <p className="form-error">Cadastre um produto intermediário ou final antes de criar uma ficha.</p>}<div className="form-grid"><label>Produto produzido<select required value={produtoId} onChange={(event) => setProdutoId(Number(event.target.value))}>{productsForSheet.map((produto) => <option key={produto.id} value={produto.id}>{produto.nome}</option>)}</select></label><label>Rendimento<input required type="number" min="0.001" step="0.001" value={rendimento} onChange={(event) => setRendimento(Number(event.target.value))} /></label></div><label>Observações<textarea rows={3} maxLength={2000} value={observacao} onChange={(event) => setObservacao(event.target.value)} /></label>
-      <section className="subsection"><div><h3>Etapas de preparo</h3><button className="text-button" type="button" onClick={() => setFases((rows) => [...rows, { key: key(), fase_id: catalogoFases[0]?.id ?? 0, ordem: rows.length + 1, tempo_previsto_min: 10 }])}>+ Adicionar etapa</button></div>{fases.map((fase) => <div className="form-row" key={fase.key}><label>Ordem<input required type="number" min="1" value={fase.ordem} onChange={(event) => updatePhase(fase.key, { ordem: Number(event.target.value) })} /></label><label>Fase<select required value={fase.fase_id} onChange={(event) => updatePhase(fase.key, { fase_id: Number(event.target.value) })}>{catalogoFases.map((item) => <option key={item.id} value={item.id}>{item.nome}</option>)}</select></label><label>Tempo (min)<input required type="number" min="1" value={fase.tempo_previsto_min} onChange={(event) => updatePhase(fase.key, { tempo_previsto_min: Number(event.target.value) })} /></label><button className="remove-row" type="button" aria-label="Remover etapa" disabled={fases.length === 1} onClick={() => setFases((rows) => rows.filter((row) => row.key !== fase.key))}>×</button></div>)}</section>
-      <section className="subsection"><div><h3>Componentes</h3><button className="text-button" type="button" onClick={() => setComponentes((rows) => [...rows, { key: key(), produto_id: produtos[0]?.id ?? 0, quantidade: 1, fase_ordem: fases[0]?.ordem ?? null }])}>+ Adicionar componente</button></div>{componentes.map((item) => <div className="form-row component-row" key={item.key}><label>Produto<select required value={item.produto_id} onChange={(event) => updateComponent(item.key, { produto_id: Number(event.target.value) })}>{produtos.map((produto) => <option key={produto.id} value={produto.id}>{produto.nome} ({produto.unidade_medida})</option>)}</select></label><label>Quantidade<input required type="number" min="0.001" step="0.001" value={item.quantidade} onChange={(event) => updateComponent(item.key, { quantidade: Number(event.target.value) })} /></label><label>Etapa<select value={item.fase_ordem ?? ''} onChange={(event) => updateComponent(item.key, { fase_ordem: event.target.value ? Number(event.target.value) : null })}><option value="">Sem vínculo</option>{fases.map((fase) => <option key={fase.key} value={fase.ordem}>Etapa {fase.ordem}</option>)}</select></label><button className="remove-row" type="button" aria-label="Remover componente" disabled={componentes.length === 1} onClick={() => setComponentes((rows) => rows.filter((row) => row.key !== item.key))}>×</button></div>)}</section>
+  const addPhase = () => setFases((rows) => [...rows, { key: key(), fase_id: catalogoFases[0]?.id ?? 0, ordem: rows.length + 1, tempo_previsto_min: 10 }])
+  const addComponent = () => setComponentes((rows) => [...rows, { key: key(), produto_id: produtos[0]?.id ?? 0, quantidade: 1, fase_ordem: fases[0]?.ordem ?? null }])
+  const etapaOptions = [{ value: '' as const, label: 'Sem vínculo' }, ...fases.map((fase) => ({ value: fase.ordem, label: `Etapa ${fase.ordem}` }))]
+
+  const footer = <>
+    {ficha && <button className="danger-link" onClick={remove} disabled={saving}>Excluir ficha</button>}
+    <button className="secondary" onClick={onClose} type="button">Cancelar</button>
+    <button className="primary" form="sheet-form" disabled={saving}>{saving ? 'Salvando…' : 'Salvar ficha'}</button>
+  </>
+
+  return <Modal eyebrow="PADRONIZAÇÃO" title={ficha ? 'Editar ficha técnica' : 'Nova ficha técnica'} wide onClose={onClose} footer={footer}>
+    <form className="dialog-body" id="sheet-form" onSubmit={save}>
+      {error && <p className="form-error">{error}</p>}
+      {!productsForSheet.length && <p className="form-error">Cadastre um produto intermediário ou final antes de criar uma ficha.</p>}
+
+      <div className="form-grid">
+        <label>
+          Produto produzido
+          <SearchSelect
+            required
+            ariaLabel="Produto da ficha"
+            placeholder="Buscar produto"
+            value={produtoId}
+            onChange={setProdutoId}
+            options={productsForSheet.map((produto) => ({ value: produto.id, label: produto.nome }))}
+          />
+        </label>
+        <label>
+          Rendimento
+          <input required type="number" min="0.001" step="0.001" value={rendimento} onChange={(event) => setRendimento(Number(event.target.value))} />
+        </label>
+      </div>
+
+      <label>
+        Observações
+        <textarea rows={3} maxLength={2000} value={observacao} onChange={(event) => setObservacao(event.target.value)} />
+      </label>
+
+      <section className="subsection">
+        <div>
+          <h3>Etapas de preparo</h3>
+          <button className="text-button" type="button" onClick={addPhase}>+ Adicionar etapa</button>
+        </div>
+        {fases.map((fase) => (
+          <div className="form-row" key={fase.key}>
+            <label>
+              Ordem
+              <input required type="number" min="1" value={fase.ordem} onChange={(event) => updatePhase(fase.key, { ordem: Number(event.target.value) })} />
+            </label>
+            <label>
+              Fase
+              <SearchSelect
+                required
+                ariaLabel="Fase"
+                value={fase.fase_id}
+                onChange={(faseId) => updatePhase(fase.key, { fase_id: faseId })}
+                options={catalogoFases.map((item) => ({ value: item.id, label: item.nome }))}
+              />
+            </label>
+            <label>
+              Tempo (min)
+              <input required type="number" min="1" value={fase.tempo_previsto_min} onChange={(event) => updatePhase(fase.key, { tempo_previsto_min: Number(event.target.value) })} />
+            </label>
+            <button className="remove-row" type="button" aria-label="Remover etapa" disabled={fases.length === 1} onClick={() => setFases((rows) => rows.filter((row) => row.key !== fase.key))}>×</button>
+          </div>
+        ))}
+      </section>
+
+      <section className="subsection">
+        <div>
+          <h3>Componentes</h3>
+          <button className="text-button" type="button" onClick={addComponent}>+ Adicionar componente</button>
+        </div>
+        {componentes.map((item) => (
+          <div className="form-row component-row" key={item.key}>
+            <label>
+              Produto
+              <SearchSelect
+                required
+                ariaLabel="Componente"
+                placeholder="Buscar produto"
+                value={item.produto_id}
+                onChange={(produtoId) => updateComponent(item.key, { produto_id: produtoId })}
+                options={componentOptions}
+              />
+            </label>
+            <label>
+              Quantidade
+              <input required type="number" min="0.001" step="0.001" value={item.quantidade} onChange={(event) => updateComponent(item.key, { quantidade: Number(event.target.value) })} />
+            </label>
+            <label>
+              Etapa
+              <SearchSelect<number | ''>
+                ariaLabel="Etapa"
+                value={item.fase_ordem ?? ''}
+                onChange={(ordem) => updateComponent(item.key, { fase_ordem: ordem === '' ? null : ordem })}
+                options={etapaOptions}
+              />
+            </label>
+            <button className="remove-row" type="button" aria-label="Remover componente" disabled={componentes.length === 1} onClick={() => setComponentes((rows) => rows.filter((row) => row.key !== item.key))}>×</button>
+          </div>
+        ))}
+      </section>
     </form>
   </Modal>
 }
@@ -124,7 +221,103 @@ export function StockModal({ lote, produtos, localizacoes, usuarioId, onClose, o
     } catch (reason) { setError(reason instanceof Error ? reason.message : 'Não foi possível movimentar o estoque.') } finally { setSaving(false) }
   }
   const needsReason = Boolean(lote && ['SAIDA', 'AJUSTE_ENTRADA', 'AJUSTE_SAIDA'].includes(tipo))
-  return <Modal eyebrow="ESTOQUE GERAL" title={lote ? `Movimentar lote #${lote.id}` : 'Nova entrada de estoque'} onClose={onClose} footer={<><button className="secondary" onClick={onClose} type="button">Cancelar</button><button className="primary" form="stock-form" disabled={saving || !localizacaoId}>{saving ? 'Salvando…' : lote ? 'Registrar movimento' : 'Criar lote e dar entrada'}</button></>}>
-    <form className="dialog-body" id="stock-form" onSubmit={save}>{error && <p className="form-error">{error}</p>}{lote ? <div className="stock-lot-summary"><span className={`badge ${produto?.tipo.toLowerCase()}`}>{produto?.tipo === 'FINAL' ? 'Produto final' : produto?.tipo === 'INTERMEDIARIO' ? 'Intermediário' : 'Insumo'}</span><strong>{lote.produto}</strong><small>{lote.quantidade} {produto?.unidade_medida} em {lote.localizacao}</small></div> : <><label>Produto<select required value={produtoId} onChange={(event) => changeProduct(Number(event.target.value))}>{produtos.map((item) => <option key={item.id} value={item.id}>{item.nome} · {item.tipo === 'FINAL' ? 'Produto final' : item.tipo === 'INTERMEDIARIO' ? 'Intermediário' : 'Insumo'}</option>)}</select></label><label>Localização<select required value={localizacaoId} onChange={(event) => setLocalizacaoId(Number(event.target.value))}>{locaisCompativeis.map((item) => <option key={item.id} value={item.id}>{item.nome}</option>)}</select></label><div className="form-grid"><label>Data de produção<input type="date" value={dataProducao} onChange={(event) => setDataProducao(event.target.value)} /></label><label>Data de validade<input type="date" required={Boolean(produto?.validade_obrigatoria)} value={dataValidade} onChange={(event) => setDataValidade(event.target.value)} /></label><label>Custo unitário<input type="number" min="0" step="0.01" value={custo} onChange={(event) => setCusto(event.target.value)} placeholder="Opcional" /></label></div></>}{lote && <label>Movimento<select value={tipo} onChange={(event) => setTipo(event.target.value as typeof tipo)}><option value="ENTRADA">Entrada</option><option value="SAIDA">Saída</option><option value="AJUSTE_ENTRADA">Ajuste de entrada</option><option value="AJUSTE_SAIDA">Ajuste de saída</option></select></label>}<label>Quantidade ({produto?.unidade_medida || 'unidade'})<input required type="number" min="0.001" step="0.001" value={quantidade} onChange={(event) => setQuantidade(Number(event.target.value))} /></label>{needsReason && <label>Motivo<input required value={motivo} onChange={(event) => setMotivo(event.target.value)} placeholder="Ex.: uso na cozinha, perda ou correção" /></label>}<label>Observação<textarea rows={2} value={observacao} onChange={(event) => setObservacao(event.target.value)} placeholder="Opcional" /></label></form>
+  const tipoLabel = (tipoProduto?: TipoProduto) =>
+    tipoProduto === 'FINAL' ? 'Produto final' : tipoProduto === 'INTERMEDIARIO' ? 'Intermediário' : 'Insumo'
+
+  const footer = <>
+    <button className="secondary" onClick={onClose} type="button">Cancelar</button>
+    <button className="primary" form="stock-form" disabled={saving || !localizacaoId}>
+      {saving ? 'Salvando…' : lote ? 'Registrar movimento' : 'Criar lote e dar entrada'}
+    </button>
+  </>
+
+  return <Modal eyebrow="ESTOQUE GERAL" title={lote ? `Movimentar lote #${lote.id}` : 'Nova entrada de estoque'} onClose={onClose} footer={footer}>
+    <form className="dialog-body" id="stock-form" onSubmit={save}>
+      {error && <p className="form-error">{error}</p>}
+
+      {lote ? (
+        <div className="stock-lot-summary">
+          <span className={`badge ${produto?.tipo.toLowerCase()}`}>{tipoLabel(produto?.tipo)}</span>
+          <strong>{lote.produto}</strong>
+          <small>{lote.quantidade} {produto?.unidade_medida} em {lote.localizacao}</small>
+        </div>
+      ) : (
+        <>
+          <label>
+            Produto
+            <SearchSelect
+              required
+              ariaLabel="Produto"
+              placeholder="Buscar produto"
+              value={produtoId}
+              onChange={changeProduct}
+              options={produtos.map((item) => ({ value: item.id, label: `${item.nome} · ${tipoLabel(item.tipo)}` }))}
+            />
+          </label>
+          <label>
+            Localização
+            <SearchSelect
+              required
+              ariaLabel="Localização"
+              value={localizacaoId}
+              onChange={setLocalizacaoId}
+              options={locaisCompativeis.map((item) => ({ value: item.id, label: item.nome }))}
+            />
+          </label>
+          <div className="form-grid">
+            <label>
+              Data de produção
+              <input type="date" value={dataProducao} onChange={(event) => setDataProducao(event.target.value)} />
+            </label>
+            <label>
+              Data de validade
+              <input type="date" required={Boolean(produto?.validade_obrigatoria)} value={dataValidade} onChange={(event) => setDataValidade(event.target.value)} />
+            </label>
+          </div>
+        </>
+      )}
+
+      {lote && (
+        <label>
+          Movimento
+          <SearchSelect
+            ariaLabel="Tipo de movimentação"
+            value={tipo}
+            onChange={setTipo}
+            options={[
+              { value: 'ENTRADA', label: 'Entrada' },
+              { value: 'SAIDA', label: 'Saída' },
+              { value: 'AJUSTE_ENTRADA', label: 'Ajuste de entrada' },
+              { value: 'AJUSTE_SAIDA', label: 'Ajuste de saída' },
+            ]}
+          />
+        </label>
+      )}
+
+      <div className={lote ? undefined : 'form-grid'}>
+        <label>
+          Quantidade ({produto?.unidade_medida || 'unidade'})
+          <input required type="number" min="0.001" step="0.001" value={quantidade} onChange={(event) => setQuantidade(Number(event.target.value))} />
+        </label>
+        {!lote && (
+          <label>
+            Custo unitário
+            <MoneyInput value={custo} onChange={setCusto} placeholder="R$ 0,00 (opcional)" />
+          </label>
+        )}
+      </div>
+
+      {needsReason && (
+        <label>
+          Motivo
+          <input required value={motivo} onChange={(event) => setMotivo(event.target.value)} placeholder="Ex.: uso na cozinha, perda ou correção" />
+        </label>
+      )}
+
+      <label>
+        Observação
+        <textarea rows={8} value={observacao} onChange={(event) => setObservacao(event.target.value)} placeholder="Opcional" />
+      </label>
+    </form>
   </Modal>
 }

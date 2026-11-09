@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import { useEffect, useId, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent, type ReactNode } from 'react'
 import type { Usuario, View } from './types'
 
 const primaryNavigation: Array<[View, string, string]> = [
@@ -57,4 +57,72 @@ export function Pagination({ page, perPage, total, label, onChange }: { page: nu
 
 export function Modal({ title, eyebrow, wide, children, footer, onClose }: { title: string; eyebrow: string; wide?: boolean; children: ReactNode; footer: ReactNode; onClose: () => void }) {
   return <div className="modal-backdrop" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && onClose()}><section className={`dialog modal-card ${wide ? 'wide' : ''}`} role="dialog" aria-modal="true" aria-label={title}><div className="dialog-head"><div><span className="eyebrow">{eyebrow}</span><h2>{title}</h2></div><button className="icon-button" onClick={onClose} aria-label="Fechar" type="button">×</button></div>{children}<div className="dialog-actions">{footer}</div></section></div>
+}
+
+export type SearchSelectOption<V extends string | number> = { value: V; label: string }
+
+export function SearchSelect<V extends string | number>({ options, value, onChange, required, disabled, placeholder = 'Buscar', ariaLabel }: {
+  options: SearchSelectOption<V>[]; value: V; onChange: (value: NoInfer<V>) => void; required?: boolean; disabled?: boolean; placeholder?: string; ariaLabel?: string
+}) {
+  const listId = useId()
+  const inputRef = useRef<HTMLInputElement>(null)
+  const listRef = useRef<HTMLUListElement>(null)
+  const [open, setOpen] = useState(false)
+  const [query, setQuery] = useState('')
+  const [active, setActive] = useState(0)
+  const [position, setPosition] = useState<CSSProperties>({})
+  const selected = options.find((option) => option.value === value)
+  const empty = !selected || selected.value === ''
+  const filtered = useMemo(() => {
+    const search = query.trim().toLocaleLowerCase('pt-BR')
+    return search ? options.filter((option) => option.label.toLocaleLowerCase('pt-BR').includes(search)) : options
+  }, [options, query])
+
+  useEffect(() => {
+    if (!open) return
+    const place = () => {
+      const rect = inputRef.current?.getBoundingClientRect()
+      if (!rect) return
+      setPosition({ top: rect.bottom + 4, left: rect.left, width: rect.width, maxHeight: Math.max(160, Math.min(320, window.innerHeight - rect.bottom - 12)) })
+    }
+    place()
+    window.addEventListener('scroll', place, true)
+    window.addEventListener('resize', place)
+    return () => { window.removeEventListener('scroll', place, true); window.removeEventListener('resize', place) }
+  }, [open])
+  useEffect(() => { if (open) listRef.current?.children[active]?.scrollIntoView({ block: 'nearest' }) }, [active, open])
+
+  const openList = () => { setOpen(true); setActive(Math.max(0, filtered.findIndex((option) => option.value === value))) }
+  const close = () => { setOpen(false); setQuery('') }
+  const choose = (option: SearchSelectOption<V>) => { onChange(option.value); close() }
+  const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'ArrowDown') { event.preventDefault(); if (!open) openList(); else setActive((index) => Math.min(index + 1, filtered.length - 1)) }
+    else if (event.key === 'ArrowUp') { event.preventDefault(); setActive((index) => Math.max(index - 1, 0)) }
+    else if (event.key === 'Enter' && open) { event.preventDefault(); if (filtered[active]) choose(filtered[active]) }
+    else if (event.key === 'Escape' && open) { event.preventDefault(); event.stopPropagation(); close() }
+  }
+
+  return <div className="picker">
+    <input ref={inputRef} role="combobox" aria-expanded={open} aria-controls={listId} aria-autocomplete="list" aria-label={ariaLabel} required={required} disabled={disabled}
+      placeholder={selected ? selected.label : placeholder}
+      value={open ? query : (empty ? '' : selected.label)}
+      onFocus={openList} onClick={() => { if (!open) openList() }} onBlur={close} onKeyDown={onKeyDown}
+      onChange={(event) => { setQuery(event.target.value); setActive(0); setOpen(true) }} />
+    {open && <ul id={listId} role="listbox" className="picker-list" ref={listRef} style={position}>
+      {filtered.length ? filtered.map((option, index) => <li key={String(option.value)} role="option" aria-selected={option.value === value} className={index === active ? 'active' : ''}
+        onMouseDown={(event) => { event.preventDefault(); choose(option) }} onMouseEnter={() => setActive(index)}>{option.label}</li>)
+        : <li className="picker-empty">Nenhum resultado</li>}
+    </ul>}
+  </div>
+}
+
+const moeda = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' })
+
+export function MoneyInput({ value, onChange, placeholder, required }: { value: string; onChange: (value: string) => void; placeholder?: string; required?: boolean }) {
+  return <input type="text" inputMode="numeric" required={required} placeholder={placeholder}
+    value={value === '' ? '' : moeda.format(Number(value))}
+    onChange={(event) => {
+      const digits = event.target.value.replace(/\D/g, '')
+      onChange(digits ? (Number(digits) / 100).toFixed(2) : '')
+    }} />
 }
