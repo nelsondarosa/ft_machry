@@ -48,3 +48,12 @@ main{min-width:0}header{height:78px;border-bottom:1px solid var(--line);display:
 .catalog-pagination .secondary{padding:9px 12px}
 .catalog-pagination button:disabled{opacity:.45;cursor:not-allowed}
 @media(max-width:650px){.catalog-filters label{flex-basis:100%}.catalog-tabs{display:grid;grid-template-columns:1fr 1fr}.catalog-tabs button{justify-content:space-between}.catalog-pagination{align-items:stretch;flex-direction:column}.catalog-pagination>div{justify-content:space-between}}
+.picker{position:relative}
+.picker input{width:100%;padding:11px;border:1px solid #ccd2c9;border-radius:8px;background:#fff;color:#20342f;font:inherit}
+.picker input::placeholder{color:#20342f;opacity:1}
+.picker input:disabled{background:#f1f3ee;color:var(--muted);cursor:not-allowed}
+.picker-list{position:fixed;z-index:30;overflow-y:auto;margin:0;padding:6px;list-style:none;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 12px 32px rgba(29,48,42,.14)}
+.picker-list li{padding:9px 10px;border-radius:6px;font-size:13px;cursor:pointer}
+.picker-list li.active{background:#eef1e9}
+.picker-list li[aria-selected=true]{font-weight:700}
+.picker-list .picker-empty{color:var(--muted);cursor:default}
