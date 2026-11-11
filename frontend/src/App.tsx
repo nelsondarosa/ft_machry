@@ -6,7 +6,7 @@ import { LoginPage } from './LoginPage'
 import { HistoryPage, LocationsPage, UsersPage } from './management'
 import { DashboardPage, ProductionPage, ProductsPage, SheetsPage } from './pages'
 import { StockPage } from './stock'
-import type { FaseCatalogo, FichaTecnica, ItemInventario, Localizacao, Lote, Produto, SolicitacaoProducao, Usuario, View } from './types'
+import type { FaseCatalogo, FichaTecnica, Localizacao, Lote, Produto, SolicitacaoProducao, Usuario, View } from './types'
 
 export function App() {
   const [usuario, setUsuario] = useState<Usuario | null | undefined>(undefined)
@@ -15,7 +15,6 @@ export function App() {
   const [produtos, setProdutos] = useState<Produto[]>([])
   const [fichas, setFichas] = useState<FichaTecnica[]>([])
   const [fases, setFases] = useState<FaseCatalogo[]>([])
-  const [inventario, setInventario] = useState<ItemInventario[]>([])
   const [lotes, setLotes] = useState<Lote[]>([])
   const [localizacoes, setLocalizacoes] = useState<Localizacao[]>([])
   const [solicitacoes, setSolicitacoes] = useState<SolicitacaoProducao[]>([])
@@ -32,15 +31,14 @@ export function App() {
     try {
       const canSeeCatalog = loggedUser.papel !== 'USER'
       const canSeeStock = loggedUser.papel !== 'USER'
-      const [loadedProducts, loadedSheets, loadedPhases, loadedStock, loadedLots, loadedLocations, loadedProduction] = await Promise.all([
+      const [loadedProducts, loadedSheets, loadedPhases, loadedLots, loadedLocations, loadedProduction] = await Promise.all([
         canSeeCatalog ? apiListAll<Produto>('/api/produtos') : Promise.resolve([]),
         apiListAll<FichaTecnica>('/api/fichas-tecnicas'), apiListAll<FaseCatalogo>('/api/fichas-tecnicas/fases'),
-        canSeeStock ? apiListAll<ItemInventario>('/api/estoque/inventario') : Promise.resolve([]),
         canSeeStock ? apiListAll<Lote>('/api/estoque/lotes') : Promise.resolve([]),
         canSeeStock ? apiListAll<Localizacao>('/api/estoque/localizacoes') : Promise.resolve([]),
         apiListAll<SolicitacaoProducao>('/api/producao/solicitacoes'),
       ])
-      setProdutos(loadedProducts); setFichas(loadedSheets); setFases(loadedPhases); setInventario(loadedStock); setLotes(loadedLots); setLocalizacoes(loadedLocations); setSolicitacoes(loadedProduction)
+      setProdutos(loadedProducts); setFichas(loadedSheets); setFases(loadedPhases); setLotes(loadedLots); setLocalizacoes(loadedLocations); setSolicitacoes(loadedProduction)
     } catch (reason) {
       if (reason instanceof ApiError && reason.status === 401) setUsuario(null)
       else setLoadError(reason instanceof Error ? reason.message : 'Não foi possível carregar o sistema.')
@@ -54,7 +52,7 @@ export function App() {
   const mutationDone = async (message: string) => { setProductModal(null); setSheetModal(null); if (usuario) await load(usuario); setToast({ text: message }) }
   const stockChanged = async (message: string) => { if (usuario) await load(usuario, true); setToast({ text: message }) }
   const loggedIn = (loggedUser: Usuario) => { setUsuario(loggedUser); setView(loggedUser.papel === 'USER' ? 'producao' : 'inicio'); void load(loggedUser) }
-  const logout = async () => { await api('/api/auth/logout', { method: 'POST' }).catch(() => undefined); setUsuario(null); setProdutos([]); setFichas([]); setInventario([]); setSolicitacoes([]) }
+  const logout = async () => { await api('/api/auth/logout', { method: 'POST' }).catch(() => undefined); setUsuario(null); setProdutos([]); setFichas([]); setLotes([]); setSolicitacoes([]) }
   const createProduction = async (fichaId: number) => {
     try { await api('/api/producao/solicitacoes', { method: 'POST', body: JSON.stringify({ ficha_tecnica_id: fichaId }) }); await load(usuario!); setToast({ text: 'Preparo adicionado à fila.' }) }
     catch (reason) { setToast({ text: reason instanceof Error ? reason.message : 'Não foi possível adicionar o preparo.', error: true }) }
@@ -71,7 +69,7 @@ export function App() {
   let page
   if (loading) page = <section className="panel load-error">Carregando dados da operação…</section>
   else if (loadError) page = <section className="panel load-error"><strong>Não foi possível acessar a API</strong><p>{loadError}</p><button className="primary" onClick={() => void load(usuario)}>Tentar novamente</button></section>
-  else if (view === 'inicio') page = <DashboardPage produtos={produtos} fichas={fichas} inventario={inventario} canManage={canManageCatalog} onNewSheet={() => setSheetModal('new')} onEditSheet={setSheetModal} />
+  else if (view === 'inicio') page = <DashboardPage produtos={produtos} fichas={fichas} lotes={lotes} canManage={canManageCatalog} onNewSheet={() => setSheetModal('new')} onEditSheet={setSheetModal} />
   else if (view === 'produtos') page = <ProductsPage produtos={produtos} onNew={() => setProductModal('new')} onEdit={setProductModal} />
   else if (view === 'fichas') page = <SheetsPage fichas={fichas} canManage={canManageCatalog} onNew={() => setSheetModal('new')} onEdit={setSheetModal} />
   else if (view === 'estoque') page = <StockPage lotes={lotes} produtos={produtos} localizacoes={localizacoes} usuarioId={usuario.id} onChanged={stockChanged} />
