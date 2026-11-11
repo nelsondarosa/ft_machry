@@ -90,6 +90,39 @@ def atualizar_lote(lote_id):
     return schemas.LoteOut.model_validate(atualizado).model_dump()
 
 
+@bp.get("/lotes/<int:lote_id>/itens")
+def listar_itens(lote_id):
+    filtro = consulta(schemas.ItemLoteQuery)
+    pagina = get_service().listar_itens(lote_id, filtro)
+    return resposta_paginada(pagina, schemas.ItemLoteOut)
+
+
+@bp.post("/lotes/<int:lote_id>/itens")
+def adicionar_itens(lote_id):
+    dados = entrada(schemas.ItensLoteCreate)
+    itens = get_service().adicionar_itens(lote_id, dados)
+    return [schemas.ItemLoteOut.model_validate(item).model_dump() for item in itens], 201
+
+
+@bp.get("/itens/<int:item_id>")
+def detalhar_item(item_id):
+    item = get_service().obter_item(item_id)
+    return schemas.ItemLoteOut.model_validate(item).model_dump()
+
+
+@bp.put("/itens/<int:item_id>")
+def atualizar_item(item_id):
+    dados = entrada(schemas.ItemLoteUpdate)
+    item = get_service().atualizar_item(item_id, dados)
+    return schemas.ItemLoteOut.model_validate(item).model_dump()
+
+
+@bp.post("/itens/<int:item_id>/abrir")
+def abrir_item(item_id):
+    item = get_service().abrir_item(item_id)
+    return schemas.ItemLoteOut.model_validate(item).model_dump()
+
+
 @bp.post("/movimentacoes")
 def registrar_movimentacao():
     dados = entrada(schemas.MovimentacaoCreate)

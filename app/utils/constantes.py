@@ -39,6 +39,16 @@ class Constantes:
     TIPOS_COM_DESTINO = {"TRANSFERENCIA", "TRANSFORMACAO"}
     TIPOS_QUE_EXIGEM_SAIDA = {"SAIDA", "AJUSTE_SAIDA", "TRANSFERENCIA", "TRANSFORMACAO"}
 
+    # -- itens do lote (unidades rastreadas individualmente) -------------------
+
+    # Códigos gerados como FT-003-01: prefixo, lote de origem e sequência.
+    PREFIXO_CODIGO_ITEM = "FT"
+
+    StatusItem = Literal["DISPONIVEL", "RESERVADA", "EM_USO", "CONSUMIDA"]
+    STATUS_ITEM = get_args(StatusItem)
+    STATUS_ITEM_ATIVOS = {"DISPONIVEL", "RESERVADA", "EM_USO"} 
+    STATUS_ITEM_LIVRES = {"DISPONIVEL", "EM_USO"}              
+
     # -- produção ------------------------------------------------------------
 
     StatusSolicitacao = Literal["ABERTA", "EM_SEPARACAO", "EM_PRODUCAO", "CONCLUIDA", "CANCELADA"]

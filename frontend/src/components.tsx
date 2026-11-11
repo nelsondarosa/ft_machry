@@ -55,8 +55,8 @@ export function Pagination({ page, perPage, total, label, onChange }: { page: nu
   </nav>
 }
 
-export function Modal({ title, eyebrow, wide, children, footer, onClose }: { title: string; eyebrow: string; wide?: boolean; children: ReactNode; footer: ReactNode; onClose: () => void }) {
-  return <div className="modal-backdrop" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && onClose()}><section className={`dialog modal-card ${wide ? 'wide' : ''}`} role="dialog" aria-modal="true" aria-label={title}><div className="dialog-head"><div><span className="eyebrow">{eyebrow}</span><h2>{title}</h2></div><button className="icon-button" onClick={onClose} aria-label="Fechar" type="button">×</button></div>{children}<div className="dialog-actions">{footer}</div></section></div>
+export function Modal({ title, eyebrow, wide, titleAside, subtitle, children, footer, onClose }: { title: string; eyebrow?: string; wide?: boolean; titleAside?: ReactNode; subtitle?: ReactNode; children: ReactNode; footer: ReactNode; onClose: () => void }) {
+  return <div className="modal-backdrop" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && onClose()}><section className={`dialog modal-card ${wide ? 'wide' : ''}`} role="dialog" aria-modal="true" aria-label={title}><div className="dialog-head"><div>{eyebrow && <span className="eyebrow">{eyebrow}</span>}<div className="dialog-title"><h2>{title}</h2>{titleAside}</div>{subtitle && <p className="dialog-subtitle">{subtitle}</p>}</div><button className="icon-button" onClick={onClose} aria-label="Fechar" type="button">×</button></div>{children}<div className="dialog-actions">{footer}</div></section></div>
 }
 
 export type SearchSelectOption<V extends string | number> = { value: V; label: string }

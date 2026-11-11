@@ -88,6 +88,32 @@ export interface Lote {
   data_producao: string | null
   data_validade: string | null
   custo_unitario: number | null
+  fornecedor: string | null
+  nota_fiscal: string | null
+  criado_em: string
+  itens_total: number
+  itens_disponiveis: number
+  itens_reservados: number
+  itens_em_uso: number
+  itens_consumidos: number
+}
+
+export type StatusItem = 'DISPONIVEL' | 'RESERVADA' | 'EM_USO' | 'CONSUMIDA'
+
+export interface ItemLote {
+  id: number
+  lote_id: number
+  lote_origem_id: number
+  sequencia: number
+  codigo: string
+  quantidade: number
+  saldo: number
+  fabricante: string | null
+  data_fabricacao: string | null
+  data_validade: string | null
+  status: StatusItem
+  solicitacao_producao_id: number | null
+  aberto_em: string | null
   criado_em: string
 }
 

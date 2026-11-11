@@ -64,6 +64,14 @@ def _migrar_produto() -> None:
     db.session.commit()
 
 
+def _migrar_lote() -> None:
+    colunas = {coluna["name"] for coluna in inspect(db.engine).get_columns("lote")}
+    for coluna in ("fornecedor", "nota_fiscal"):
+        if coluna not in colunas:
+            db.session.execute(text(f"ALTER TABLE lote ADD COLUMN {coluna} TEXT"))
+    db.session.commit()
+
+
 def _provisionar_usuarios_iniciais() -> None:
     from app.features.usuarios.models import Usuario
     from flask import current_app
@@ -147,8 +155,10 @@ def _criar_views() -> None:
 @click.option("--seed", is_flag=True, help="Também carrega os dados de exemplo.")
 def init_db_command(seed: bool):
     if _tabelas_existem(db.engine):
+        db.create_all()
         _migrar_autenticacao()
         _migrar_produto()
+        _migrar_lote()
         _provisionar_usuarios_iniciais()
         click.echo("Banco já criado e atualizado")
         return
