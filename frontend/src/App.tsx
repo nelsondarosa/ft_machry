@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useState } from 'react'
 import { api, apiListAll, ApiError } from './api'
 import { Shell } from './components'
-import { ProductModal, SheetModal, StockModal } from './forms'
+import { ProductModal, SheetModal } from './forms'
 import { LoginPage } from './LoginPage'
-import { HistoryPage, LocationsPage, UsersPage, TransferPage, LotDetails } from './management'
-import { DashboardPage, ProductionPage, ProductsPage, SheetsPage, StockPage } from './pages'
-import type { FaseCatalogo, FichaTecnica, ItemInventario, Localizacao, Lote, Produto, SolicitacaoProducao, Usuario, View } from './types'
+import { HistoryPage, LocationsPage, UsersPage } from './management'
+import { DashboardPage, ProductionPage, ProductsPage, SheetsPage } from './pages'
+import { StockPage } from './stock'
+import type { FaseCatalogo, FichaTecnica, Localizacao, Lote, Produto, SolicitacaoProducao, Usuario, View } from './types'
 
 export function App() {
   const [usuario, setUsuario] = useState<Usuario | null | undefined>(undefined)
@@ -14,7 +15,6 @@ export function App() {
   const [produtos, setProdutos] = useState<Produto[]>([])
   const [fichas, setFichas] = useState<FichaTecnica[]>([])
   const [fases, setFases] = useState<FaseCatalogo[]>([])
-  const [inventario, setInventario] = useState<ItemInventario[]>([])
   const [lotes, setLotes] = useState<Lote[]>([])
   const [localizacoes, setLocalizacoes] = useState<Localizacao[]>([])
   const [solicitacoes, setSolicitacoes] = useState<SolicitacaoProducao[]>([])
@@ -22,24 +22,23 @@ export function App() {
   const [loadError, setLoadError] = useState('')
   const [productModal, setProductModal] = useState<Produto | 'new' | null>(null)
   const [sheetModal, setSheetModal] = useState<FichaTecnica | 'new' | null>(null)
-  const [stockModal, setStockModal] = useState<Lote | 'new' | null>(null)
   const [toast, setToast] = useState<{ text: string; error?: boolean } | null>(null)
 
-  const load = useCallback(async (loggedUser: Usuario) => {
-    setLoading(true)
+  // silent: recarrega sem trocar a página pelo aviso de carregamento (mantém modais abertos).
+  const load = useCallback(async (loggedUser: Usuario, silent = false) => {
+    if (!silent) setLoading(true)
     setLoadError('')
     try {
       const canSeeCatalog = loggedUser.papel !== 'USER'
       const canSeeStock = loggedUser.papel !== 'USER'
-      const [loadedProducts, loadedSheets, loadedPhases, loadedStock, loadedLots, loadedLocations, loadedProduction] = await Promise.all([
+      const [loadedProducts, loadedSheets, loadedPhases, loadedLots, loadedLocations, loadedProduction] = await Promise.all([
         canSeeCatalog ? apiListAll<Produto>('/api/produtos') : Promise.resolve([]),
         apiListAll<FichaTecnica>('/api/fichas-tecnicas'), apiListAll<FaseCatalogo>('/api/fichas-tecnicas/fases'),
-        canSeeStock ? apiListAll<ItemInventario>('/api/estoque/inventario') : Promise.resolve([]),
         canSeeStock ? apiListAll<Lote>('/api/estoque/lotes') : Promise.resolve([]),
         canSeeStock ? apiListAll<Localizacao>('/api/estoque/localizacoes') : Promise.resolve([]),
         apiListAll<SolicitacaoProducao>('/api/producao/solicitacoes'),
       ])
-      setProdutos(loadedProducts); setFichas(loadedSheets); setFases(loadedPhases); setInventario(loadedStock); setLotes(loadedLots); setLocalizacoes(loadedLocations); setSolicitacoes(loadedProduction)
+      setProdutos(loadedProducts); setFichas(loadedSheets); setFases(loadedPhases); setLotes(loadedLots); setLocalizacoes(loadedLocations); setSolicitacoes(loadedProduction)
     } catch (reason) {
       if (reason instanceof ApiError && reason.status === 401) setUsuario(null)
       else setLoadError(reason instanceof Error ? reason.message : 'Não foi possível carregar o sistema.')
@@ -50,9 +49,10 @@ export function App() {
   }, [load])
   useEffect(() => { if (!toast) return; const timeout = window.setTimeout(() => setToast(null), 3200); return () => window.clearTimeout(timeout) }, [toast])
   const navigate = (target: View) => { setView(target); setMenuOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }) }
-  const mutationDone = async (message: string) => { setProductModal(null); setSheetModal(null); setStockModal(null); if (usuario) await load(usuario); setToast({ text: message }) }
+  const mutationDone = async (message: string) => { setProductModal(null); setSheetModal(null); if (usuario) await load(usuario); setToast({ text: message }) }
+  const stockChanged = async (message: string) => { if (usuario) await load(usuario, true); setToast({ text: message }) }
   const loggedIn = (loggedUser: Usuario) => { setUsuario(loggedUser); setView(loggedUser.papel === 'USER' ? 'producao' : 'inicio'); void load(loggedUser) }
-  const logout = async () => { await api('/api/auth/logout', { method: 'POST' }).catch(() => undefined); setUsuario(null); setProdutos([]); setFichas([]); setInventario([]); setSolicitacoes([]) }
+  const logout = async () => { await api('/api/auth/logout', { method: 'POST' }).catch(() => undefined); setUsuario(null); setProdutos([]); setFichas([]); setLotes([]); setSolicitacoes([]) }
   const createProduction = async (fichaId: number) => {
     try { await api('/api/producao/solicitacoes', { method: 'POST', body: JSON.stringify({ ficha_tecnica_id: fichaId }) }); await load(usuario!); setToast({ text: 'Preparo adicionado à fila.' }) }
     catch (reason) { setToast({ text: reason instanceof Error ? reason.message : 'Não foi possível adicionar o preparo.', error: true }) }
@@ -69,10 +69,10 @@ export function App() {
   let page
   if (loading) page = <section className="panel load-error">Carregando dados da operação…</section>
   else if (loadError) page = <section className="panel load-error"><strong>Não foi possível acessar a API</strong><p>{loadError}</p><button className="primary" onClick={() => void load(usuario)}>Tentar novamente</button></section>
-  else if (view === 'inicio') page = <DashboardPage produtos={produtos} fichas={fichas} inventario={inventario} canManage={canManageCatalog} onNewSheet={() => setSheetModal('new')} onEditSheet={setSheetModal} />
+  else if (view === 'inicio') page = <DashboardPage produtos={produtos} fichas={fichas} lotes={lotes} canManage={canManageCatalog} onNewSheet={() => setSheetModal('new')} onEditSheet={setSheetModal} />
   else if (view === 'produtos') page = <ProductsPage produtos={produtos} onNew={() => setProductModal('new')} onEdit={setProductModal} />
   else if (view === 'fichas') page = <SheetsPage fichas={fichas} canManage={canManageCatalog} onNew={() => setSheetModal('new')} onEdit={setSheetModal} />
-  else if (view === 'estoque') page = <><StockPage inventario={inventario} lotes={lotes} onNew={() => setStockModal('new')} onMove={setStockModal} /><TransferPage lotes={lotes} produtos={produtos} usuarioId={usuario.id} onChanged={() => load(usuario)} /><LotDetails lotes={lotes} onChanged={() => load(usuario)} /></>
+  else if (view === 'estoque') page = <StockPage lotes={lotes} produtos={produtos} localizacoes={localizacoes} usuarioId={usuario.id} onChanged={stockChanged} />
   else if (view === 'historico') page = <HistoryPage lotes={lotes} produtos={produtos} reload={() => void load(usuario)} />
   else if (view === 'locais') page = <LocationsPage locations={localizacoes} onChanged={() => load(usuario)} />
   else if (view === 'usuarios') page = usuario.papel === 'OWNER' ? <UsersPage current={usuario} /> : <section className="panel">Acesso restrito.</section>
@@ -82,7 +82,6 @@ export function App() {
   return <><Shell view={view} menuOpen={menuOpen} apiOnline={!loadError} usuario={usuario} onNavigate={navigate} onMenuToggle={() => setMenuOpen((open) => !open)} onLogout={() => void logout()}>{page}</Shell>
     {productModal && <ProductModal produto={productModal === 'new' ? null : productModal} onClose={() => setProductModal(null)} onSaved={() => void mutationDone('Produto salvo com sucesso.')} onDeleted={() => void mutationDone('Produto excluído.')} />}
     {sheetModal && <SheetModal ficha={sheetModal === 'new' ? null : sheetModal} produtos={produtos} catalogoFases={fases} onClose={() => setSheetModal(null)} onSaved={() => void mutationDone('Ficha técnica salva com sucesso.')} onDeleted={() => void mutationDone('Ficha técnica excluída.')} />}
-    {stockModal && <StockModal lote={stockModal === 'new' ? null : stockModal} produtos={produtos} localizacoes={localizacoes} usuarioId={usuario.id} onClose={() => setStockModal(null)} onSaved={() => void mutationDone('Estoque atualizado com sucesso.')} />}
     {toast && <div className={`toast show ${toast.error ? 'error' : ''}`}>{toast.text}</div>}
   </>
 }

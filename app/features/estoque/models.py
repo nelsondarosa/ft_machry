@@ -38,11 +38,66 @@ class Lote(db.Model):
     data_producao = db.Column(db.String)
     data_validade = db.Column(db.String)
     custo_unitario = db.Column(db.Numeric(asdecimal=False))
+    fornecedor = db.Column(db.Text)
+    nota_fiscal = db.Column(db.Text)
     criado_em = db.Column(
         db.String,
         nullable=False,
         server_default=db.text("(CAST(CURRENT_TIMESTAMP AS TEXT))"),
     )
+
+
+class ItemLote(db.Model):
+    """Unidade física de um lote (pacote, caixa, pote) com código próprio.
+
+    `quantidade` é o conteúdo da unidade e `saldo` o que ainda resta nela, ambos
+    na unidade de medida do produto. Em lotes com itens, o saldo do lote é a
+    soma dos saldos dos itens ativos.
+    """
+    __tablename__ = "item_lote"
+    __table_args__ = (
+        db.CheckConstraint(
+            Constantes.sql_in("status", Constantes.STATUS_ITEM), name="ck_item_lote_status"
+        ),
+        db.CheckConstraint("quantidade > 0", name="ck_item_lote_quantidade"),
+        db.CheckConstraint("saldo >= 0 AND saldo <= quantidade", name="ck_item_lote_saldo"),
+        db.UniqueConstraint("lote_origem_id", "sequencia", name="uq_item_lote_sequencia"),
+        db.Index("idx_item_lote_lote", "lote_id", "status"),
+    )
+
+    id = db.Column(db.Integer, primary_key=True)
+    lote_id = db.Column(db.Integer, db.ForeignKey("lote.id"), nullable=False)
+    lote_origem_id = db.Column(db.Integer, db.ForeignKey("lote.id"), nullable=False)
+    sequencia = db.Column(db.Integer, nullable=False)
+    codigo = db.Column(db.Text, nullable=False, unique=True)
+    quantidade = db.Column(db.Numeric(asdecimal=False), nullable=False)
+    saldo = db.Column(db.Numeric(asdecimal=False), nullable=False)
+    fabricante = db.Column(db.Text)
+    data_fabricacao = db.Column(db.String)
+    data_validade = db.Column(db.String)
+    status = db.Column(db.Text, nullable=False, default="DISPONIVEL", server_default="DISPONIVEL")
+    solicitacao_producao_id = db.Column(db.Integer, db.ForeignKey("solicitacao_producao.id"))
+    aberto_em = db.Column(db.String)
+    criado_em = db.Column(
+        db.String,
+        nullable=False,
+        server_default=db.text("(CAST(CURRENT_TIMESTAMP AS TEXT))"),
+    )
+
+
+class MovimentacaoItem(db.Model):
+    """Quais itens cada movimentação usou e quanto saiu de cada um."""
+    __tablename__ = "movimentacao_item"
+    __table_args__ = (
+        db.CheckConstraint("quantidade > 0", name="ck_movimentacao_item_quantidade"),
+        db.Index("idx_movimentacao_item_item", "item_id"),
+    )
+
+    movimentacao_id = db.Column(
+        db.Integer, db.ForeignKey("movimentacao_estoque.id"), primary_key=True
+    )
+    item_id = db.Column(db.Integer, db.ForeignKey("item_lote.id"), primary_key=True)
+    quantidade = db.Column(db.Numeric(asdecimal=False), nullable=False)
 
 
 class MovimentacaoEstoque(db.Model):
@@ -132,9 +187,16 @@ class LoteListado:
     data_producao: Optional[str]
     data_validade: Optional[str]
     custo_unitario: Optional[float]
+    fornecedor: Optional[str]
+    nota_fiscal: Optional[str]
     criado_em: str
     produto: str
     localizacao: str
+    itens_total: int
+    itens_disponiveis: int
+    itens_reservados: int
+    itens_em_uso: int
+    itens_consumidos: int
 
     @classmethod
     def from_row(cls, row) -> "LoteListado":

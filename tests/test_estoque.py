@@ -161,6 +161,23 @@ def test_atualizar_lote(seeded_client):
     assert c.put('/api/estoque/lotes/9999', json={'custo_unitario': 1}).status_code == 404
 
 
+def test_atualizar_localizacao_do_lote(seeded_client):
+    c = seeded_client
+    lote = c.post('/api/estoque/lotes', json={'produto_id': 1, 'localizacao_id': 1}).json
+    nova = c.post('/api/estoque/localizacoes', json={'nome': 'Despensa P2', 'tipo': 'SECO'}).json
+    fria = c.post('/api/estoque/localizacoes', json={'nome': 'Freezer teste', 'tipo': 'CONGELADO'}).json
+
+    r = c.put(f"/api/estoque/lotes/{lote['id']}", json={'localizacao_id': nova['id']})
+    assert r.status_code == 200, r.json
+    assert r.json['localizacao_id'] == nova['id']
+
+    # Conservação incompatível, local inexistente ou vazio: recusados sem alterar o lote.
+    assert c.put(f"/api/estoque/lotes/{lote['id']}", json={'localizacao_id': fria['id']}).status_code == 400
+    assert c.put(f"/api/estoque/lotes/{lote['id']}", json={'localizacao_id': 9999}).status_code == 400
+    assert c.put(f"/api/estoque/lotes/{lote['id']}", json={'localizacao_id': None}).status_code == 400
+    assert c.get(f"/api/estoque/lotes/{lote['id']}").json['localizacao_id'] == nova['id']
+
+
 def test_sugestao_saida_validacoes(client):
     assert client.get('/api/estoque/sugestao-saida/1').status_code == 400  # sem quantidade
     assert client.get('/api/estoque/sugestao-saida/9999?quantidade=1').status_code == 404
