@@ -67,7 +67,7 @@ def _texto_opcional(valor: Optional[str]) -> Optional[str]:
 class GrupoItensCreate(BaseModel):
     """Grupo de unidades iguais: mesmo conteúdo, fabricante e datas."""
     quantidade_unidades: int = Field(gt=0, le=500, strict=True)
-    quantidade: float = Field(gt=0, allow_inf_nan=False, strict=True)  # conteúdo de cada unidade
+    quantidade: float = Field(gt=0, allow_inf_nan=False, strict=True)
     fabricante: Optional[str] = Field(default=None, max_length=100)
     data_fabricacao: Optional[date] = None
     data_validade: Optional[date] = None

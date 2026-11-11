@@ -237,10 +237,10 @@ class EstoqueRepository(RepositorioBase):
             .where(ItemLote.lote_id == lote_id)
             .where(ItemLote.status.in_(Constantes.STATUS_ITEM_LIVRES))
             .order_by(
-                ItemLote.status != "EM_USO",       # 1º os itens já abertos
-                ItemLote.data_validade.is_(None),  # itens sem validade por último
-                ItemLote.data_validade,            # depois o que vence antes
-                ItemLote.lote_origem_id,           # empate: ordem do código
+                ItemLote.status != "EM_USO",
+                ItemLote.data_validade.is_(None),
+                ItemLote.data_validade,
+                ItemLote.lote_origem_id,
                 ItemLote.sequencia,
             )
             .with_for_update()

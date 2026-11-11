@@ -31,8 +31,6 @@ const movimentoLabels: Record<string, string> = {
   TRANSFERENCIA: 'Transferência', TRANSFORMACAO: 'Transformação', AJUSTE_ENTRADA: 'Ajuste de entrada', AJUSTE_SAIDA: 'Ajuste de saída',
 }
 
-// -- utilitários de data e texto ------------------------------------------------
-
 const hojeIso = () => new Date().toLocaleDateString('sv-SE')
 const paraData = (valor: string | null) => {
   if (!valor) return null
@@ -49,7 +47,6 @@ const diasAte = (valor: string | null) => {
 }
 const mensagemErro = (reason: unknown) => reason instanceof Error ? reason.message : 'Não foi possível concluir a operação.'
 
-/** A data de entrada fica em data_producao; lotes antigos sem ela usam a data de cadastro. */
 const dataEntrada = (lote: Lote) => lote.data_producao ?? lote.criado_em
 const temItens = (lote: Lote) => lote.itens_total > 0
 const itensAtivos = (lote: Lote) => lote.itens_total - lote.itens_consumidos
@@ -64,7 +61,6 @@ function situacaoDo(lote: Lote): { tipo: Situacao; texto: string } {
   return { tipo: 'EM_DIA', texto: `Em dia · ${dias} dias` }
 }
 
-/** Monta "Despensa seca · P2" subindo pelo parent_id das localizações. */
 function caminhoLocalizacao(id: number, porId: Map<number, Localizacao>, fallback: string) {
   const partes: string[] = []
   const visitados = new Set<number>()
@@ -77,7 +73,6 @@ function caminhoLocalizacao(id: number, porId: Map<number, Localizacao>, fallbac
   return partes.length ? partes.join(' · ') : fallback
 }
 
-/** Ordem de uso: abertos primeiro, depois o que vence antes, depois o código. */
 function ordemDeUso(a: ItemLote, b: ItemLote) {
   if (a.status !== b.status && (a.status === 'EM_USO' || b.status === 'EM_USO')) return a.status === 'EM_USO' ? -1 : 1
   const validadeA = a.data_validade ?? '9999-12-31'
@@ -90,7 +85,6 @@ type Contexto = {
   locaisPorId: Map<number, Localizacao>
 }
 
-/** Carrega os itens de um lote e permite recarregar depois de uma alteração. */
 function useItensDoLote(loteId: number | null, ativo: boolean) {
   const [itens, setItens] = useState<ItemLote[] | null>(null)
   const [erro, setErro] = useState('')
@@ -109,8 +103,6 @@ function useItensDoLote(loteId: number | null, ativo: boolean) {
 
   return { itens, erro, recarregar }
 }
-
-// -- página ------------------------------------------------------------------------
 
 export function StockPage({ lotes, produtos, localizacoes, usuarioId, onChanged }: {
   lotes: Lote[]
@@ -252,13 +244,11 @@ export function StockPage({ lotes, produtos, localizacoes, usuarioId, onChanged 
       onSaved={async (loteId) => {
         setNovoLote(false)
         await onChanged(`Lote #${loteId} criado.`)
-        setAberto({ loteId, aba: 'ITENS' })
       }}
     />}
   </>
 }
 
-/** "10 un · 7 disponíveis" com a barra por status; lotes sem itens mostram o saldo. */
 function ResumoItens({ lote, unidade, vencido }: { lote: Lote; unidade: string; vencido: boolean }) {
   if (!temItens(lote)) {
     return <div className="item-summary">
@@ -283,8 +273,6 @@ function BarraStatus({ lote, vencido }: { lote: Lote; vencido?: boolean }) {
     {partes.filter(([, quantidade]) => quantidade > 0).map(([classe, quantidade]) => <i key={classe} className={classe} style={{ flex: quantidade }} />)}
   </div>
 }
-
-// -- modal do lote ----------------------------------------------------------------
 
 function LotModal({ lote, abaInicial, lotes, produtos, contexto, usuarioId, onClose, onChanged, onFinishedWithoutLot }: {
   lote: Lote | null
@@ -316,7 +304,6 @@ function LotModal({ lote, abaInicial, lotes, produtos, contexto, usuarioId, onCl
     else onFinishedWithoutLot()
   }
 
-  // Formulário que o botão principal do rodapé envia em cada aba/modo.
   let formId: string | undefined
   let textoSalvar = ''
   if (aba === 'MOVIMENTAR') { formId = 'move-form'; textoSalvar = 'Registrar movimento' }
@@ -401,8 +388,6 @@ function LotModal({ lote, abaInicial, lotes, produtos, contexto, usuarioId, onCl
   </Modal>
 }
 
-// -- aba de itens -------------------------------------------------------------------
-
 function LotDetails({ lote, contexto, usuarioId, itens, erroItens, onItemChanged }: {
   lote: Lote
   contexto: Contexto
@@ -460,7 +445,6 @@ function LotDetails({ lote, contexto, usuarioId, itens, erroItens, onItemChanged
   </>
 }
 
-/** Dias decorridos entre a entrada e a validade do lote. */
 function vidaUtil(lote: Lote) {
   const inicio = paraData(dataEntrada(lote))
   const fim = paraData(lote.data_validade)
@@ -494,7 +478,6 @@ function ItemsTable({ loteId, usuarioId, itens, erro, unidade, onItemChanged }: 
     void executar(item, () => api(`/api/estoque/itens/${item.id}/abrir`, { method: 'POST' }), `${item.codigo} aberto.`)
   }
 
-  /** Dá saída no que sobrou do item; ele passa a constar como consumido. */
   function consumir(item: ItemLote) {
     void executar(item, () => api('/api/estoque/movimentacoes', {
       method: 'POST',
@@ -552,8 +535,6 @@ function destinoDoItem(item: ItemLote) {
   return '—'
 }
 
-// -- grupos de itens (novo lote e "+ Adicionar itens") ------------------------
-
 type Grupo = { chave: number; unidades: string; conteudo: string; fabricante: string; fabricacao: string; validade: string }
 
 let proximaChave = 1
@@ -577,7 +558,6 @@ function resumoDosGrupos(grupos: Grupo[]) {
   return { unidades, quantidade, menorValidade: validades[0] ?? '' }
 }
 
-/** Nome do campo com a marca "(opcional)" na mesma linha. */
 function Rotulo({ texto, opcional }: { texto: string; opcional?: boolean }) {
   return <span className="field-title">{texto}{opcional && <small className="optional"> (opcional)</small>}</span>
 }
@@ -585,7 +565,7 @@ function Rotulo({ texto, opcional }: { texto: string; opcional?: boolean }) {
 function GroupsEditor({ grupos, unidade, pedirValidade, validadeObrigatoria, onChange }: {
   grupos: Grupo[]
   unidade: string
-  pedirValidade: boolean  // falso quando o produto não exige validade
+  pedirValidade: boolean
   validadeObrigatoria: boolean
   onChange: (grupos: Grupo[]) => void
 }) {
@@ -646,8 +626,6 @@ function AddItemsForm({ lote, unidade, validadeObrigatoria, usuarioId, onSaving,
   </form>
 }
 
-// -- novo lote ----------------------------------------------------------------------
-
 function NewLotModal({ produtos, localizacoes, usuarioId, onClose, onSaved }: {
   produtos: Produto[]
   localizacoes: Localizacao[]
@@ -672,7 +650,6 @@ function NewLotModal({ produtos, localizacoes, usuarioId, onClose, onSaved }: {
 
   const resumo = resumoDosGrupos(grupos)
   const vencimento = resumo.menorValidade || validadeLote
-  // Produto sem "Exigir data de validade nos lotes" não mostra os campos de validade.
   const pedirValidade = Boolean(produto?.validade_obrigatoria)
 
   function trocarProduto(id: number | '') {
@@ -771,8 +748,6 @@ function NewLotModal({ produtos, localizacoes, usuarioId, onClose, onSaved }: {
   </Modal>
 }
 
-// -- editar lote --------------------------------------------------------------------
-
 function LotEditForm({ lote, produto, contexto, onSaving, onSaved }: {
   lote: Lote
   produto: Produto | undefined
@@ -797,7 +772,6 @@ function LotEditForm({ lote, produto, contexto, onSaving, onSaved }: {
       fornecedor: fornecedor.trim() || null,
       nota_fiscal: notaFiscal.trim() || null,
     }
-    // Em lote com itens o vencimento vem dos itens.
     if (!temItens(lote)) campos.data_validade = validade || null
     try {
       await api(`/api/estoque/lotes/${lote.id}`, { method: 'PUT', body: JSON.stringify(campos) })
@@ -805,7 +779,6 @@ function LotEditForm({ lote, produto, contexto, onSaving, onSaved }: {
     } catch (reason) { setErro(mensagemErro(reason)) } finally { onSaving(false) }
   }
 
-  // Só locais com a mesma conservação do produto (seco, resfriado, congelado).
   const locaisCompativeis = [...contexto.locaisPorId.values()].filter((local) => !produto || local.tipo === produto.conservacao)
 
   return <form id="lot-edit-form" className="lot-form" onSubmit={salvar}>
@@ -835,11 +808,8 @@ function LotEditForm({ lote, produto, contexto, onSaving, onSaved }: {
   </form>
 }
 
-// -- movimentar --------------------------------------------------------------------
-
 type TipoMovimento = 'ENTRADA' | 'SAIDA' | 'AJUSTE_ENTRADA' | 'AJUSTE_SAIDA'
 
-/** Entrada, saída e ajustes de quantidade. Lotes com itens só aceitam saídas (a entrada é por "+ Adicionar itens"). */
 function MoveForm({ lote, unidade, usuarioId, onSaving, onSaved }: {
   lote: Lote
   unidade: string
@@ -890,8 +860,6 @@ function MoveForm({ lote, unidade, usuarioId, onSaving, onSaved }: {
   </form>
 }
 
-// -- transferir ou transformar --------------------------------------------------
-
 function TransferForm({ origem, lotes, produtos, contexto, usuarioId, onSaving, onSaved }: {
   origem: Lote
   lotes: Lote[]
@@ -922,7 +890,6 @@ function TransferForm({ origem, lotes, produtos, contexto, usuarioId, onSaving, 
   const lotesDestino = lotes.filter((lote) => {
     if (lote.id === origem.id || !produtoDestino || lote.produto_id !== produtoDestino.id) return false
     if (operacao === 'TRANSFORMACAO') return true
-    // Transferência: itens só vão para lotes com itens ou vazios; quantidade solta só para lotes sem itens.
     return porItens ? temItens(lote) || lote.quantidade === 0 : !temItens(lote)
   })
   const loteDestino = lotes.find((lote) => lote.id === destinoId)
@@ -1064,8 +1031,6 @@ function TransferForm({ origem, lotes, produtos, contexto, usuarioId, onSaving, 
     </div>
   </form>
 }
-
-// -- histórico ---------------------------------------------------------------------
 
 function LotHistory({ lote }: { lote: Lote }) {
   const [movimentos, setMovimentos] = useState<Movimento[] | null>(null)

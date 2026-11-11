@@ -24,7 +24,6 @@ export function App() {
   const [sheetModal, setSheetModal] = useState<FichaTecnica | 'new' | null>(null)
   const [toast, setToast] = useState<{ text: string; error?: boolean } | null>(null)
 
-  // silent: recarrega sem trocar a página pelo aviso de carregamento (mantém modais abertos).
   const load = useCallback(async (loggedUser: Usuario, silent = false) => {
     if (!silent) setLoading(true)
     setLoadError('')

@@ -171,7 +171,6 @@ def test_atualizar_localizacao_do_lote(seeded_client):
     assert r.status_code == 200, r.json
     assert r.json['localizacao_id'] == nova['id']
 
-    # Conservação incompatível, local inexistente ou vazio: recusados sem alterar o lote.
     assert c.put(f"/api/estoque/lotes/{lote['id']}", json={'localizacao_id': fria['id']}).status_code == 400
     assert c.put(f"/api/estoque/lotes/{lote['id']}", json={'localizacao_id': 9999}).status_code == 400
     assert c.put(f"/api/estoque/lotes/{lote['id']}", json={'localizacao_id': None}).status_code == 400

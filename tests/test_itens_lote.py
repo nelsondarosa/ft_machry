@@ -43,7 +43,7 @@ def test_criar_lote_com_itens_em_uma_chamada(seeded_client):
     lote = _criar_lote(c, itens=GRUPOS, fornecedor=' Moinho Sul ', nota_fiscal='NF 123',
                        data_validade='2099-12-31', observacao='compra semanal')
     assert lote['quantidade'] == 10000
-    assert lote['data_validade'] == '2099-03-10'  # menor validade entre os itens
+    assert lote['data_validade'] == '2099-03-10'
     assert lote['fornecedor'] == 'Moinho Sul' and lote['nota_fiscal'] == 'NF 123'
 
     itens = _itens(c, lote['id'])
@@ -81,7 +81,6 @@ def test_saida_por_quantidade_consome_fefo_e_abre_item(seeded_client):
     assert itens[1]['aberto_em']
     assert _lote(c, lote['id'])['quantidade'] == 8500
 
-    # O item aberto é usado antes dos outros.
     assert _mov(c, tipo='SAIDA', lote_id=lote['id'], quantidade=500, motivo='produção').status_code == 201
     assert _itens(c, lote['id'])[1]['status'] == 'CONSUMIDA'
     assert _mov(c, tipo='SAIDA', lote_id=lote['id'], quantidade=9000, motivo='x').status_code == 400
@@ -98,12 +97,10 @@ def test_saida_por_itens_escolhidos(seeded_client):
     assert [i['status'] for i in _itens(c, lote['id'], 'CONSUMIDA')] == ['CONSUMIDA', 'CONSUMIDA']
     assert _lote(c, lote['id'])['quantidade'] == 8000
 
-    # Item já consumido, repetido, com quantidade junto ou em entrada: recusados.
     assert _mov(c, tipo='SAIDA', lote_id=lote['id'], item_ids=[ids[6]], motivo='x').status_code == 400
     assert _mov(c, tipo='SAIDA', lote_id=lote['id'], item_ids=[ids[0], ids[0]], motivo='x').status_code == 400
     assert _mov(c, tipo='SAIDA', lote_id=lote['id'], item_ids=[ids[0]], quantidade=1, motivo='x').status_code == 400
     assert _mov(c, tipo='ENTRADA', lote_id=lote['id'], item_ids=[ids[0]]).status_code == 400
-    # Entrada solta num lote com itens deixaria o saldo divergente.
     assert _mov(c, tipo='ENTRADA', lote_id=lote['id'], quantidade=10).status_code == 400
     assert _lote(c, lote['id'])['quantidade'] == 8000
 
@@ -124,7 +121,6 @@ def test_transferencia_move_itens_mantendo_codigo(seeded_client):
     assert _lote(c, destino['id'])['quantidade'] == 3000
     assert _lote(c, destino['id'])['data_validade'] == '2099-03-10'
 
-    # Novos itens no destino continuam a sequência própria dele.
     novos = c.post(f"{BASE}/lotes/{destino['id']}/itens", json={'usuario_id': 1, 'itens': [{'quantidade_unidades': 1, 'quantidade': 500}]})
     assert novos.status_code == 201, novos.json
     assert novos.json[0]['codigo'] == f"FT-{destino['id']:03d}-01"
@@ -178,7 +174,7 @@ def test_adicionar_editar_e_abrir_itens(seeded_client):
     r = c.put(f'{BASE}/itens/{item}', json={'data_validade': '2099-04-01', 'fabricante': ' Prato Fino '})
     assert r.status_code == 200, r.json
     assert r.json['fabricante'] == 'Prato Fino'
-    assert _lote(c, lote['id'])['data_validade'] == '2099-02-01'  # o outro novo ainda vence antes
+    assert _lote(c, lote['id'])['data_validade'] == '2099-02-01'
     assert c.put(f'{BASE}/itens/{item}', json={'data_fabricacao': '2099-05-01'}).status_code == 400
     assert c.put(f'{BASE}/itens/{item}', json={'status': 'CONSUMIDA'}).status_code == 400
 

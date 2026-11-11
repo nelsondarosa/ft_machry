@@ -41,7 +41,6 @@ class Constantes:
 
     # -- itens do lote (unidades rastreadas individualmente) -------------------
 
-    # Códigos gerados como FT-003-01: prefixo, lote de origem e sequência.
     PREFIXO_CODIGO_ITEM = "FT"
 
     StatusItem = Literal["DISPONIVEL", "RESERVADA", "EM_USO", "CONSUMIDA"]
