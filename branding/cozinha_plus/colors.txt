@@ -1,0 +1,28 @@
+Azul Petróleo Escuro
+HEX: #1C2B30
+RGB: 28, 43, 48
+Aplicação: Fundo da metade inferior da imagem, texto "Cozinha" (na aplicação sobre fundo branco) e metade esquerda do símbolo do infinito (na aplicação sobre fundo branco).   
+
+Terracota / Cobre
+HEX: #B86A42
+RGB: 184, 106, 66
+Aplicação: Sinal de "+" e metade direita do símbolo do infinito em todas as aplicações.   
+
+Cinza Azulado Claro
+HEX: #91A3A8
+RGB: 145, 163, 168
+Aplicação: Traços da "fumacinha" exclusivamente na aplicação sobre o fundo branco.   
+
+Branco
+HEX: #FFFFFF
+RGB: 255, 255, 255
+Aplicação: Fundo da metade superior da imagem, texto "Cozinha", metade esquerda do símbolo do infinito e "fumacinha" (nas aplicações sobre o fundo escuro).   
+
+Verde Escuro
+HEX: #163036
+RGB: Aproximadamente 32, 95, 74.   
+Aplicação: Utilizado na curva interna do lado esquerdo do símbolo do infinito, sendo visível de forma clara nas aplicações sobre o fundo branco.   
+
+Ocre / Amarelado
+HEX: #cf904f.   
+Aplicação: Utilizado na curva interna do lado direito do símbolo do infinito, mantendo-se presente tanto nas aplicações de fundo claro como nas de fundo escuro.

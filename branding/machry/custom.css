@@ -1,0 +1,8 @@
+/* Machry: logo é o letreiro "MACHRY" (creme, horizontal), já contém o nome. */
+.brand { flex-direction: column; align-items: flex-start; gap: 8px; }
+.brand-mark.has-logo { width: 170px; height: 34px; border-radius: 0; justify-content: start; }
+.brand-mark.has-logo img { object-position: left center; }
+.brand strong { display: none; }
+.app-loading .brand-mark.has-logo { width: 220px; height: 44px; }
+.login-mark.has-logo { width: 260px; height: 54px; border-radius: 0; justify-content: start; }
+.login-mark.has-logo img { object-position: left center; }

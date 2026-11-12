@@ -12,7 +12,7 @@ export function DashboardPage({ produtos, fichas, lotes, canManage, onNewSheet, 
   return <><section className="hero"><div><span className="eyebrow">CENTRAL DE OPERAÇÕES</span><h1>Sua cozinha, <em>sob controle.</em></h1><p>Produtos, receitas, estoque e produção reunidos em uma visão simples para a rotina do estabelecimento.</p></div>{canManage && <button className="primary" onClick={onNewSheet}>Nova ficha técnica</button>}</section><section className="metrics"><Metric label="PRODUTOS ATIVOS" value={produtos.length} detail="itens cadastrados" /><Metric label="FICHAS TÉCNICAS" value={fichas.length} detail="receitas padronizadas" /><Metric label="UNIDADES CADASTRADAS" value={unidadesCadastradas} detail={`em ${lotesComSaldo.length} ${lotesComSaldo.length === 1 ? 'lote ativo' : 'lotes ativos'}`} /></section><section className="panel"><div className="panel-title"><div><span className="eyebrow">RECEITAS</span><h2>Fichas recentes</h2></div>{canManage && <button className="text-button" onClick={onNewSheet}>Adicionar ficha →</button>}</div>{fichas.length ? <div className="recipe-grid">{fichas.slice(0, 6).map((ficha) => <article className="recipe-card" key={ficha.id}><span className="type">FICHA #{ficha.id}</span><h3>{ficha.produto}</h3><p>{ficha.observacao || 'Receita padronizada para a equipe.'}</p><div><span>{ficha.fases.length} fases</span><span>{ficha.componentes.length} componentes</span><span>{number.format(ficha.rendimento)} {ficha.unidade_rendimento}</span></div>{canManage && <button className="text-button" onClick={() => onEditSheet(ficha)}>Editar ficha →</button>}</article>)}</div> : <EmptyState title="Nenhuma ficha cadastrada" text="Cadastre a primeira receita para padronizar o preparo." />}</section></>
 }
 
-export function ProductsPage({ produtos, onNew, onEdit }: { produtos: Produto[]; onNew: () => void; onEdit: (produto: Produto) => void }) {
+export function ProductsPage({ produtos, onNew, onImport, onEdit }: { produtos: Produto[]; onNew: () => void; onImport: () => void; onEdit: (produto: Produto) => void }) {
   const [query, setQuery] = useState('')
   const [tipo, setTipo] = useState<TipoProduto | 'TODOS'>('TODOS')
   const [subdivisao, setSubdivisao] = useState('')
@@ -43,7 +43,7 @@ export function ProductsPage({ produtos, onNew, onEdit }: { produtos: Produto[];
   const alterarTipo = (novo: TipoProduto | 'TODOS') => { setTipo(novo); setSubdivisao(''); setPagina(1) }
 
   return <>
-    <PageHeading eyebrow="CATÁLOGO" title="Produtos" description="Catálogo organizado por insumos, preparos intermediários e produtos finais." action={<button className="primary" onClick={onNew}>Novo produto</button>} />
+    <PageHeading eyebrow="CATÁLOGO" title="Produtos" description="Catálogo organizado por insumos, preparos intermediários e produtos finais." action={<div className="heading-actions"><button className="secondary outline" onClick={onImport}>Importar CSV</button><button className="primary" onClick={onNew}>Novo produto</button></div>} />
     <section className="panel catalog-panel">
       <div className="catalog-tabs" role="group" aria-label="Tipo de produto">
         {([['TODOS', 'Todos'], ['INSUMO', 'Insumos'], ['INTERMEDIARIO', 'Intermediários'], ['FINAL', 'Produtos finais']] as const).map(([value, label]) => (

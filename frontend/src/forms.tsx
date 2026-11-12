@@ -44,6 +44,119 @@ export function ProductModal({ produto, onClose, onSaved, onDeleted }: { produto
   </Modal>
 }
 
+const csvColunas = ['nome', 'tipo', 'unidade_medida', 'subdivisao', 'conservacao', 'validade_obrigatoria', 'validade_padrao_dias'] as const
+const csvModelo = 'nome;tipo;unidade_medida;subdivisao;conservacao;validade_obrigatoria;validade_padrao_dias\nFarinha de trigo;INSUMO;kg;tipo 1;SECO;0;180\nMolho de tomate;INTERMEDIARIO;L;;RESFRIADO;1;5\nLasanha;FINAL;un;;CONGELADO;1;30\n'
+const normalizar = (valor: string) => valor.normalize('NFD').replace(/[̀-ͯ]/g, '').trim().toUpperCase()
+const tiposCsv: Record<string, TipoProduto> = { INSUMO: 'INSUMO', INSUMOS: 'INSUMO', INTERMEDIARIO: 'INTERMEDIARIO', INTERMEDIARIOS: 'INTERMEDIARIO', FINAL: 'FINAL', 'PRODUTO FINAL': 'FINAL', 'PRODUTOS FINAIS': 'FINAL' }
+const conservacoesCsv: Record<string, Conservacao> = { SECO: 'SECO', RESFRIADO: 'RESFRIADO', CONGELADO: 'CONGELADO' }
+const simCsv = new Set(['1', 'SIM', 'S', 'TRUE', 'X'])
+const naoCsv = new Set(['', '0', 'NAO', 'N', 'FALSE'])
+
+type LinhaCsv = { linha: number; dados: Record<string, unknown>; erros: string[] }
+
+/** Parser CSV com suporte a aspas; detecta `;` (Excel pt-BR) ou `,` pelo cabeçalho. */
+function lerCsv(texto: string): string[][] {
+  texto = texto.replace(/^﻿/, '')
+  const primeira = texto.split(/\r?\n/, 1)[0] ?? ''
+  const sep = (primeira.match(/;/g)?.length ?? 0) >= (primeira.match(/,/g)?.length ?? 0) ? ';' : ','
+  const linhas: string[][] = []
+  let linha: string[] = [], campo = '', aspas = false
+  for (let i = 0; i < texto.length; i += 1) {
+    const c = texto[i]
+    if (aspas) {
+      if (c === '"' && texto[i + 1] === '"') { campo += '"'; i += 1 }
+      else if (c === '"') aspas = false
+      else campo += c
+    } else if (c === '"') aspas = true
+    else if (c === sep) { linha.push(campo); campo = '' }
+    else if (c === '\n' || c === '\r') {
+      if (c === '\r' && texto[i + 1] === '\n') i += 1
+      linha.push(campo); linhas.push(linha); linha = []; campo = ''
+    } else campo += c
+  }
+  if (campo || linha.length) { linha.push(campo); linhas.push(linha) }
+  return linhas
+}
+
+function converterCsv(texto: string): { linhas: LinhaCsv[]; erro?: string } {
+  const [cabecalho, ...corpo] = lerCsv(texto)
+  if (!cabecalho) return { linhas: [], erro: 'Arquivo vazio.' }
+  const indices = cabecalho.map((coluna) => coluna.trim().toLowerCase())
+  const faltando = ['nome', 'tipo', 'unidade_medida'].filter((coluna) => !indices.includes(coluna))
+  if (faltando.length) return { linhas: [], erro: `Colunas obrigatórias ausentes: ${faltando.join(', ')}.` }
+  const desconhecidas = indices.filter((coluna) => coluna && !(csvColunas as readonly string[]).includes(coluna))
+  if (desconhecidas.length) return { linhas: [], erro: `Colunas desconhecidas: ${desconhecidas.join(', ')}.` }
+  const linhas = corpo.map((valores, posicao) => ({ valores, linha: posicao + 2 }))
+    .filter(({ valores }) => valores.some((valor) => valor.trim()))
+    .map(({ valores, linha }) => {
+      const valor = (coluna: string) => (valores[indices.indexOf(coluna)] ?? '').trim()
+      const erros: string[] = []
+      const nome = valor('nome'), unidade = valor('unidade_medida'), subdivisao = valor('subdivisao')
+      if (!nome) erros.push('nome vazio'); else if (nome.length > 150) erros.push('nome com mais de 150 caracteres')
+      if (!unidade) erros.push('unidade vazia'); else if (unidade.length > 20) erros.push('unidade com mais de 20 caracteres')
+      if (subdivisao.length > 100) erros.push('subdivisão com mais de 100 caracteres')
+      const tipo = tiposCsv[normalizar(valor('tipo'))]
+      if (!tipo) erros.push(`tipo inválido “${valor('tipo')}”`)
+      const conservacao = valor('conservacao') ? conservacoesCsv[normalizar(valor('conservacao'))] : 'SECO'
+      if (!conservacao) erros.push(`conservação inválida “${valor('conservacao')}”`)
+      const obrigatoria = normalizar(valor('validade_obrigatoria'))
+      if (!simCsv.has(obrigatoria) && !naoCsv.has(obrigatoria)) erros.push(`validade obrigatória inválida “${valor('validade_obrigatoria')}”`)
+      const dias = valor('validade_padrao_dias')
+      if (dias && !/^\d+$/.test(dias)) erros.push(`validade padrão inválida “${dias}”`)
+      return { linha, erros, dados: { nome, tipo, unidade_medida: unidade, subdivisao: subdivisao || null, conservacao, validade_obrigatoria: simCsv.has(obrigatoria) ? 1 : 0, validade_padrao_dias: /^\d+$/.test(dias) ? Number(dias) : null } }
+    })
+  if (!linhas.length) return { linhas, erro: 'Nenhum produto encontrado no arquivo.' }
+  if (linhas.length > 500) return { linhas: [], erro: 'Limite de 500 produtos por importação.' }
+  return { linhas }
+}
+
+export function ProductImportModal({ onClose, onSaved }: { onClose: () => void; onSaved: (total: number) => void }) {
+  const [arquivo, setArquivo] = useState('')
+  const [linhas, setLinhas] = useState<LinhaCsv[]>([])
+  const [error, setError] = useState('')
+  const [saving, setSaving] = useState(false)
+  const comErro = linhas.filter((item) => item.erros.length)
+
+  async function selecionar(file: File | undefined) {
+    setError(''); setLinhas([]); setArquivo(file?.name ?? '')
+    if (!file) return
+    const resultado = converterCsv(await file.text())
+    setLinhas(resultado.linhas); if (resultado.erro) setError(resultado.erro)
+  }
+  function baixarModelo() {
+    const url = URL.createObjectURL(new Blob(['﻿' + csvModelo], { type: 'text/csv;charset=utf-8' }))
+    const link = Object.assign(document.createElement('a'), { href: url, download: 'modelo-produtos.csv' })
+    link.click(); URL.revokeObjectURL(url)
+  }
+  async function importar() {
+    setSaving(true); setError('')
+    try {
+      await api('/api/produtos/lote', { method: 'POST', body: JSON.stringify({ produtos: linhas.map((item) => item.dados) }) })
+      onSaved(linhas.length)
+    } catch (reason) {
+      const mensagem = reason instanceof Error ? reason.message : 'Não foi possível importar os produtos.'
+      setError(mensagem.replace(/^produto (\d+):/, (_, n: string) => `Linha ${linhas[Number(n) - 1]?.linha ?? n}:`))
+    } finally { setSaving(false) }
+  }
+  return <Modal eyebrow="CATÁLOGO" title="Importar produtos (CSV)" wide onClose={onClose} footer={<><button className="secondary" onClick={onClose} type="button">Cancelar</button><button className="primary" type="button" onClick={() => void importar()} disabled={saving || !linhas.length || comErro.length > 0}>{saving ? 'Importando…' : `Importar ${linhas.length || ''} produto(s)`}</button></>}>
+    <div className="dialog-body">
+      {error && <p className="form-error">{error}</p>}
+      <p>Colunas: <code>{csvColunas.join(';')}</code>. Obrigatórias: nome, tipo (INSUMO, INTERMEDIARIO ou FINAL) e unidade_medida. Conservação padrão: SECO. A importação é feita por completo ou não é feita.</p>
+      <button className="text-button" type="button" onClick={baixarModelo}>Baixar modelo CSV →</button>
+      <label>Arquivo CSV<input type="file" accept=".csv,text/csv" onChange={(event) => void selecionar(event.target.files?.[0])} /></label>
+      {arquivo && linhas.length > 0 && <>
+        <p>{linhas.length} produto(s) em {arquivo}{comErro.length ? ` · ${comErro.length} linha(s) com erro` : ''}.</p>
+        <div className="table-wrap"><table><thead><tr><th>Linha</th><th>Nome</th><th>Tipo</th><th>Unidade</th><th>Subdivisão</th><th>Conservação</th><th>Validade</th><th>Status</th></tr></thead>
+          <tbody>{linhas.map(({ linha, dados, erros }) => <tr key={linha}>
+            <td>{linha}</td><td><strong>{String(dados.nome || '—')}</strong></td><td>{String(dados.tipo ?? '—')}</td><td>{String(dados.unidade_medida || '—')}</td><td>{String(dados.subdivisao ?? '—')}</td><td>{String(dados.conservacao ?? '—')}</td>
+            <td>{dados.validade_padrao_dias == null ? '—' : `${dados.validade_padrao_dias} dias`}{dados.validade_obrigatoria ? ' (obrigatória)' : ''}</td>
+            <td>{erros.length ? <span className="form-error">{erros.join('; ')}</span> : 'OK'}</td>
+          </tr>)}</tbody></table></div>
+      </>}
+    </div>
+  </Modal>
+}
+
 type DraftPhase = { key: string; fase_id: number; ordem: number; tempo_previsto_min: number }
 type DraftComponent = { key: string; produto_id: number; quantidade: number; fase_ordem: number | null }
 let keySequence = 0

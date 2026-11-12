@@ -1,11 +1,12 @@
 from flask_sqlalchemy.pagination import Pagination
+from pydantic import ValidationError
 
-from app.utils.errors import RegistroNaoEncontrado
+from app.utils.errors import RegistroNaoEncontrado, mensagem_validacao
 from app.utils.paginacao import PaginacaoQuery
 
 from .models import Produto
 from .repository import ProdutoRepository
-from .schemas import ProdutoCreate, ProdutoUpdate
+from .schemas import ProdutoCreate, ProdutoLoteCreate, ProdutoUpdate
 
 
 class ProdutoService:
@@ -25,6 +26,26 @@ class ProdutoService:
         with self.repository.transacao():
             self._validar_grupo(dados.grupo_id)
             return self.repository.inserir(dados.model_dump())
+
+    def criar_lote(self, dados: ProdutoLoteCreate) -> list[Produto]:
+        """Cria todos os produtos ou nenhum; erros indicam a posição do item."""
+        itens: list[ProdutoCreate] = []
+        for posicao, bruto in enumerate(dados.produtos, start=1):
+            try:
+                itens.append(ProdutoCreate.model_validate(bruto))
+            except ValidationError as exc:
+                campo = ".".join(str(parte) for parte in exc.errors()[0]["loc"])
+                detalhe = f"{campo}: " if campo else ""
+                raise ValueError(f"produto {posicao}: {detalhe}{mensagem_validacao(exc)}") from exc
+        with self.repository.transacao():
+            criados = []
+            for posicao, item in enumerate(itens, start=1):
+                try:
+                    self._validar_grupo(item.grupo_id)
+                except ValueError as exc:
+                    raise ValueError(f"produto {posicao}: {exc}") from exc
+                criados.append(self.repository.inserir(item.model_dump()))
+            return criados
 
     def atualizar(self, produto_id: int, dados: ProdutoUpdate) -> Produto:
         with self.repository.transacao():

@@ -1,0 +1,10 @@
+{
+  "nome": "Bistrô Aurora",
+  "subtitulo": "OPERAÇÃO DE COZINHA",
+  "sigla": "BA",
+  "titulo": "Bistrô Aurora · Operação de cozinha",
+  "logo": "logo.svg",
+  "favicon": "logo.svg",
+  "apple_touch_icon": "logo.svg",
+  "css": "custom.css"
+}

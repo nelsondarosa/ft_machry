@@ -1,4 +1,5 @@
 import { useEffect, useId, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent, type ReactNode } from 'react'
+import { BrandMark, useBranding } from './branding'
 import type { Usuario, View } from './types'
 
 const primaryNavigation: Array<[View, string, string]> = [
@@ -18,11 +19,12 @@ export function Shell({ view, menuOpen, apiOnline, usuario, onNavigate, onMenuTo
     USER: ['fichas', 'producao'],
   }
   const visibleNavigation = primaryNavigation.filter(([target]) => allowedViews[usuario.papel].includes(target))
+  const branding = useBranding()
   const roleLabel = { OWNER: 'Proprietária', ADMIN: 'Gestor', USER: 'Cozinha' }[usuario.papel]
   const navButton = ([target, icon, label]: [View, string, string]) => <button className={`nav ${view === target ? 'active' : ''}`} key={target} onClick={() => onNavigate(target)} type="button"><span aria-hidden="true">{icon}</span>{label}</button>
   return <div className="layout">
     <aside className={`sidebar ${menuOpen ? 'open' : ''}`}>
-      <div className="brand"><div className="brand-mark">C+</div><div><strong>Cozinha Mais</strong><small>GESTÃO DE COZINHA</small></div></div>
+      <div className="brand"><BrandMark className="brand-mark" /><div><strong>{branding.nome}</strong><small>{branding.subtitulo}</small></div></div>
       <p className="nav-caption">OPERAÇÃO</p><nav>{visibleNavigation.map((item) => navButton(item))}</nav>
       <div className="account"><div className="account-avatar">{usuario.nome.charAt(0).toUpperCase()}</div><div><strong>{usuario.nome}</strong><small>{roleLabel}</small></div><button onClick={onLogout} type="button">Sair</button></div>
       <div className={`api-state ${apiOnline ? '' : 'offline'}`}><i /><div><strong>{apiOnline ? 'API conectada' : 'API indisponível'}</strong><small>Flask · banco integrado</small></div></div>
