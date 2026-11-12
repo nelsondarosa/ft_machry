@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { api, apiListAll, ApiError } from './api'
+import { BrandMark, useBranding } from './branding'
 import { Shell } from './components'
 import { ProductImportModal, ProductModal, SheetModal } from './forms'
 import { LoginPage } from './LoginPage'
@@ -9,6 +10,7 @@ import { StockPage } from './stock'
 import type { FaseCatalogo, FichaTecnica, Localizacao, Lote, Produto, SolicitacaoProducao, Usuario, View } from './types'
 
 export function App() {
+  const branding = useBranding()
   const [usuario, setUsuario] = useState<Usuario | null | undefined>(undefined)
   const [view, setView] = useState<View>('inicio')
   const [menuOpen, setMenuOpen] = useState(false)
@@ -62,7 +64,7 @@ export function App() {
     catch (reason) { setToast({ text: reason instanceof Error ? reason.message : 'Não foi possível atualizar o preparo.', error: true }) }
   }
 
-  if (usuario === undefined) return <div className="app-loading"><div className="brand-mark">C+</div><span>Carregando Cozinha Mais…</span></div>
+  if (usuario === undefined) return <div className="app-loading"><BrandMark className="brand-mark" /><span>Carregando {branding.nome}…</span></div>
   if (usuario === null) return <LoginPage onLogin={loggedIn} />
   const canManageCatalog = usuario.papel === 'OWNER'
 

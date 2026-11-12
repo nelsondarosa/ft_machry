@@ -87,6 +87,36 @@ pnpm exec tsc --noEmit
 pnpm build
 ```
 
+## Identidade visual
+
+A identidade (nome, logo, ícones e CSS) vem de uma pasta em `branding/`, escolhida pela variável `BRANDING`. O padrão é `machry`, com a identidade original Cozinha Mais. Para trocar, defina no `.env` outra pasta (ou um caminho absoluto, fora do Docker):
+
+```
+BRANDING=cozinha_plus
+```
+
+Com `BRANDING=` vazio, nenhuma pasta é lida e o frontend usa os mesmos valores da pasta `machry`, embutidos no código.
+
+A pasta deve conter um `brand.json`; todos os campos são opcionais e os ausentes mantêm o padrão:
+
+```json
+{
+  "nome": "Bistrô Aurora",
+  "subtitulo": "OPERAÇÃO DE COZINHA",
+  "sigla": "BA",
+  "titulo": "Bistrô Aurora · Operação de cozinha",
+  "logo": "logo.svg",
+  "favicon": "favicon.png",
+  "apple_touch_icon": "apple-touch-icon.png",
+  "css": "custom.css"
+}
+```
+
+- `sigla` aparece no lugar do logo quando `logo` não é informado.
+- `css` é carregado depois do CSS padrão; sobrescreva as variáveis `--green`, `--lime`, `--cream`, `--line`, `--muted` ou qualquer classe.
+- Arquivos são lidos da própria pasta. No Docker, `./branding` é montado na API: alterações em arquivos exigem apenas recarregar a página; alterar `BRANDING` exige `docker compose up -d api`.
+- Veja `branding/machry/`, `branding/cozinha_plus/` e `branding/exemplo/`.
+
 ## PostgreSQL
 
 O container PostgreSQL já está preparado como um profile opcional. Ajuste o `.env`:

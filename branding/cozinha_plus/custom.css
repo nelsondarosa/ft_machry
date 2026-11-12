@@ -1,0 +1,17 @@
+/* Identidade Cozinha+ — paleta de colors.txt */
+:root {
+  --green: #1c2b30;      /* azul petróleo escuro */
+  --lime: #b86a42;       /* terracota / cobre */
+  --ocre: #cf904f;
+  --cinza-azulado: #91a3a8;
+}
+
+/* Símbolo do infinito é horizontal: alarga a marca em vez do círculo. */
+.brand-mark.has-logo { width: 58px; height: 38px; border-radius: 0; }
+.login-mark.has-logo { width: 120px; height: 76px; border-radius: 0; }
+
+/* Terracota pede texto claro nos botões principais. */
+.primary { color: #fff; }
+.catalog-tabs button.active span { color: #fff; }
+.hero h1 em, h1 em { color: var(--ocre); }
+.brand small, .account small { color: var(--cinza-azulado); }
