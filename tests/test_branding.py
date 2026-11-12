@@ -10,7 +10,8 @@ def test_padrao_machry(app, monkeypatch):
     assert Config(_env_file=None).BRANDING == "machry"
     app.config["BRANDING"] = "machry"
     dados =app.test_client().get(URL).get_json()  # rota pública, sem login
-    assert dados["nome"] == "Cozinha Mais" and dados["sigla"] == "C+"
+    assert dados["nome"] == "Machry Armazém e Bistrô" and dados["sigla"] == "M"
+    assert dados["logo"].startswith(f"{URL}/arquivos/logo.png?v=")
     assert dados["favicon"].startswith(f"{URL}/arquivos/favicon-32.png?v=")
 
 

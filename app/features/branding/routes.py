@@ -3,7 +3,7 @@
 A variável de ambiente BRANDING aponta para uma pasta com `brand.json`:
 o nome de uma subpasta de `branding/` na raiz do projeto ou um caminho
 absoluto. O padrão é `machry`; com a variável vazia, a rota devolve `{}` e o
-frontend usa os valores embutidos (os mesmos da pasta `machry`).
+frontend usa os textos embutidos (os mesmos da pasta `machry`).
 """
 import json
 import os

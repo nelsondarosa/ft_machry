@@ -1,8 +1,10 @@
 {
-  "nome": "Cozinha Mais",
-  "subtitulo": "GESTÃO DE COZINHA",
-  "sigla": "C+",
-  "titulo": "Cozinha Mais · Operação de cozinha",
+  "nome": "Machry Armazém e Bistrô",
+  "subtitulo": "COZINHA+ · GESTÃO DE COZINHA",
+  "sigla": "M",
+  "titulo": "Machry Armazém e Bistrô · Cozinha+ Gestão de cozinha",
+  "logo": "logo.png",
   "favicon": "favicon-32.png",
-  "apple_touch_icon": "apple-touch-icon.png"
+  "apple_touch_icon": "apple-touch-icon.png",
+  "css": "custom.css"
 }

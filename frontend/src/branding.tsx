@@ -1,6 +1,6 @@
 import { createContext, useContext } from 'react'
 
-/** Identidade visual. Os valores padrão valem quando BRANDING não está definido na API. */
+/** Identidade visual. Os valores padrão (textos de branding/machry) valem quando a API não fornece outros. */
 export interface Branding {
   nome: string
   subtitulo: string
@@ -13,10 +13,10 @@ export interface Branding {
 }
 
 export const brandingPadrao: Branding = {
-  nome: 'Cozinha Mais',
-  subtitulo: 'GESTÃO DE COZINHA',
-  sigla: 'C+',
-  titulo: 'Cozinha Mais · Operação de cozinha',
+  nome: 'Machry Armazém e Bistrô',
+  subtitulo: 'COZINHA+ · GESTÃO DE COZINHA',
+  sigla: 'M',
+  titulo: 'Machry Armazém e Bistrô · Cozinha+ Gestão de cozinha',
 }
 
 const BrandingContext = createContext<Branding>(brandingPadrao)

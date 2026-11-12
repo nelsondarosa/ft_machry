@@ -89,13 +89,13 @@ pnpm build
 
 ## Identidade visual
 
-A identidade (nome, logo, ícones e CSS) vem de uma pasta em `branding/`, escolhida pela variável `BRANDING`. O padrão é `machry`, com a identidade original Cozinha Mais. Para trocar, defina no `.env` outra pasta (ou um caminho absoluto, fora do Docker):
+A identidade (nome, logo, ícones e CSS) vem de uma pasta em `branding/`, escolhida pela variável `BRANDING`. O padrão é `machry`: nome e logo do site oficial (machry.com.br). Para trocar, defina no `.env` outra pasta (ou um caminho absoluto, fora do Docker):
 
 ```
 BRANDING=cozinha_plus
 ```
 
-Com `BRANDING=` vazio, nenhuma pasta é lida e o frontend usa os mesmos valores da pasta `machry`, embutidos no código.
+Com `BRANDING=` vazio, nenhuma pasta é lida e o frontend usa os textos da pasta `machry` embutidos no código (sem logo, ícones nem CSS).
 
 A pasta deve conter um `brand.json`; todos os campos são opcionais e os ausentes mantêm o padrão:
 
