@@ -59,6 +59,18 @@ class FichaTecnicaRepository(RepositorioBase):
         fases = db.session.query(FaseProducao).filter(FaseProducao.id.in_(ids)).all()
         return {fase.id: fase for fase in fases}
 
+    def produtos_ativos(self) -> list[Produto]:
+        return db.session.query(Produto).filter(Produto.ativo == 1).all()
+
+    def fases_todas(self) -> list[FaseProducao]:
+        return db.session.query(FaseProducao).all()
+
+    def criar_fase(self, nome: str) -> FaseProducao:
+        fase = FaseProducao(nome=nome)
+        db.session.add(fase)
+        db.session.flush()
+        return fase
+
     def produtos_ativos_por_ids(self, ids: set[int]) -> dict[int, Produto]:
         produtos = (
             db.session.query(Produto)

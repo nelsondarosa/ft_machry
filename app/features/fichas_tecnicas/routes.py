@@ -4,7 +4,7 @@ from app.utils.paginacao import PaginacaoQuery, resposta_paginada
 from app.utils.parsing import consulta, entrada
 
 from .repository import FichaTecnicaRepository
-from .schemas import FaseCatalogoOut, FichaTecnicaInput
+from .schemas import FaseCatalogoOut, FichaLoteInput, FichaTecnicaInput
 from .services import FichaTecnicaService
 
 bp = Blueprint("fichas_tecnicas", __name__)
@@ -67,6 +67,16 @@ def detalhar(ficha_id: int):
 @bp.post("")
 def criar():
     return _serializar(get_service().criar(entrada(FichaTecnicaInput))), 201
+
+
+@bp.post("/lote")
+def criar_lote():
+    fichas, fases_criadas = get_service().criar_lote(entrada(FichaLoteInput))
+    return {
+        "items": [_serializar(ficha) for ficha in fichas],
+        "total": len(fichas),
+        "fases_criadas": fases_criadas,
+    }, 201
 
 
 @bp.put("/<int:ficha_id>")

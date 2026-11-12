@@ -5,7 +5,7 @@ Sistema de operação para restaurante, com API Flask, frontend React com Vite e
 ## Funcionalidades atuais
 
 - Catálogo de insumos, produtos intermediários e produtos finais, com importação em lote via CSV.
-- Fichas técnicas com rendimento, fases ordenadas e componentes.
+- Fichas técnicas com rendimento, fases ordenadas e componentes, com importação em lote via CSV.
 - Validações de domínio recuperadas do projeto anterior.
 - Lotes, localizações, movimentações e sugestão de saída por FEFO.
 - Estoque geral de insumos, produtos intermediários e produtos finais, com entradas, saídas e ajustes pela interface.
@@ -89,7 +89,7 @@ pnpm build
 
 ## Importação de produtos via CSV
 
-Na página **Produtos**, o botão **Importar CSV** cadastra vários produtos de uma vez. A tela mostra uma prévia com os erros de cada linha antes de enviar, e a importação é tudo ou nada (limite de 500 produtos por arquivo). O mesmo recurso está disponível na API em `POST /api/produtos/lote`.
+Na página **Produtos**, o botão **Importar CSV** cadastra vários produtos de uma vez. A tela mostra uma prévia com os erros de cada linha antes de enviar, e a importação é tudo ou nada (limite de 500 produtos por arquivo). Produtos com o mesmo nome e conservação de um produto já cadastrado são ignorados, então reimportar um arquivo não duplica o catálogo. O mesmo recurso está disponível na API em `POST /api/produtos/lote`.
 
 Colunas (separador `;` ou `,`, UTF-8):
 
@@ -104,6 +104,30 @@ Colunas (separador `;` ou `,`, UTF-8):
 | `validade_padrao_dias` | não | número inteiro de dias |
 
 Exemplo completo: [`docs/exemplos/produtos_machry.csv`](docs/exemplos/produtos_machry.csv), com 366 insumos do estoque do Machry gerados a partir das planilhas de validade. Unidades e prazos de validade desse arquivo são estimativas por categoria; revise antes de usar em produção.
+
+## Importação de fichas técnicas via CSV
+
+Na página **Fichas técnicas**, o botão **Importar CSV** cadastra várias receitas de uma vez (limite de 200 fichas, tudo ou nada). API: `POST /api/fichas-tecnicas/lote`.
+
+O arquivo tem **uma linha por componente**; as linhas com o mesmo valor em `ficha` formam uma receita.
+
+| Coluna | Uso |
+|---|---|
+| `ficha` | nome do produto preparado; precisa existir no catálogo como `INTERMEDIARIO` ou `FINAL` |
+| `rendimento` | na unidade do produto da ficha; basta informar na primeira linha |
+| `observacao` | opcional; as observações das linhas são unidas em ordem (útil para o modo de preparo) |
+| `fase_ordem`, `fase`, `tempo_min` | fase da linha; nome e tempo só precisam aparecer na primeira linha daquela ordem. Fases fora do catálogo são criadas |
+| `componente` | nome do produto usado; vazio para uma fase sem insumos |
+| `quantidade` | número (vírgula ou ponto); `q.b.` ou vazio vira "A gosto (q.b.)" na observação |
+| `unidade` | opcional; `mg`/`g`/`kg` e `ml`/`L` são convertidos para a unidade do produto |
+
+Produtos e fases são buscados pelo nome, sem diferenciar maiúsculas, acentos e espaços. Um nome que corresponda a mais de um produto (ex.: o mesmo item refrigerado e congelado) gera erro.
+
+Exemplo da Aula 4 (cortes e cocções de batatas), em ordem de importação:
+
+1. [`docs/exemplos/produtos_machry.csv`](docs/exemplos/produtos_machry.csv): catálogo de insumos.
+2. [`docs/exemplos/produtos_aula4.csv`](docs/exemplos/produtos_aula4.csv): hortifrúti, ovo e louro que faltam no catálogo, e os preparos da aula (fundo de legumes, batata parmentier, gratin, potage, purê e duchesse).
+3. [`docs/exemplos/fichas_aula4.csv`](docs/exemplos/fichas_aula4.csv): as fichas FT 08 a FT 11 e os intermediários. A ficha do fundo de legumes é estimada (o material da aula não a traz); rendimentos e tempos das fases também são estimativas. A nata, pesada em g na receita, foi lançada em ml porque está cadastrada em L. Cada ficha termina com uma linha só de `observacao` (“Ajustes da importação: …”) que registra essas diferenças em relação à ficha original. Uma linha com apenas `ficha` e `observacao` é válida para esse fim.
 
 ## Identidade visual
 
