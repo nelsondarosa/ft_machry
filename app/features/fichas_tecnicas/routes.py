@@ -71,11 +71,12 @@ def criar():
 
 @bp.post("/lote")
 def criar_lote():
-    fichas, fases_criadas = get_service().criar_lote(entrada(FichaLoteInput))
+    fichas, fases_criadas, ignoradas = get_service().criar_lote(entrada(FichaLoteInput))
     return {
         "items": [_serializar(ficha) for ficha in fichas],
         "total": len(fichas),
         "fases_criadas": fases_criadas,
+        "ignoradas": ignoradas,
     }, 201
 
 

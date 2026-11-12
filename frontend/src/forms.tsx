@@ -228,7 +228,7 @@ function converterFichasCsv(texto: string): { fichas: FichaCsv[]; erro?: string 
   return { fichas }
 }
 
-export function SheetImportModal({ onClose, onSaved }: { onClose: () => void; onSaved: (total: number, fasesCriadas: string[]) => void }) {
+export function SheetImportModal({ onClose, onSaved }: { onClose: () => void; onSaved: (total: number, fasesCriadas: string[], ignoradas: string[]) => void }) {
   const [arquivo, setArquivo] = useState('')
   const [fichas, setFichas] = useState<FichaCsv[]>([])
   const [error, setError] = useState('')
@@ -253,8 +253,8 @@ export function SheetImportModal({ onClose, onSaved }: { onClose: () => void; on
         produto: ficha.nome, rendimento: String(numeroCsv(ficha.rendimento)), observacao: ficha.observacoes.join('\n') || null,
         fases: [...ficha.fases.values()].sort((a, b) => a.ordem - b.ordem), componentes: ficha.componentes,
       }))
-      const resposta = await api<{ total: number; fases_criadas: string[] }>('/api/fichas-tecnicas/lote', { method: 'POST', body: JSON.stringify({ fichas: corpo }) })
-      onSaved(resposta.total, resposta.fases_criadas)
+      const resposta = await api<{ total: number; fases_criadas: string[]; ignoradas: string[] }>('/api/fichas-tecnicas/lote', { method: 'POST', body: JSON.stringify({ fichas: corpo }) })
+      onSaved(resposta.total, resposta.fases_criadas, resposta.ignoradas)
     } catch (reason) {
       const mensagem = reason instanceof Error ? reason.message : 'Não foi possível importar as fichas.'
       setError(mensagem.replace(/^ficha (\d+) \(/, (_, n: string) => `Linha ${fichas[Number(n) - 1]?.linhas[0] ?? n} (`))
@@ -264,7 +264,7 @@ export function SheetImportModal({ onClose, onSaved }: { onClose: () => void; on
     <div className="dialog-body">
       {error && <p className="form-error">{error}</p>}
       <p>Uma linha por componente; as linhas com o mesmo nome em <code>ficha</code> formam uma receita. Colunas: <code>{fichaColunas.join(';')}</code>.</p>
-      <p>Produtos e fases são buscados pelo nome (sem diferenciar maiúsculas e acentos). A ficha precisa ser de um produto intermediário ou final já cadastrado; fases que não existem são criadas. Em <code>unidade</code>, g/mg/kg e ml/L são convertidos para a unidade do produto. Quantidade <code>q.b.</code> vira “a gosto” na observação. A importação é feita por completo ou não é feita.</p>
+      <p>Produtos e fases são buscados pelo nome (sem diferenciar maiúsculas e acentos). A ficha precisa ser de um produto intermediário ou final já cadastrado; fases que não existem são criadas e produtos que já têm ficha são ignorados. Em <code>unidade</code>, g/mg/kg e ml/L são convertidos para a unidade do produto. Quantidade <code>q.b.</code> vira “a gosto” na observação. A importação é feita por completo ou não é feita.</p>
       <button className="text-button" type="button" onClick={baixarModelo}>Baixar modelo CSV →</button>
       <label>Arquivo CSV<input type="file" accept=".csv,text/csv" onChange={(event) => void selecionar(event.target.files?.[0])} /></label>
       {arquivo && fichas.length > 0 && <>

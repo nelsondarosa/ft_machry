@@ -121,13 +121,17 @@ O arquivo tem **uma linha por componente**; as linhas com o mesmo valor em `fich
 | `quantidade` | número (vírgula ou ponto); `q.b.` ou vazio vira "A gosto (q.b.)" na observação |
 | `unidade` | opcional; `mg`/`g`/`kg` e `ml`/`L` são convertidos para a unidade do produto |
 
-Produtos e fases são buscados pelo nome, sem diferenciar maiúsculas, acentos e espaços. Um nome que corresponda a mais de um produto (ex.: o mesmo item refrigerado e congelado) gera erro.
+Produtos e fases são buscados pelo nome, sem diferenciar maiúsculas, acentos e espaços. Um nome que corresponda a mais de um produto (ex.: o mesmo item refrigerado e congelado) gera erro. Produtos que já têm ficha técnica são ignorados (e listados no aviso final), então arquivos com receitas em comum podem ser importados em sequência; a mesma ficha repetida dentro de um arquivo gera erro.
 
-Exemplo da Aula 4 (cortes e cocções de batatas), em ordem de importação:
+Cada ficha de exemplo termina com linhas só de `observacao`: o código e a origem da receita, o modo de preparo e “Ajustes da importação: …”, que registra as diferenças em relação à ficha original (unidades convertidas, como 2 dentes de alho ≈ 10 g, e valores estimados, como rendimentos e tempos das fases). Uma linha com apenas `ficha` e `observacao` é válida para esse fim.
 
-1. [`docs/exemplos/produtos_machry.csv`](docs/exemplos/produtos_machry.csv): catálogo de insumos.
-2. [`docs/exemplos/produtos_aula4.csv`](docs/exemplos/produtos_aula4.csv): hortifrúti, ovo e louro que faltam no catálogo, e os preparos da aula (fundo de legumes, batata parmentier, gratin, potage, purê e duchesse).
-3. [`docs/exemplos/fichas_aula4.csv`](docs/exemplos/fichas_aula4.csv): as fichas FT 08 a FT 11 e os intermediários. A ficha do fundo de legumes é estimada (o material da aula não a traz); rendimentos e tempos das fases também são estimativas. A nata, pesada em g na receita, foi lançada em ml porque está cadastrada em L. Cada ficha termina com uma linha só de `observacao` (“Ajustes da importação: …”) que registra essas diferenças em relação à ficha original. Uma linha com apenas `ficha` e `observacao` é válida para esse fim.
+Exemplos, em ordem de importação (os de produtos pela página **Produtos**, os de fichas pela página **Fichas técnicas**):
+
+1. [`produtos_machry.csv`](docs/exemplos/produtos_machry.csv): catálogo de insumos.
+2. [`produtos_apostila_ft01-10.csv`](docs/exemplos/produtos_apostila_ft01-10.csv) e [`fichas_apostila_ft01-10.csv`](docs/exemplos/fichas_apostila_ft01-10.csv): as 10 primeiras fichas da Apostila Cozinheiro 2024 (FT 01 fundo de legumes, FT 02 velouté, FT 03 bouquet garni, FT 04 crispy de couve, FT 05 e FT 06 sopas creme de cenoura e de tomate, FT 07 croûtons, FT 08 gratin, FT 09 potage e FT 10 purê), com o hortifrúti e os preparos que faltam no catálogo. O mirepoix entra como produto intermediário, sem ficha (a apostila só descreve a proporção).
+3. [`produtos_aula4.csv`](docs/exemplos/produtos_aula4.csv) e [`fichas_aula4.csv`](docs/exemplos/fichas_aula4.csv): Aula 4 (batatas). Repete FT 08 a FT 10, que são ignoradas se o passo 2 já foi importado, e acrescenta a batata parmentier e as batatas duchesse (FT 11).
+
+As fichas usam os nomes do catálogo (ex.: “Manteiga” → Manteiga sem sal, “Batatas” → Batata asterix). Nata e creme de leite, pesados em g nas receitas, foram lançados em ml porque estão cadastrados em L.
 
 ## Identidade visual
 

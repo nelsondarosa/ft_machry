@@ -7,6 +7,7 @@ def _produtos(client):
         {"nome": "Leite integral", "tipo": "INSUMO", "unidade_medida": "L"},
         {"nome": "Louro", "tipo": "INSUMO", "unidade_medida": "un"},
         {"nome": "Purê de batata", "tipo": "FINAL", "unidade_medida": "kg"},
+        {"nome": "Gratin", "tipo": "FINAL", "unidade_medida": "kg"},
         {"nome": "Bacalhau", "tipo": "INSUMO", "unidade_medida": "kg", "conservacao": "RESFRIADO"},
         {"nome": "Bacalhau", "tipo": "INSUMO", "unidade_medida": "kg", "conservacao": "CONGELADO"},
     ]
@@ -58,7 +59,7 @@ def test_lote_atomico_e_erros_com_posicao(client):
         ({"produto": "Batata asterix"}, "um insumo não pode possuir ficha técnica"),
     ]
     for extra, erro in casos:
-        outro = {**_ficha(), "produto": "Purê de batata", **extra}
+        outro = {**_ficha(), "produto": "Gratin", **extra}
         r = client.post(URL, json={"fichas": [_ficha(), outro]})
         assert r.status_code == 400, extra
         assert erro in r.get_json()["erro"]
@@ -67,9 +68,17 @@ def test_lote_atomico_e_erros_com_posicao(client):
     assert "Passar na peneira" not in fases  # rollback inclui fases criadas
 
 
-def test_produto_com_ficha_existente(client):
+def test_produto_com_ficha_existente_e_ignorado(client):
     _produtos(client)
     assert client.post(URL, json={"fichas": [_ficha()]}).status_code == 201
     r = client.post(URL, json={"fichas": [_ficha()]})
-    assert r.status_code == 409
-    assert "já possui uma ficha" in r.get_json()["erro"]
+    assert r.status_code == 201
+    assert r.get_json()["total"] == 0 and r.get_json()["ignoradas"] == ["Purê de batata"]
+    assert len(client.get("/api/fichas-tecnicas").get_json()["items"]) == 1
+
+
+def test_ficha_repetida_no_arquivo(client):
+    _produtos(client)
+    r = client.post(URL, json={"fichas": [_ficha(), _ficha()]})
+    assert r.status_code == 400
+    assert "ficha 2 (pure de batata): ficha repetida no arquivo" in r.get_json()["erro"]

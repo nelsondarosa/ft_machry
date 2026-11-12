@@ -85,7 +85,7 @@ export function App() {
   return <><Shell view={view} menuOpen={menuOpen} apiOnline={!loadError} usuario={usuario} onNavigate={navigate} onMenuToggle={() => setMenuOpen((open) => !open)} onLogout={() => void logout()}>{page}</Shell>
     {productModal && <ProductModal produto={productModal === 'new' ? null : productModal} onClose={() => setProductModal(null)} onSaved={() => void mutationDone('Produto salvo com sucesso.')} onDeleted={() => void mutationDone('Produto excluído.')} />}
     {importModal && <ProductImportModal onClose={() => setImportModal(false)} onSaved={(total, ignorados) => void mutationDone(`${total} produto(s) importado(s).${ignorados.length ? ` ${ignorados.length} já cadastrado(s) foram ignorados.` : ''}`)} />}
-    {sheetImportModal && <SheetImportModal onClose={() => setSheetImportModal(false)} onSaved={(total, fasesCriadas) => void mutationDone(`${total} ficha(s) importada(s).${fasesCriadas.length ? ` Fases criadas: ${fasesCriadas.join(', ')}.` : ''}`)} />}
+    {sheetImportModal && <SheetImportModal onClose={() => setSheetImportModal(false)} onSaved={(total, fasesCriadas, ignoradas) => void mutationDone(`${total} ficha(s) importada(s).${fasesCriadas.length ? ` Fases criadas: ${fasesCriadas.join(', ')}.` : ''}${ignoradas.length ? ` Já tinham ficha: ${ignoradas.join(', ')}.` : ''}`)} />}
     {sheetModal && <SheetModal ficha={sheetModal === 'new' ? null : sheetModal} produtos={produtos} catalogoFases={fases} onClose={() => setSheetModal(null)} onSaved={() => void mutationDone('Ficha técnica salva com sucesso.')} onDeleted={() => void mutationDone('Ficha técnica excluída.')} />}
     {toast && <div className={`toast show ${toast.error ? 'error' : ''}`}>{toast.text}</div>}
   </>

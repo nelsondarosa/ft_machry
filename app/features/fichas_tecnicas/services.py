@@ -58,11 +58,13 @@ class FichaTecnicaService:
             ficha_id = ficha.id
         return self.obter(ficha_id)
 
-    def criar_lote(self, dados: FichaLoteInput) -> tuple[list[FichaTecnica], list[str]]:
+    def criar_lote(self, dados: FichaLoteInput) -> tuple[list[FichaTecnica], list[str], list[str]]:
         """Cria várias fichas referenciando produtos e fases pelo nome; tudo ou nada.
 
         Fases ausentes do catálogo são criadas. Componentes sem quantidade ("a gosto")
-        não entram na ficha e são listados na observação.
+        não entram na ficha e são listados na observação. Produtos que já possuem
+        ficha são ignorados, para que arquivos com receitas em comum possam ser
+        importados em sequência. Devolve (fichas criadas, fases criadas, ignoradas).
         """
         itens: list[FichaLoteItem] = []
         for posicao, bruto in enumerate(dados.fichas, start=1):
@@ -87,10 +89,16 @@ class FichaTecnicaService:
                     raise ValueError(f"nome '{nome}' corresponde a mais de um produto; renomeie para diferenciar")
                 return encontrados[0]
 
-            fichas_ids = []
+            fichas_ids, ignoradas, produtos_no_lote = [], [], set()
             for posicao, item in enumerate(itens, start=1):
                 try:
                     produto = buscar_produto(item.produto)
+                    if produto.id in produtos_no_lote:
+                        raise ValueError("ficha repetida no arquivo")
+                    produtos_no_lote.add(produto.id)
+                    if self.repository.ficha_do_produto(produto.id) is not None:
+                        ignoradas.append(produto.nome)
+                        continue
                     fases_entrada = []
                     for fase in item.fases:
                         chave = normalizar_nome(fase.fase)
@@ -123,7 +131,7 @@ class FichaTecnicaService:
                     fichas_ids.append(ficha.id)
                 except (ValueError, Conflito) as exc:
                     raise type(exc)(f"ficha {posicao} ({item.produto}): {exc}") from exc
-        return [self.obter(ficha_id) for ficha_id in fichas_ids], fases_criadas
+        return [self.obter(ficha_id) for ficha_id in fichas_ids], fases_criadas, ignoradas
 
     def atualizar(self, ficha_id: int, dados: FichaTecnicaInput) -> FichaTecnica:
         with self.repository.transacao():
