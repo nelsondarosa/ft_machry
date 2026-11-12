@@ -1,0 +1,367 @@
+﻿nome;tipo;unidade_medida;subdivisao;conservacao;validade_obrigatoria;validade_padrao_dias
+Amaretto;INSUMO;L;Bebidas;SECO;1;365
+Cachaça;INSUMO;L;Bebidas;SECO;1;365
+Cerveja;INSUMO;L;Bebidas;SECO;1;365
+Cointreau;INSUMO;L;Bebidas;SECO;1;365
+Conhaque;INSUMO;L;Bebidas;SECO;1;365
+Gin;INSUMO;L;Bebidas;SECO;1;365
+Licor de bergamota;INSUMO;L;Bebidas;SECO;1;365
+Licor de café;INSUMO;L;Bebidas;SECO;1;365
+Licor de menta;INSUMO;L;Bebidas;SECO;1;365
+Rum cristal;INSUMO;L;Bebidas;SECO;1;365
+Rum ouro;INSUMO;L;Bebidas;SECO;1;365
+Saquê mirin;INSUMO;L;Bebidas;SECO;1;365
+Suco de maracujá;INSUMO;L;Bebidas;SECO;1;365
+Vinho branco;INSUMO;L;Bebidas;SECO;1;365
+Vinho de Jerez;INSUMO;L;Bebidas;SECO;1;365
+Vinho do Porto;INSUMO;L;Bebidas;SECO;1;365
+Vinho tinto;INSUMO;L;Bebidas;SECO;1;365
+Blossoms ao leite;INSUMO;kg;Chocolates;SECO;1;180
+Cacau black;INSUMO;kg;Chocolates;SECO;1;180
+Chocolate 40%;INSUMO;kg;Chocolates;SECO;1;180
+Chocolate 70%;INSUMO;kg;Chocolates;SECO;1;180
+Chocolate 70,5%;INSUMO;kg;Chocolates;SECO;1;180
+Chocolate ao leite nobre;INSUMO;kg;Chocolates;SECO;1;180
+Chocolate branco nobre;INSUMO;kg;Chocolates;SECO;1;180
+Chocolate cobertura ao leite;INSUMO;kg;Chocolates;SECO;1;180
+Chocolate cobertura branco;INSUMO;kg;Chocolates;SECO;1;180
+Chocolate cobertura meio amargo;INSUMO;kg;Chocolates;SECO;1;180
+Chocolate em pó 100%;INSUMO;kg;Chocolates;SECO;1;180
+Chocolate em pó 33%;INSUMO;kg;Chocolates;SECO;1;180
+Chocolate em pó 50%;INSUMO;kg;Chocolates;SECO;1;180
+Chocolate gotas forneável;INSUMO;kg;Chocolates;SECO;1;180
+Granulé ao leite;INSUMO;kg;Chocolates;SECO;1;180
+Granulé ao meio amargo;INSUMO;kg;Chocolates;SECO;1;180
+Granulé branco;INSUMO;kg;Chocolates;SECO;1;180
+Nibs;INSUMO;kg;Chocolates;SECO;1;180
+Vermicelli ao leite;INSUMO;kg;Chocolates;SECO;1;180
+Vermicelli branco;INSUMO;kg;Chocolates;SECO;1;180
+Bacalhau;INSUMO;kg;Congelados;CONGELADO;1;90
+Biscoito;INTERMEDIARIO;kg;Congelados;CONGELADO;1;90
+Camarão;INSUMO;kg;Congelados;CONGELADO;1;90
+Camarão 7 barbas;INSUMO;kg;Congelados;CONGELADO;1;90
+Carne moída;INSUMO;kg;Congelados;CONGELADO;1;90
+Carne suína;INSUMO;kg;Congelados;CONGELADO;1;90
+Casca de camarão;INSUMO;kg;Congelados;CONGELADO;1;90
+Charque;INSUMO;kg;Congelados;CONGELADO;1;90
+Costela;INSUMO;kg;Congelados;CONGELADO;1;90
+Costela bovina;INSUMO;kg;Congelados;CONGELADO;1;90
+Costela suína;INSUMO;kg;Congelados;CONGELADO;1;90
+Coxa e sobrecoxa de pato;INSUMO;kg;Congelados;CONGELADO;1;90
+Coxas de frango;INSUMO;kg;Congelados;CONGELADO;1;90
+Croqueta;INTERMEDIARIO;un;Congelados;CONGELADO;1;90
+Croqueta de frango;INTERMEDIARIO;un;Congelados;CONGELADO;1;90
+Empada;INTERMEDIARIO;un;Congelados;CONGELADO;1;90
+Ervilha congelada;INSUMO;kg;Congelados;CONGELADO;1;90
+Feijão;INTERMEDIARIO;kg;Congelados;CONGELADO;1;90
+Filé-mignon;INSUMO;kg;Congelados;CONGELADO;1;90
+Frango inteiro;INSUMO;un;Congelados;CONGELADO;1;90
+Galeto;INSUMO;un;Congelados;CONGELADO;1;90
+Linguado;INSUMO;kg;Congelados;CONGELADO;1;90
+Linguiça calabresa;INSUMO;kg;Congelados;CONGELADO;1;90
+Linguiça mista;INSUMO;kg;Congelados;CONGELADO;1;90
+Linguiça moída;INSUMO;kg;Congelados;CONGELADO;1;90
+Massa filo;INSUMO;pct;Congelados;CONGELADO;1;90
+Massa folhada;INSUMO;pct;Congelados;CONGELADO;1;90
+Matambre;INSUMO;kg;Congelados;CONGELADO;1;90
+Matambre suíno;INSUMO;kg;Congelados;CONGELADO;1;90
+Mexilhões;INSUMO;kg;Congelados;CONGELADO;1;90
+Morango;INSUMO;kg;Congelados;CONGELADO;1;90
+Paleta de ovelha sem osso;INSUMO;kg;Congelados;CONGELADO;1;90
+Partes para feijoada;INSUMO;kg;Congelados;CONGELADO;1;90
+Patê en croûte;INTERMEDIARIO;kg;Congelados;CONGELADO;1;90
+Peito de frango;INSUMO;kg;Congelados;CONGELADO;1;90
+Peito de frango com osso;INSUMO;kg;Congelados;CONGELADO;1;90
+Peito de pato;INSUMO;kg;Congelados;CONGELADO;1;90
+Pés de frango;INSUMO;kg;Congelados;CONGELADO;1;90
+Polvo;INSUMO;kg;Congelados;CONGELADO;1;90
+Queijo mussarela;INSUMO;kg;Congelados;CONGELADO;1;90
+Salmão curado;INSUMO;kg;Congelados;CONGELADO;1;90
+Salmão defumado;INSUMO;kg;Congelados;CONGELADO;1;90
+Sorvete;INSUMO;kg;Congelados;CONGELADO;1;90
+Tainha;INSUMO;kg;Congelados;CONGELADO;1;90
+Uva verde;INSUMO;kg;Congelados;CONGELADO;1;90
+Atum sólido;INSUMO;kg;Conservas;SECO;1;365
+Azeitona preta fatiada;INSUMO;kg;Conservas;SECO;1;365
+Molho Sriracha;INSUMO;L;Conservas;SECO;1;365
+Molho Tabasco;INSUMO;L;Conservas;SECO;1;365
+Mostarda Dijon em grãos;INSUMO;kg;Conservas;SECO;1;365
+Pepino em conserva;INSUMO;kg;Conservas;SECO;1;365
+Picles variados;INSUMO;kg;Conservas;SECO;1;365
+Sardinha;INSUMO;kg;Conservas;SECO;1;365
+Seleta com atum;INSUMO;kg;Conservas;SECO;1;365
+Abacaxi em calda;INSUMO;kg;Enlatados;SECO;1;365
+Açúcar de baunilha;INSUMO;kg;Enlatados;SECO;1;365
+Ágar-ágar;INSUMO;kg;Enlatados;SECO;1;365
+Ameixa preta sem caroço;INSUMO;kg;Enlatados;SECO;1;365
+Amêndoas inteiras;INSUMO;kg;Enlatados;SECO;1;365
+Amêndoas laminadas;INSUMO;kg;Enlatados;SECO;1;365
+Amendoim;INSUMO;kg;Enlatados;SECO;1;365
+Avelãs;INSUMO;kg;Enlatados;SECO;1;365
+Baunilha em fava;INSUMO;un;Enlatados;SECO;1;365
+Bicarbonato de sódio;INSUMO;kg;Enlatados;SECO;1;365
+Bombom Sonho de Valsa;INSUMO;un;Enlatados;SECO;1;365
+Café solúvel;INSUMO;kg;Enlatados;SECO;1;365
+Castanha de caju;INSUMO;kg;Enlatados;SECO;1;365
+Castanha de caju crua;INSUMO;kg;Enlatados;SECO;1;365
+Castanha de caju triturada;INSUMO;kg;Enlatados;SECO;1;365
+Castanha-do-pará;INSUMO;kg;Enlatados;SECO;1;365
+Chantilly;INSUMO;kg;Enlatados;SECO;1;365
+CMC;INSUMO;kg;Enlatados;SECO;1;365
+Coco em flocos;INSUMO;kg;Enlatados;SECO;1;365
+Coco em flocos queimado;INSUMO;kg;Enlatados;SECO;1;365
+Coco ralado;INSUMO;kg;Enlatados;SECO;1;365
+Cremor tártaro;INSUMO;kg;Enlatados;SECO;1;365
+Doce de leite;INSUMO;kg;Enlatados;SECO;1;365
+Emustab;INSUMO;kg;Enlatados;SECO;1;365
+Ervilha em lata;INSUMO;kg;Enlatados;SECO;1;365
+Essência de amêndoas;INSUMO;L;Enlatados;SECO;1;365
+Essência de baunilha;INSUMO;L;Enlatados;SECO;1;365
+Essência de laranja;INSUMO;L;Enlatados;SECO;1;365
+Extrato de tomate;INSUMO;kg;Enlatados;SECO;1;365
+Fermento biológico;INSUMO;kg;Enlatados;SECO;1;365
+Fermento biológico para massas doces;INSUMO;kg;Enlatados;SECO;1;365
+Fermento químico;INSUMO;kg;Enlatados;SECO;1;365
+Funghi seco;INSUMO;kg;Enlatados;SECO;1;365
+Gelatina em pó;INSUMO;kg;Enlatados;SECO;1;365
+Gelatina folha;INSUMO;pct;Enlatados;SECO;1;365
+Geleia de figo;INSUMO;kg;Enlatados;SECO;1;365
+Glacê real;INSUMO;kg;Enlatados;SECO;1;365
+Glucose;INSUMO;kg;Enlatados;SECO;1;365
+Pasta de baunilha;INSUMO;kg;Enlatados;SECO;1;365
+Açúcar branco;INSUMO;kg;Farináceos;SECO;1;180
+Açúcar confeiteiro;INSUMO;kg;Farináceos;SECO;1;180
+Açúcar cristal;INSUMO;kg;Farináceos;SECO;1;180
+Açúcar demerara;INSUMO;kg;Farináceos;SECO;1;180
+Açúcar gelado;INSUMO;kg;Farináceos;SECO;1;180
+Açúcar impalpável;INSUMO;kg;Farináceos;SECO;1;180
+Açúcar mascavo;INSUMO;kg;Farináceos;SECO;1;180
+Amido;INSUMO;kg;Farináceos;SECO;1;180
+Arroz arbóreo;INSUMO;kg;Farináceos;SECO;1;180
+Arroz basmati;INSUMO;kg;Farináceos;SECO;1;180
+Arroz branco;INSUMO;kg;Farináceos;SECO;1;180
+Arroz carnaroli;INSUMO;kg;Farináceos;SECO;1;180
+Arroz cateto;INSUMO;kg;Farináceos;SECO;1;180
+Arroz cateto integral;INSUMO;kg;Farináceos;SECO;1;180
+Arroz integral;INSUMO;kg;Farináceos;SECO;1;180
+Arroz japonês;INSUMO;kg;Farináceos;SECO;1;180
+Arroz jasmim;INSUMO;kg;Farináceos;SECO;1;180
+Arroz negro;INSUMO;kg;Farináceos;SECO;1;180
+Aveia em flocos;INSUMO;kg;Farináceos;SECO;1;180
+Aveia flocos finos;INSUMO;kg;Farináceos;SECO;1;180
+Batata palha;INSUMO;kg;Farináceos;SECO;1;180
+Canjica branca;INSUMO;kg;Farináceos;SECO;1;180
+Canjica de trigo;INSUMO;kg;Farináceos;SECO;1;180
+Canjiquinha;INSUMO;kg;Farináceos;SECO;1;180
+Chia;INSUMO;kg;Farináceos;SECO;1;180
+Cuscuz marroquino;INSUMO;kg;Farináceos;SECO;1;180
+Farinha de amêndoas;INSUMO;kg;Farináceos;SECO;1;180
+Farinha de arroz;INSUMO;kg;Farináceos;SECO;1;180
+Farinha de linhaça;INSUMO;kg;Farináceos;SECO;1;180
+Farinha de mandioca;INSUMO;kg;Farináceos;SECO;1;180
+Farinha de milho fina;INSUMO;kg;Farináceos;SECO;1;180
+Farinha de milho flocão;INSUMO;kg;Farináceos;SECO;1;180
+Farinha de milho grossa;INSUMO;kg;Farináceos;SECO;1;180
+Farinha de milho média;INSUMO;kg;Farináceos;SECO;1;180
+Farinha de soja;INSUMO;kg;Farináceos;SECO;1;180
+Farinha de trigo 00;INSUMO;kg;Farináceos;SECO;1;180
+Farinha de trigo integral;INSUMO;kg;Farináceos;SECO;1;180
+Farinha de trigo tipo 1;INSUMO;kg;Farináceos;SECO;1;180
+Farinha panko;INSUMO;kg;Farináceos;SECO;1;180
+Feijão fradinho;INSUMO;kg;Farináceos;SECO;1;180
+Feijão preto;INSUMO;kg;Farináceos;SECO;1;180
+Feijão vermelho;INSUMO;kg;Farináceos;SECO;1;180
+Gergelim branco;INSUMO;kg;Farináceos;SECO;1;180
+Gergelim preto;INSUMO;kg;Farináceos;SECO;1;180
+Goma de tapioca;INSUMO;kg;Farináceos;SECO;1;180
+Grão-de-bico;INSUMO;kg;Farináceos;SECO;1;180
+Lentilha;INSUMO;kg;Farináceos;SECO;1;180
+Massa de lasanha;INSUMO;pct;Farináceos;SECO;1;180
+Massa rigatoni;INSUMO;kg;Farináceos;SECO;1;180
+Massa spaghetti com ovos;INSUMO;kg;Farináceos;SECO;1;180
+Massa spaghetti de sêmola;INSUMO;kg;Farináceos;SECO;1;180
+Massa spaghetti nero;INSUMO;kg;Farináceos;SECO;1;180
+Polvilho azedo;INSUMO;kg;Farináceos;SECO;1;180
+Polvilho doce;INSUMO;kg;Farináceos;SECO;1;180
+Proteína de soja;INSUMO;kg;Farináceos;SECO;1;180
+Psyllium;INSUMO;kg;Farináceos;SECO;1;180
+Sal fino;INSUMO;kg;Farináceos;SECO;1;180
+Sal grosso;INSUMO;kg;Farináceos;SECO;1;180
+Sal parrilla;INSUMO;kg;Farináceos;SECO;1;180
+Sal parrilla temperado;INSUMO;kg;Farináceos;SECO;1;180
+Semolina;INSUMO;kg;Farináceos;SECO;1;180
+Tapioca granulada;INSUMO;kg;Farináceos;SECO;1;180
+Trigo para kibe;INSUMO;kg;Farináceos;SECO;1;180
+Goiabada mole;INSUMO;kg;Oleaginosas;SECO;1;180
+Goma xantana;INSUMO;kg;Oleaginosas;SECO;1;180
+Granulado;INSUMO;kg;Oleaginosas;SECO;1;180
+Isomalte;INSUMO;kg;Oleaginosas;SECO;1;180
+Leite condensado;INSUMO;kg;Oleaginosas;SECO;1;180
+Leite em pó;INSUMO;kg;Oleaginosas;SECO;1;180
+Leite integral;INSUMO;L;Oleaginosas;SECO;1;180
+Levedura nutricional;INSUMO;kg;Oleaginosas;SECO;1;180
+Manteiga de cacau;INSUMO;kg;Oleaginosas;SECO;1;180
+Manteiga de garrafa;INSUMO;kg;Oleaginosas;SECO;1;180
+Massa elástica;INSUMO;kg;Oleaginosas;SECO;1;180
+Mel;INSUMO;kg;Oleaginosas;SECO;1;180
+Melado;INSUMO;kg;Oleaginosas;SECO;1;180
+Milho de pipoca;INSUMO;kg;Oleaginosas;SECO;1;180
+Alcaparras;INSUMO;kg;Refrigerados;RESFRIADO;1;30
+Amora;INSUMO;kg;Refrigerados;RESFRIADO;1;30
+Anchovas;INSUMO;kg;Refrigerados;RESFRIADO;1;30
+Azeite de dendê;INSUMO;L;Refrigerados;RESFRIADO;1;30
+Azeitona verde;INSUMO;kg;Refrigerados;RESFRIADO;1;30
+Bacalhau;INSUMO;kg;Refrigerados;RESFRIADO;1;30
+Bacon;INSUMO;kg;Refrigerados;RESFRIADO;1;30
+Banha;INSUMO;kg;Refrigerados;RESFRIADO;1;30
+Cereja;INSUMO;kg;Refrigerados;RESFRIADO;1;30
+Chantilly vegetal;INSUMO;kg;Refrigerados;RESFRIADO;1;30
+Cogumelo Paris;INSUMO;kg;Refrigerados;RESFRIADO;1;30
+Cogumelo shiitake;INSUMO;kg;Refrigerados;RESFRIADO;1;30
+Cream cheese;INSUMO;kg;Refrigerados;RESFRIADO;1;30
+Creme de leite fresco;INSUMO;L;Refrigerados;RESFRIADO;1;30
+Damasco;INSUMO;kg;Refrigerados;RESFRIADO;1;30
+Frutas cristalizadas;INSUMO;kg;Refrigerados;RESFRIADO;1;30
+Gema pasteurizada;INSUMO;kg;Refrigerados;RESFRIADO;1;30
+Goiabada;INSUMO;kg;Refrigerados;RESFRIADO;1;30
+Iogurte;INSUMO;kg;Refrigerados;RESFRIADO;1;30
+Ketchup;INSUMO;kg;Refrigerados;RESFRIADO;1;30
+Leite de coco;INSUMO;L;Refrigerados;RESFRIADO;1;30
+Leite UHT;INSUMO;L;Refrigerados;RESFRIADO;1;30
+Linguiça calabresa;INSUMO;kg;Refrigerados;RESFRIADO;1;30
+Maionese;INSUMO;kg;Refrigerados;RESFRIADO;1;30
+Manteiga com sal;INSUMO;kg;Refrigerados;RESFRIADO;1;30
+Manteiga de coco;INSUMO;kg;Refrigerados;RESFRIADO;1;30
+Manteiga Gradina;INSUMO;kg;Refrigerados;RESFRIADO;1;30
+Manteiga sem sal;INSUMO;kg;Refrigerados;RESFRIADO;1;30
+Milho em conserva;INSUMO;kg;Refrigerados;RESFRIADO;1;30
+Mini cenoura;INSUMO;kg;Refrigerados;RESFRIADO;1;30
+Molho de pimenta;INSUMO;L;Refrigerados;RESFRIADO;1;30
+Nata;INSUMO;L;Refrigerados;RESFRIADO;1;30
+Óleo de coco;INSUMO;L;Refrigerados;RESFRIADO;1;30
+Paleta defumada;INSUMO;kg;Refrigerados;RESFRIADO;1;30
+Palmito;INSUMO;kg;Refrigerados;RESFRIADO;1;30
+Pão baguete;INSUMO;un;Refrigerados;RESFRIADO;1;30
+Pão de forma;INSUMO;pct;Refrigerados;RESFRIADO;1;30
+Passas de uva branca;INSUMO;kg;Refrigerados;RESFRIADO;1;30
+Pimenta biquinho;INSUMO;kg;Refrigerados;RESFRIADO;1;30
+Polpa de butiá;INSUMO;kg;Refrigerados;RESFRIADO;1;30
+Presunto fatiado;INSUMO;kg;Refrigerados;RESFRIADO;1;30
+Presunto peça;INSUMO;kg;Refrigerados;RESFRIADO;1;30
+Queijo coalho;INSUMO;kg;Refrigerados;RESFRIADO;1;30
+Queijo colonial;INSUMO;kg;Refrigerados;RESFRIADO;1;30
+Queijo de cabra;INSUMO;kg;Refrigerados;RESFRIADO;1;30
+Queijo gorgonzola;INSUMO;kg;Refrigerados;RESFRIADO;1;30
+Queijo gruyère;INSUMO;kg;Refrigerados;RESFRIADO;1;30
+Queijo minas padrão;INSUMO;kg;Refrigerados;RESFRIADO;1;30
+Queijo mussarela fatiada;INSUMO;kg;Refrigerados;RESFRIADO;1;30
+Queijo mussarela peça;INSUMO;kg;Refrigerados;RESFRIADO;1;30
+Queijo parmesão;INSUMO;kg;Refrigerados;RESFRIADO;1;30
+Queijo pecorino;INSUMO;kg;Refrigerados;RESFRIADO;1;30
+Queijo provolone;INSUMO;kg;Refrigerados;RESFRIADO;1;30
+Queijo ricota;INSUMO;kg;Refrigerados;RESFRIADO;1;30
+Requeijão;INSUMO;kg;Refrigerados;RESFRIADO;1;30
+Suco natural;INSUMO;L;Refrigerados;RESFRIADO;1;30
+Tahine;INSUMO;kg;Refrigerados;RESFRIADO;1;30
+Tâmara;INSUMO;kg;Refrigerados;RESFRIADO;1;30
+Tinta de lula;INSUMO;L;Refrigerados;RESFRIADO;1;30
+Tofu;INSUMO;kg;Refrigerados;RESFRIADO;1;30
+Tofu defumado;INSUMO;kg;Refrigerados;RESFRIADO;1;30
+Açafrão;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Açafrão pistilo;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Adobo;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Alecrim;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Alho em flocos;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Alho em pó;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Anis-estrelado;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Canela em pau;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Canela em pó;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Cardamomo em grão;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Cardamomo em pó;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Cebola em flocos;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Cebola em pó;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Chimichurri;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Coentro em grão;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Coentro em pó;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Colorau;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Cominho em grão;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Cominho em pó;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Cravo em pó;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Cravo-da-índia;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Cúrcuma;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Curry;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Endro;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Erva-doce;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Ervas de Provence;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Ervas finas;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Estragão;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Flor de sal;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Garam masala;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Gengibre em pó;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Hondashi;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Manjericão;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Mostarda em pó;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Noz-moscada em grão;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Noz-moscada em pó;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Óregano;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Páprica defumada;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Páprica doce;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Páprica picante;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Pimenta caiena;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Pimenta caiena em pó;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Pimenta calabresa;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Pimenta chili;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Pimenta rosa;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Pimenta Sichuan;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Pimenta síria;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Pimenta-branca em grão;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Pimenta-branca em pó;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Pimenta-da-jamaica em grão;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Pimenta-da-jamaica em pó;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Pimenta-do-reino em grão;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Pimenta-do-reino em pó;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Semente de uva em pó;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Zimbro;INSUMO;kg;Temperos e especiarias;SECO;1;365
+Milho em lata;INSUMO;kg;Variados;SECO;1;180
+Molho de tomate;INSUMO;L;Variados;SECO;1;180
+Mostarda à l'ancienne;INSUMO;kg;Variados;SECO;1;180
+Mostarda amarela;INSUMO;kg;Variados;SECO;1;180
+Mostarda Dijon;INSUMO;kg;Variados;SECO;1;180
+Mostarda escura;INSUMO;kg;Variados;SECO;1;180
+Nesquik;INSUMO;kg;Variados;SECO;1;180
+Nozes;INSUMO;kg;Variados;SECO;1;180
+Nozes trituradas;INSUMO;kg;Variados;SECO;1;180
+Nutella;INSUMO;kg;Variados;SECO;1;180
+Ovomaltine em pó;INSUMO;kg;Variados;SECO;1;180
+Passas de uva preta;INSUMO;kg;Variados;SECO;1;180
+Pasta americana;INSUMO;kg;Variados;SECO;1;180
+Pasta de pistache;INSUMO;kg;Variados;SECO;1;180
+Pectina;INSUMO;kg;Variados;SECO;1;180
+Pistache;INSUMO;kg;Variados;SECO;1;180
+Quinoa;INSUMO;kg;Variados;SECO;1;180
+Sagu;INSUMO;kg;Variados;SECO;1;180
+Sal amoníaco;INSUMO;kg;Variados;SECO;1;180
+Semente de abóbora;INSUMO;kg;Variados;SECO;1;180
+Tomate pelati;INSUMO;kg;Variados;SECO;1;180
+Tomate seco;INSUMO;kg;Variados;SECO;1;180
+Aceto balsâmico;INSUMO;L;Vinagres e óleos;SECO;1;365
+Água de flor de laranjeira;INSUMO;L;Vinagres e óleos;SECO;1;365
+Água de rosas;INSUMO;L;Vinagres e óleos;SECO;1;365
+Azeite de oliva;INSUMO;L;Vinagres e óleos;SECO;1;365
+Azeite trufado;INSUMO;L;Vinagres e óleos;SECO;1;365
+Creme balsâmico;INSUMO;L;Vinagres e óleos;SECO;1;365
+Fumaça líquida;INSUMO;L;Vinagres e óleos;SECO;1;365
+Molho de ostras;INSUMO;L;Vinagres e óleos;SECO;1;365
+Molho inglês;INSUMO;L;Vinagres e óleos;SECO;1;365
+Óleo de algodão;INSUMO;L;Vinagres e óleos;SECO;1;365
+Óleo de gergelim;INSUMO;L;Vinagres e óleos;SECO;1;365
+Óleo de girassol;INSUMO;L;Vinagres e óleos;SECO;1;365
+Óleo de soja;INSUMO;L;Vinagres e óleos;SECO;1;365
+Shoyu;INSUMO;L;Vinagres e óleos;SECO;1;365
+Vinagre balsâmico;INSUMO;L;Vinagres e óleos;SECO;1;365
+Vinagre branco;INSUMO;L;Vinagres e óleos;SECO;1;365
+Vinagre de arroz;INSUMO;L;Vinagres e óleos;SECO;1;365
+Vinagre de cana;INSUMO;L;Vinagres e óleos;SECO;1;365
+Vinagre de maçã;INSUMO;L;Vinagres e óleos;SECO;1;365
+Vinagre de vinho branco;INSUMO;L;Vinagres e óleos;SECO;1;365
+Vinagre de vinho tinto;INSUMO;L;Vinagres e óleos;SECO;1;365

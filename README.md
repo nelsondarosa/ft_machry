@@ -4,7 +4,7 @@ Sistema de operação para restaurante, com API Flask, frontend React com Vite e
 
 ## Funcionalidades atuais
 
-- Catálogo de insumos, produtos intermediários e produtos finais.
+- Catálogo de insumos, produtos intermediários e produtos finais, com importação em lote via CSV.
 - Fichas técnicas com rendimento, fases ordenadas e componentes.
 - Validações de domínio recuperadas do projeto anterior.
 - Lotes, localizações, movimentações e sugestão de saída por FEFO.
@@ -86,6 +86,24 @@ Para validar a compilação:
 pnpm exec tsc --noEmit
 pnpm build
 ```
+
+## Importação de produtos via CSV
+
+Na página **Produtos**, o botão **Importar CSV** cadastra vários produtos de uma vez. A tela mostra uma prévia com os erros de cada linha antes de enviar, e a importação é tudo ou nada (limite de 500 produtos por arquivo). O mesmo recurso está disponível na API em `POST /api/produtos/lote`.
+
+Colunas (separador `;` ou `,`, UTF-8):
+
+| Coluna | Obrigatória | Valores |
+|---|---|---|
+| `nome` | sim | até 150 caracteres |
+| `tipo` | sim | `INSUMO`, `INTERMEDIARIO` ou `FINAL` |
+| `unidade_medida` | sim | ex.: `kg`, `g`, `L`, `ml`, `un`, `pct`, `cx` |
+| `subdivisao` | não | categoria ou variação, usada no filtro da tela |
+| `conservacao` | não | `SECO` (padrão), `RESFRIADO` ou `CONGELADO` |
+| `validade_obrigatoria` | não | `1`/`sim` ou `0`/`não` (padrão) |
+| `validade_padrao_dias` | não | número inteiro de dias |
+
+Exemplo completo: [`docs/exemplos/produtos_machry.csv`](docs/exemplos/produtos_machry.csv), com 366 insumos do estoque do Machry gerados a partir das planilhas de validade. Unidades e prazos de validade desse arquivo são estimativas por categoria; revise antes de usar em produção.
 
 ## Identidade visual
 
