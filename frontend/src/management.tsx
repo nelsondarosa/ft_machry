@@ -1,0 +1,51 @@
+import { useEffect, useMemo, useState, type FormEvent } from 'react'
+import { api, apiListAll } from './api'
+import { PageHeading, Pagination, SearchSelect } from './components'
+import type { Localizacao, Lote, Produto, Usuario } from './types'
+
+type Movimento = {id:number;tipo:string;lote_id:number;lote_destino_id:number|null;quantidade:number;quantidade_destino:number|null;motivo:string|null;usuario_id:number;observacao:string|null;criado_em:string}
+const dateTime = (value:string) => new Date(value).toLocaleString('pt-BR')
+const errorMessage = (reason:unknown) => reason instanceof Error ? reason.message : 'Falha ao salvar.'
+
+export function HistoryPage({lotes, produtos, reload}: {lotes:Lote[];produtos:Produto[];reload:()=>void}) {
+  const [items,setItems] = useState<Movimento[]>([])
+  const [error,setError] = useState('')
+  const [busy,setBusy] = useState(false)
+  const [lot,setLot] = useState('')
+  const [type,setType] = useState('')
+  const [product,setProduct] = useState('')
+  const [from,setFrom] = useState('')
+  const [to,setTo] = useState('')
+  const [user,setUser] = useState('')
+  const refresh = async () => {setBusy(true);setError('');try {setItems(await apiListAll<Movimento>('/api/estoque/movimentacoes'))}catch(e){setError(errorMessage(e))}finally{setBusy(false)}}
+  useEffect(()=>{void refresh()},[])
+  const byLot = new Map(lotes.map(l=>[l.id,l]))
+  const byProduct = new Map(produtos.map(p=>[p.id,p]))
+  const filtered = useMemo(()=>items.filter(m=>{
+    const l = byLot.get(m.lote_id)
+    return (!lot || m.lote_id===Number(lot)) && (!type || m.tipo===type) && (!user || m.usuario_id===Number(user)) && (!product || l?.produto_id===Number(product)) && (!from || m.criado_em.slice(0,10)>=from) && (!to || m.criado_em.slice(0,10)<=to)
+  }),[items,lot,type,user,product,from,to,lotes])
+  return <><PageHeading eyebrow="RASTREABILIDADE" title="Movimentações" description="Consulte entradas, saídas, ajustes, transferências e transformações. Navegue e filtre o histórico completo de movimentações." action={<button className="secondary" onClick={()=>{void refresh();reload()}} disabled={busy}>Atualizar</button>}/><section className="panel"><div className="filter-grid"><label>Produto<SearchSelect ariaLabel="Produto" value={product} onChange={setProduct} options={[{value:'',label:'Todos'},...produtos.map(p=>({value:String(p.id),label:p.nome}))]}/></label><label>Lote<SearchSelect ariaLabel="Lote" value={lot} onChange={setLot} options={[{value:'',label:'Todos'},...lotes.map(l=>({value:String(l.id),label:`#${l.id} — ${l.produto}`}))]}/></label><label>Tipo<SearchSelect ariaLabel="Tipo" value={type} onChange={setType} options={[{value:'',label:'Todos'},...['ENTRADA','SAIDA','AJUSTE_ENTRADA','AJUSTE_SAIDA','TRANSFERENCIA','TRANSFORMACAO'].map(t=>({value:t,label:t}))]}/></label><label>ID do usuário<input type="number" min="1" value={user} onChange={e=>setUser(e.target.value)} placeholder="Todos"/></label><label>De<input type="date" value={from} onChange={e=>setFrom(e.target.value)}/></label><label>Até<input type="date" value={to} onChange={e=>setTo(e.target.value)}/></label></div>{error&&<p className="form-error">{error}</p>}<p className="helper">{filtered.length} registro(s) exibido(s). Os filtros de data e produto atuam sobre os registros recebidos.</p><div className="table-wrap"><table><thead><tr><th>Data</th><th>Tipo</th><th>Produto</th><th>Origem</th><th>Destino</th><th>Quantidade</th><th>Usuário</th><th>Motivo / observação</th></tr></thead><tbody>{filtered.map(m=><tr key={m.id}><td>{dateTime(m.criado_em)}</td><td>{m.tipo.replaceAll('_',' ')}</td><td>{byProduct.get(byLot.get(m.lote_id)?.produto_id||0)?.nome||'—'}</td><td>#{m.lote_id}</td><td>{m.lote_destino_id ? `#${m.lote_destino_id}`:'—'}</td><td>{m.quantidade}{m.quantidade_destino ? ` → ${m.quantidade_destino}`:''}</td><td>#{m.usuario_id}</td><td>{[m.motivo,m.observacao].filter(Boolean).join(' · ')||'—'}</td></tr>)}</tbody></table></div></section></>
+}
+
+export function LocationsPage({locations,onChanged}:{locations:Localizacao[];onChanged:()=>Promise<void>}){
+ const [editing,setEditing]=useState<Localizacao|null>(null)
+ const [name,setName]=useState('');const [type,setType]=useState<Localizacao['tipo']>('SECO');const [parent,setParent]=useState('');const [error,setError]=useState('');const [busy,setBusy]=useState(false)
+ const start=(l:Localizacao|null)=>{setEditing(l);setName(l?.nome||'');setType(l?.tipo||'SECO');setParent(l?.parent_id?.toString()||'');setError('')}
+ const save=async(e:FormEvent)=>{e.preventDefault();setBusy(true);setError('');try{await api(`/api/estoque/localizacoes${editing?`/${editing.id}`:''}`,{method:editing?'PUT':'POST',body:JSON.stringify({nome:name.trim(),tipo:type,parent_id:parent?Number(parent):null})});await onChanged();start(null)}catch(e){setError(errorMessage(e))}finally{setBusy(false)}}
+ const remove=async(l:Localizacao)=>{if(!window.confirm(`Excluir a localização ${l.nome}?`))return;setError('');try{await api(`/api/estoque/localizacoes/${l.id}`,{method:'DELETE'});await onChanged();start(null)}catch(e){setError(errorMessage(e))}}
+ return <><PageHeading eyebrow="ORGANIZAÇÃO" title="Localizações" description="Cadastre e organize depósitos, câmaras frias, geladeiras e áreas de armazenamento."/><section className="panel"><h2>{editing?`Editar ${editing.nome}`:'Nova localização'}</h2><form onSubmit={save} className="inline-form"><label>Nome<input required value={name} onChange={e=>setName(e.target.value)}/></label><label>Conservação<SearchSelect ariaLabel="Tipo" value={type} onChange={setType} options={[{value:'SECO',label:'Seco'},{value:'RESFRIADO',label:'Resfriado'},{value:'CONGELADO',label:'Congelado'}]}/></label><label>Localização superior<SearchSelect ariaLabel="Localização superior" value={parent} onChange={setParent} options={[{value:'',label:'Nenhuma'},...locations.filter(l=>l.id!==editing?.id).map(l=>({value:String(l.id),label:l.nome}))]}/></label><button className="primary" disabled={busy||!name.trim()}>{editing?'Salvar alterações':'Criar localização'}</button>{editing&&<button type="button" className="secondary" onClick={()=>start(null)}>Cancelar</button>}</form>{error&&<p className="form-error">{error}</p>}</section><section className="panel"><div className="table-wrap"><table><thead><tr><th>Nome</th><th>Tipo</th><th>Dentro de</th><th>Ações</th></tr></thead><tbody>{locations.map(l=><tr key={l.id}><td><strong>{l.nome}</strong></td><td>{l.tipo}</td><td>{locations.find(p=>p.id===l.parent_id)?.nome||'—'}</td><td><button className="text-button" onClick={()=>start(l)}>Editar</button> · <button className="danger-link" onClick={()=>void remove(l)}>Excluir</button></td></tr>)}</tbody></table></div></section></>
+}
+
+export function UsersPage({current}:{current:Usuario}){
+ const [users,setUsers]=useState<Usuario[]>([]);const [editing,setEditing]=useState<Usuario|null>(null)
+ const [pagina,setPagina]=useState(1);const porPagina=20
+ const paginaAtual=Math.min(pagina,Math.max(1,Math.ceil(users.length/porPagina)))
+ const visiveis=users.slice((paginaAtual-1)*porPagina,paginaAtual*porPagina)
+ const [name,setName]=useState('');const [username,setUsername]=useState('');const [password,setPassword]=useState('');const [role,setRole]=useState<Usuario['papel']>('USER');const [active,setActive]=useState(true);const [error,setError]=useState('');const [busy,setBusy]=useState(false)
+ const refresh=async()=>{try{setUsers(await apiListAll<Usuario>('/api/usuarios'))}catch(e){setError(errorMessage(e))}}
+ useEffect(()=>{void refresh()},[])
+ const start=(u:Usuario|null)=>{setEditing(u);setName(u?.nome||'');setUsername(u?.username||'');setPassword('');setRole(u?.papel||'USER');setActive(u?.ativo!==0);setError('')}
+ const save=async(e:FormEvent)=>{e.preventDefault();setBusy(true);setError('');try{const body=editing?{nome:name.trim(),papel:role,ativo:active?1:0,...(password?{password}:{})}:{nome:name.trim(),username:username.trim(),password,papel:role};await api(`/api/usuarios${editing?`/${editing.id}`:''}`,{method:editing?'PUT':'POST',body:JSON.stringify(body)});await refresh();start(null)}catch(e){setError(errorMessage(e))}finally{setBusy(false)}}
+ return <><PageHeading eyebrow="ADMINISTRAÇÃO" title="Usuários" description="Somente a conta proprietária pode cadastrar, alterar permissões e desativar acessos."/><section className="panel"><h2>{editing?'Editar usuário':'Novo usuário'}</h2><form className="inline-form" onSubmit={save}><label>Nome<input required minLength={2} value={name} onChange={e=>setName(e.target.value)}/></label><label>Login<input required={!editing} disabled={!!editing} minLength={3} value={username} onChange={e=>setUsername(e.target.value)}/></label><label>{editing?'Nova senha (opcional)':'Senha'}<input type="password" required={!editing} minLength={8} value={password} onChange={e=>setPassword(e.target.value)}/></label><label>Perfil<SearchSelect ariaLabel="Perfil" value={role} onChange={setRole} options={[{value:'OWNER',label:'Proprietário'},{value:'ADMIN',label:'Gestor'},{value:'USER',label:'Cozinha'}]}/></label>{editing&&<label>Ativo<SearchSelect ariaLabel="Ativo" value={active?'1':'0'} disabled={editing.id===current.id} onChange={v=>setActive(v==='1')} options={[{value:'1',label:'Sim'},{value:'0',label:'Não'}]}/></label>}<button className="primary" disabled={busy}>{editing?'Salvar usuário':'Cadastrar'}</button>{editing&&<button type="button" className="secondary" onClick={()=>start(null)}>Cancelar</button>}</form>{error&&<p className="form-error">{error}</p>}</section><section className="panel"><div className="table-wrap"><table><thead><tr><th>Nome</th><th>Login</th><th>Perfil</th><th>Status</th><th></th></tr></thead><tbody>{visiveis.map(u=><tr key={u.id}><td><strong>{u.nome}</strong></td><td>{u.username}</td><td>{u.papel}</td><td>{u.ativo?'Ativo':'Inativo'}</td><td><button className="text-button" onClick={()=>start(u)}>Editar</button></td></tr>)}</tbody></table></div><Pagination page={paginaAtual} perPage={porPagina} total={users.length} label="Paginação de usuários" onChange={setPagina}/></section></>
+}

@@ -1,12 +1,62 @@
 services:
   api:
     build: .
-    ports:
-      - "5000:5000"
+    restart: unless-stopped
     environment:
+      DB_CONNECTION: ${DB_CONNECTION:-sqlite}
       DATABASE_PATH: /app/data/app.db
-      FLASK_DEBUG: "1"
+      DATABASE_URL: ${DATABASE_URL:-}
+      DB_HOST: ${DB_HOST:-postgres}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_DATABASE: ${DB_DATABASE:-ft_machry}
+      DB_USERNAME: ${DB_USERNAME:-machry}
+      DB_PASSWORD: ${DB_PASSWORD:-}
+      SECRET_KEY: ${SECRET_KEY:-machry-desenvolvimento-troque-em-producao}
+      SESSION_COOKIE_SECURE: ${SESSION_COOKIE_SECURE:-0}
+      OWNER_USERNAME: ${OWNER_USERNAME:-dona}
+      OWNER_INITIAL_PASSWORD: ${OWNER_INITIAL_PASSWORD:-Dona@123}
+      MANAGER_USERNAME: ${MANAGER_USERNAME:-gestor}
+      MANAGER_INITIAL_PASSWORD: ${MANAGER_INITIAL_PASSWORD:-Gestor@123}
+      COOK_USERNAME: ${COOK_USERNAME:-cozinha}
+      COOK_INITIAL_PASSWORD: ${COOK_INITIAL_PASSWORD:-Cozinha@123}
+      BRANDING: ${BRANDING:-machry}
     volumes:
       - ./data:/app/data
-      - ./app:/app/app
-      - ./db:/app/db
+      - ./branding:/app/branding:ro
+    ports:
+      - "${API_PORT:-5000}:5000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  frontend:
+    build: ./frontend
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_healthy
+    ports:
+      - "${FRONTEND_PORT:-8080}:80"
+
+  postgres:
+    image: postgres:17-alpine
+    profiles: ["postgres"]
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-ft_machry}
+      POSTGRES_USER: ${DB_USERNAME:-machry}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-machry-local}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-machry} -d ${DB_DATABASE:-ft_machry}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres_data:

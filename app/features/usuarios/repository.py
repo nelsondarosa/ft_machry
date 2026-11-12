@@ -1,0 +1,24 @@
+from app.utils.paginacao import PaginacaoQuery, paginar
+from app.utils.interfaces.repository import RepositorioBase
+from db.database_config import db
+
+from .models import Usuario
+
+
+class UsuarioRepository(RepositorioBase):
+    def listar(self, paginacao: PaginacaoQuery):
+        return paginar(db.select(Usuario).order_by(Usuario.nome, Usuario.id), paginacao)
+
+    def obter(self, usuario_id: int) -> Usuario | None:
+        return db.session.get(Usuario, usuario_id)
+
+    def obter_por_username(self, username: str) -> Usuario | None:
+        return db.session.execute(
+            db.select(Usuario).where(db.func.lower(Usuario.username) == username.lower())
+        ).scalar_one_or_none()
+
+    def inserir(self, dados: dict) -> Usuario:
+        usuario = Usuario(**dados)
+        db.session.add(usuario)
+        db.session.flush()
+        return usuario
