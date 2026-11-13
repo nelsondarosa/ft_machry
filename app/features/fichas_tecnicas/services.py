@@ -1,11 +1,33 @@
-from flask_sqlalchemy.pagination import Pagination
+from decimal import Decimal
 
-from app.utils.errors import Conflito, RegistroNaoEncontrado
+from flask_sqlalchemy.pagination import Pagination
+from pydantic import ValidationError
+
+from app.utils.errors import Conflito, RegistroNaoEncontrado, mensagem_validacao
 from app.utils.paginacao import PaginacaoQuery
+from app.utils.texto import normalizar_nome
 
 from .models import FichaTecnica
 from .repository import FichaTecnicaRepository
-from .schemas import FichaTecnicaInput
+from .schemas import FichaLoteInput, FichaLoteItem, FichaTecnicaInput
+
+# Fatores para a unidade base de cada grandeza (massa em g, volume em ml).
+UNIDADES = {
+    "mg": ("massa", Decimal("0.001")), "g": ("massa", Decimal(1)), "kg": ("massa", Decimal(1000)),
+    "ml": ("volume", Decimal(1)), "l": ("volume", Decimal(1000)),
+}
+
+
+def converter_quantidade(quantidade: Decimal, origem: str | None, destino: str, produto: str) -> Decimal:
+    """Converte a quantidade da unidade informada para a unidade do produto."""
+    if not origem or origem.strip().lower() == destino.strip().lower():
+        return quantidade
+    de, para = UNIDADES.get(origem.strip().lower()), UNIDADES.get(destino.strip().lower())
+    if de is None or para is None or de[0] != para[0]:
+        raise ValueError(
+            f"unidade '{origem}' não pode ser convertida para '{destino}' (unidade de {produto})"
+        )
+    return quantidade * de[1] / para[1]
 
 
 class FichaTecnicaService:
@@ -35,6 +57,81 @@ class FichaTecnicaService:
             self.repository.substituir_conteudo(ficha, dados)
             ficha_id = ficha.id
         return self.obter(ficha_id)
+
+    def criar_lote(self, dados: FichaLoteInput) -> tuple[list[FichaTecnica], list[str], list[str]]:
+        """Cria várias fichas referenciando produtos e fases pelo nome; tudo ou nada.
+
+        Fases ausentes do catálogo são criadas. Componentes sem quantidade ("a gosto")
+        não entram na ficha e são listados na observação. Produtos que já possuem
+        ficha são ignorados, para que arquivos com receitas em comum possam ser
+        importados em sequência. Devolve (fichas criadas, fases criadas, ignoradas).
+        """
+        itens: list[FichaLoteItem] = []
+        for posicao, bruto in enumerate(dados.fichas, start=1):
+            try:
+                itens.append(FichaLoteItem.model_validate(bruto))
+            except ValidationError as exc:
+                campo = ".".join(str(parte) for parte in exc.errors()[0]["loc"])
+                raise ValueError(f"ficha {posicao}: {campo + ': ' if campo else ''}{mensagem_validacao(exc)}") from exc
+
+        with self.repository.transacao():
+            produtos: dict[str, list] = {}
+            for produto in self.repository.produtos_ativos():
+                produtos.setdefault(normalizar_nome(produto.nome), []).append(produto)
+            fases = {normalizar_nome(fase.nome): fase for fase in self.repository.fases_todas()}
+            fases_criadas: list[str] = []
+
+            def buscar_produto(nome: str):
+                encontrados = produtos.get(normalizar_nome(nome), [])
+                if not encontrados:
+                    raise ValueError(f"produto '{nome}' não encontrado")
+                if len(encontrados) > 1:
+                    raise ValueError(f"nome '{nome}' corresponde a mais de um produto; renomeie para diferenciar")
+                return encontrados[0]
+
+            fichas_ids, ignoradas, produtos_no_lote = [], [], set()
+            for posicao, item in enumerate(itens, start=1):
+                try:
+                    produto = buscar_produto(item.produto)
+                    if produto.id in produtos_no_lote:
+                        raise ValueError("ficha repetida no arquivo")
+                    produtos_no_lote.add(produto.id)
+                    if self.repository.ficha_do_produto(produto.id) is not None:
+                        ignoradas.append(produto.nome)
+                        continue
+                    fases_entrada = []
+                    for fase in item.fases:
+                        chave = normalizar_nome(fase.fase)
+                        if chave not in fases:
+                            fases[chave] = self.repository.criar_fase(fase.fase.strip())
+                            fases_criadas.append(fases[chave].nome)
+                        fases_entrada.append({"fase_id": fases[chave].id, "ordem": fase.ordem, "tempo_previsto_min": fase.tempo_previsto_min})
+                    componentes, a_gosto = [], []
+                    for componente in item.componentes:
+                        if componente.quantidade is None:
+                            a_gosto.append(componente.produto.strip())
+                            continue
+                        alvo = buscar_produto(componente.produto)
+                        quantidade = converter_quantidade(componente.quantidade, componente.unidade, alvo.unidade_medida, alvo.nome)
+                        quantidade = quantidade.quantize(Decimal("0.001"))
+                        if quantidade <= 0:
+                            raise ValueError(f"quantidade de '{alvo.nome}' fica zerada em {alvo.unidade_medida}")
+                        componentes.append({"produto_id": alvo.id, "quantidade": quantidade, "fase_ordem": componente.fase_ordem})
+                    observacao = "\n".join(filter(None, [
+                        (item.observacao or "").strip(),
+                        f"A gosto (q.b.): {', '.join(a_gosto)}." if a_gosto else "",
+                    ])) or None
+                    try:
+                        entrada = FichaTecnicaInput(produto_id=produto.id, rendimento=item.rendimento, observacao=observacao, fases=fases_entrada, componentes=componentes)
+                    except ValidationError as exc:
+                        raise ValueError(mensagem_validacao(exc)) from exc
+                    self._validar(entrada)
+                    ficha = self.repository.inserir(produto_id=entrada.produto_id, rendimento=entrada.rendimento, observacao=entrada.observacao)
+                    self.repository.substituir_conteudo(ficha, entrada)
+                    fichas_ids.append(ficha.id)
+                except (ValueError, Conflito) as exc:
+                    raise type(exc)(f"ficha {posicao} ({item.produto}): {exc}") from exc
+        return [self.obter(ficha_id) for ficha_id in fichas_ids], fases_criadas, ignoradas
 
     def atualizar(self, ficha_id: int, dados: FichaTecnicaInput) -> FichaTecnica:
         with self.repository.transacao():

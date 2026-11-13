@@ -1,0 +1,144 @@
+﻿ficha;rendimento;observacao;fase_ordem;fase;tempo_min;componente;quantidade;unidade
+Fundo de legumes;2;;1;Cortar;15;Cebola;300;g
+Fundo de legumes;;;1;;;Cenoura;150;g
+Fundo de legumes;;;1;;;Salsão;75;g
+Fundo de legumes;;;1;;;Alho-poró;75;g
+Fundo de legumes;;;2;Refogar;5;Óleo de girassol;20;ml
+Fundo de legumes;;;3;Cozir;50;Bouquet garni;1;un
+Fundo de legumes;;;4;Resfriar;60;;;
+Fundo de legumes;;FT 01 – Apostila Cozinheiro 2024.;;;;;;
+Fundo de legumes;;Em uma panela alta, aqueça o óleo e adicione o mirepoix.;;;;;;
+Fundo de legumes;;Refogue brevemente e adicione o bouquet garni.;;;;;;
+Fundo de legumes;;Cubra com água fria e espere atingir a fase de fervura branda.;;;;;;
+Fundo de legumes;;Baixe o fogo e cozinhe por 40 a 60 minutos sem deixar ferver.;;;;;;
+Fundo de legumes;;Coe e refrigere o fundo.;;;;;;
+Fundo de legumes;;Após frio, retire a gordura da superfície e está pronto para uso.;;;;;;
+Fundo de legumes;;Ajustes da importação: Água (2 L) não é controlada no estoque e ficou fora dos componentes. Tempos das fases estimados.;;;;;;
+Velouté de legumes;1;;1;Cozir;5;Manteiga sem sal;50;g
+Velouté de legumes;;;1;;;Farinha de trigo tipo 1;50;g
+Velouté de legumes;;;2;Bater/Misturar;15;Fundo de legumes;1;L
+Velouté de legumes;;;;;;Sal fino;q.b.;
+Velouté de legumes;;;;;;Pimenta-do-reino em pó;q.b.;
+Velouté de legumes;;FT 02 – Apostila Cozinheiro 2024.;;;;;;
+Velouté de legumes;;Derreta a manteiga em fogo baixo e logo adicione a farinha de trigo.;;;;;;
+Velouté de legumes;;Mexa até ficar homogêneo e cozinhe em fogo baixo por 2 minutos. Cuide para não dourar o preparo.;;;;;;
+Velouté de legumes;;Adicione aos poucos o fundo de legumes e mexa com um fouet para dissolver o roux. Assim que todo o fundo for adicionado, baixe o fogo e ferva por 10 minutos, mexendo às vezes para não grudar no fundo da panela. Coe se necessário.;;;;;;
+Velouté de legumes;;Devolva à panela o velouté, ajuste o sal e a pimenta e está pronto para uso.;;;;;;
+Velouté de legumes;;Ajustes da importação: “Farinha” lançada como Farinha de trigo tipo 1 e “Manteiga” como Manteiga sem sal. Rendimento estimado.;;;;;;
+Bouquet garni;1;;1;Montar;5;Alho-poró;40;g
+Bouquet garni;;;1;;;Salsa;0,1;un
+Bouquet garni;;;1;;;Salsão;30;g
+Bouquet garni;;;1;;;Tomilho;0,1;un
+Bouquet garni;;;1;;;Pimenta-do-reino em grão;1;g
+Bouquet garni;;;1;;;Alho;5;g
+Bouquet garni;;;1;;;Barbante;0,3;m
+Bouquet garni;;FT 03 – Apostila Cozinheiro 2024.;;;;;;
+Bouquet garni;;Higienizar as folhas de alho-poró e o restante dos insumos.;;;;;;
+Bouquet garni;;Abrir as folhas de alho-poró e dispor os insumos dentro de uma folha de alho-poró.;;;;;;
+Bouquet garni;;Parta ao meio o dente de alho para facilitar a amarração.;;;;;;
+Bouquet garni;;Cubra com a outra folha e amarre o bouquet com o barbante.;;;;;;
+Bouquet garni;;"Ajustes da importação: Original: 2 folhas de alho-poró ≈ 40 g; 1 talo de salsinha ≈ 0,1 maço; 1 talo de salsão ≈ 30 g; 1 ramo de tomilho ≈ 0,1 maço; 5 grãos de pimenta ≈ 1 g; 1 dente de alho ≈ 5 g; barbante 30 cm = 0,3 m.";;;;;;
+Crispy de couve;0,1;;1;Cortar;10;Couve;1;un
+Crispy de couve;;;2;Fritar;10;Óleo de algodão;0,9;L
+Crispy de couve;;;2;;;Sal fino;50;g
+Crispy de couve;;FT 04 – Apostila Cozinheiro 2024.;;;;;;
+Crispy de couve;;Cortar a couve em chiffonade.;;;;;;
+Crispy de couve;;Colocar o óleo em uma panela funda para trabalhar com segurança.;;;;;;
+Crispy de couve;;"Ao colocar a couve, que possui água na sua composição, o óleo subirá; fritar a 170 °C. Assim que parar de borbulhar no óleo, retire e coloque em papel absorvente.";;;;;;
+Crispy de couve;;Coloque sal e está pronta para o uso.;;;;;;
+Crispy de couve;;"Ajustes da importação: Original: couve 1 maço = 1 un; óleo de algodão 1 garrafa ≈ 0,9 L (o mesmo óleo serve os 4 grupos). Rendimento e tempos estimados.";;;;;;
+Sopa creme de cenoura;1,5;;1;Refogar;10;Óleo de girassol;20;ml
+Sopa creme de cenoura;;;1;;;Mirepoix;120;g
+Sopa creme de cenoura;;;2;Cozir;30;Cenoura;500;g
+Sopa creme de cenoura;;;2;;;Velouté de legumes;1;L
+Sopa creme de cenoura;;;2;;;Bouquet garni;1;un
+Sopa creme de cenoura;;;3;Bater/Misturar;10;;;
+Sopa creme de cenoura;;;4;Cozir;5;Creme de leite fresco;120;ml
+Sopa creme de cenoura;;;;;;Sal fino;q.b.;
+Sopa creme de cenoura;;;;;;Pimenta-do-reino em pó;q.b.;
+Sopa creme de cenoura;;FT 05 – Apostila Cozinheiro 2024.;;;;;;
+Sopa creme de cenoura;;Aqueça o óleo e refogue o mirepoix por 10 minutos.;;;;;;
+Sopa creme de cenoura;;Adicione as cenouras e cozinhe por mais 10 minutos até ficarem um pouco macias. Junte o velouté e o bouquet garni.;;;;;;
+Sopa creme de cenoura;;Baixe o fogo e cozinhe o preparo até que tudo esteja macio. Mexa e observe o preparo durante o cozimento. Se necessário, escume. Assim que tudo estiver cozido, retire o bouquet garni.;;;;;;
+Sopa creme de cenoura;;Liquidifique bem o preparo e passe por uma peneira. Retorne o preparo à panela e ferva novamente.;;;;;;
+Sopa creme de cenoura;;Adicione o creme de leite e ajuste o sal e a pimenta.;;;;;;
+Sopa creme de cenoura;;Ajustes da importação: Original: creme de leite fresco 120 g lançado como 120 ml (cadastrado em L). Rendimento e tempos estimados.;;;;;;
+Sopa creme de tomate;1,2;;1;Refogar;10;Manteiga sem sal;20;g
+Sopa creme de tomate;;;1;;;Mirepoix;120;g
+Sopa creme de tomate;;;1;;;Alho;5;g
+Sopa creme de tomate;;;2;Cozir;25;Tomate pelati;230;g
+Sopa creme de tomate;;;2;;;Tomate italiano;120;g
+Sopa creme de tomate;;;2;;;Velouté de legumes;900;ml
+Sopa creme de tomate;;;2;;;Bouquet garni;1;un
+Sopa creme de tomate;;;3;Bater/Misturar;10;;;
+Sopa creme de tomate;;;4;Fritar;10;Bacon;50;g
+Sopa creme de tomate;;;5;Montar;5;Creme de leite fresco;120;ml
+Sopa creme de tomate;;;5;;;Croûtons;60;g
+Sopa creme de tomate;;;;;;Sal fino;q.b.;
+Sopa creme de tomate;;;;;;Pimenta-do-reino em pó;q.b.;
+Sopa creme de tomate;;FT 06 – Apostila Cozinheiro 2024.;;;;;;
+Sopa creme de tomate;;Derreta a manteiga e acrescente o mirepoix. Refogue bem.;;;;;;
+Sopa creme de tomate;;Adicione os tomates pelati e os tomates in natura e cozinhe com tampa fechada até ficarem macios.;;;;;;
+Sopa creme de tomate;;Junte o velouté e o bouquet garni e baixe o fogo, deixe ferver. Mexa frequentemente e escume se necessário.;;;;;;
+Sopa creme de tomate;;Liquidifique bem o preparo e peneire. Retorne à panela e reserve.;;;;;;
+Sopa creme de tomate;;"Corte o bacon em jardineira e, em fogo baixo, separe sua gordura; escorra e reserve.";;;;;;
+Sopa creme de tomate;;Aqueça novamente a sopa, adicione o creme de leite e acerte o sal e a pimenta. Guarneça com o bacon e os croûtons.;;;;;;
+Sopa creme de tomate;;"Ajustes da importação: Original: alho 1 dente ≈ 5 g (sem etapa no modo de preparo; lançado no refogado). Rendimento e tempos estimados.";;;;;;
+Croûtons;0,1;;1;Cortar;5;Pão de forma;0,2;pct
+Croûtons;;;2;Bater/Misturar;5;Azeite de oliva;50;ml
+Croûtons;;;2;;;Alho;5;g
+Croûtons;;;3;Assar;7;;;
+Croûtons;;;;;;Orégano;q.b.;
+Croûtons;;FT 07 – Apostila Cozinheiro 2024.;;;;;;
+Croûtons;;Corte as fatias de pão em cubos de 1 cm x 1 cm e mescle o orégano, o alho ralado e o azeite de oliva.;;;;;;
+Croûtons;;Asse por 7 minutos a 160 °C. Reserve para uso posterior.;;;;;;
+Croûtons;;"Ajustes da importação: Original: pão de sanduíche 4 fatias ≈ 0,2 pacote de pão de forma (~20 fatias); alho 1 dente ≈ 5 g. Rendimento estimado.";;;;;;
+Gratin dauphinois;1,8;;1;Cortar;20;Batata asterix;1,5;kg
+Gratin dauphinois;;;2;Cozir;10;Leite integral;1,2;L
+Gratin dauphinois;;;2;;;Nata;300;ml
+Gratin dauphinois;;;2;;;Alho;10;g
+Gratin dauphinois;;;2;;;Louro;1;un
+Gratin dauphinois;;;3;Montar;15;Manteiga sem sal;100;g
+Gratin dauphinois;;;3;;;Queijo parmesão;50;g
+Gratin dauphinois;;;4;Assar;30;;;
+Gratin dauphinois;;;;;;Sal fino;q.b.;
+Gratin dauphinois;;;;;;Pimenta-do-reino em pó;q.b.;
+Gratin dauphinois;;;;;;Noz-moscada em pó;q.b.;
+Gratin dauphinois;;FT 08 – Apostila Cozinheiro 2024.;;;;;;
+Gratin dauphinois;;Batatas cortadas em anna.;;;;;;
+Gratin dauphinois;;Colocar as batatas para cozinhar com o leite, nata, alho, louro, sal, noz-moscada e pimenta.;;;;;;
+Gratin dauphinois;;Assim que começar a ferver, cozinhar por 8 a 10 minutos. Coe.;;;;;;
+Gratin dauphinois;;Disponha as batatas em uma forma refratária e pincele manteiga entre as camadas.;;;;;;
+Gratin dauphinois;;Ajuste o sal e a pimenta e na última camada cubra com parmesão ralado na hora.;;;;;;
+Gratin dauphinois;;Asse a 180 °C até dourar.;;;;;;
+Gratin dauphinois;;"Ajustes da importação: Original: alho 2 dentes ≈ 10 g; nata 300 g lançada como 300 ml (cadastrada em L); louro 1 folha = 1 un. Rendimento e tempos estimados.";;;;;;
+Potage aux deux pommes de terre;0,8;;1;Cozir;25;Batata asterix;250;g
+Potage aux deux pommes de terre;;;1;;;Fundo de legumes;400;ml
+Potage aux deux pommes de terre;;;2;Bater/Misturar;10;Nata;125;ml
+Potage aux deux pommes de terre;;;2;;;Manteiga sem sal;25;g
+Potage aux deux pommes de terre;;;3;Fritar;10;Batata parmentier;75;g
+Potage aux deux pommes de terre;;;3;;;Cogumelo Paris;75;g
+Potage aux deux pommes de terre;;;;;;Sal fino;q.b.;
+Potage aux deux pommes de terre;;;;;;Pimenta-do-reino em pó;q.b.;
+Potage aux deux pommes de terre;;FT 09 – Apostila Cozinheiro 2024.;;;;;;
+Potage aux deux pommes de terre;;Cozinhar a batata no fundo de legumes.;;;;;;
+Potage aux deux pommes de terre;;Reservar parte do caldo para uso posterior.;;;;;;
+Potage aux deux pommes de terre;;Liquidifique bem e adicione a manteiga e a nata.;;;;;;
+Potage aux deux pommes de terre;;Volte para a panela e ajuste a densidade com o caldo reservado.;;;;;;
+Potage aux deux pommes de terre;;Cozinhe em fogo baixo e ajuste o sal e a pimenta.;;;;;;
+Potage aux deux pommes de terre;;Durante este tempo, doure o parmentier e os cogumelos para guarnecer a sopa.;;;;;;
+Potage aux deux pommes de terre;;"Ajustes da importação: Original: “Batatas” lançadas como Batata asterix; nata 125 g lançada como 125 ml (cadastrada em L). Rendimento e tempos estimados.";;;;;;
+Purê de batata;0,35;;1;Cozir;25;Batata asterix;300;g
+Purê de batata;;;2;Bater/Misturar;10;Nata;60;ml
+Purê de batata;;;2;;;Leite integral;20;ml
+Purê de batata;;;2;;;Manteiga sem sal;15;g
+Purê de batata;;;;;;Sal fino;q.b.;
+Purê de batata;;;;;;Noz-moscada em pó;q.b.;
+Purê de batata;;FT 10 – Apostila Cozinheiro 2024.;;;;;;
+Purê de batata;;Cozinhe as batatas inteiras com sal.;;;;;;
+Purê de batata;;Assim que as batatas abrirem, retire da água e descasque ainda quente.;;;;;;
+Purê de batata;;Esprema as batatas em um amassador e depois em uma peneira.;;;;;;
+Purê de batata;;Em outra panela, aqueça a manteiga, a nata e o leite.;;;;;;
+Purê de batata;;Acrescente as batatas, mescle bem o preparo e cozinhe em fogo baixo por 10 minutos.;;;;;;
+Purê de batata;;Finalize com sal e noz-moscada.;;;;;;
+Purê de batata;;"Ajustes da importação: Original: “Batatas” lançadas como Batata asterix; nata 60 g lançada como 60 ml (cadastrada em L). Rendimento e tempos estimados.";;;;;;

@@ -5,7 +5,7 @@ Sistema de operação para restaurante, com API Flask, frontend React com Vite e
 ## Funcionalidades atuais
 
 - Catálogo de insumos, produtos intermediários e produtos finais, com importação em lote via CSV.
-- Fichas técnicas com rendimento, fases ordenadas e componentes.
+- Fichas técnicas com rendimento, fases ordenadas e componentes, com importação em lote via CSV.
 - Validações de domínio recuperadas do projeto anterior.
 - Lotes, localizações, movimentações e sugestão de saída por FEFO.
 - Estoque geral de insumos, produtos intermediários e produtos finais, com entradas, saídas e ajustes pela interface.
@@ -89,7 +89,7 @@ pnpm build
 
 ## Importação de produtos via CSV
 
-Na página **Produtos**, o botão **Importar CSV** cadastra vários produtos de uma vez. A tela mostra uma prévia com os erros de cada linha antes de enviar, e a importação é tudo ou nada (limite de 500 produtos por arquivo). O mesmo recurso está disponível na API em `POST /api/produtos/lote`.
+Na página **Produtos**, o botão **Importar CSV** cadastra vários produtos de uma vez. A tela mostra uma prévia com os erros de cada linha antes de enviar, e a importação é tudo ou nada (limite de 500 produtos por arquivo). Produtos com o mesmo nome e conservação de um produto já cadastrado são ignorados, então reimportar um arquivo não duplica o catálogo. O mesmo recurso está disponível na API em `POST /api/produtos/lote`.
 
 Colunas (separador `;` ou `,`, UTF-8):
 
@@ -104,6 +104,34 @@ Colunas (separador `;` ou `,`, UTF-8):
 | `validade_padrao_dias` | não | número inteiro de dias |
 
 Exemplo completo: [`docs/exemplos/produtos_machry.csv`](docs/exemplos/produtos_machry.csv), com 366 insumos do estoque do Machry gerados a partir das planilhas de validade. Unidades e prazos de validade desse arquivo são estimativas por categoria; revise antes de usar em produção.
+
+## Importação de fichas técnicas via CSV
+
+Na página **Fichas técnicas**, o botão **Importar CSV** cadastra várias receitas de uma vez (limite de 200 fichas, tudo ou nada). API: `POST /api/fichas-tecnicas/lote`.
+
+O arquivo tem **uma linha por componente**; as linhas com o mesmo valor em `ficha` formam uma receita.
+
+| Coluna | Uso |
+|---|---|
+| `ficha` | nome do produto preparado; precisa existir no catálogo como `INTERMEDIARIO` ou `FINAL` |
+| `rendimento` | na unidade do produto da ficha; basta informar na primeira linha |
+| `observacao` | opcional; as observações das linhas são unidas em ordem (útil para o modo de preparo) |
+| `fase_ordem`, `fase`, `tempo_min` | fase da linha; nome e tempo só precisam aparecer na primeira linha daquela ordem. Fases fora do catálogo são criadas |
+| `componente` | nome do produto usado; vazio para uma fase sem insumos |
+| `quantidade` | número (vírgula ou ponto); `q.b.` ou vazio vira "A gosto (q.b.)" na observação |
+| `unidade` | opcional; `mg`/`g`/`kg` e `ml`/`L` são convertidos para a unidade do produto |
+
+Produtos e fases são buscados pelo nome, sem diferenciar maiúsculas, acentos e espaços. Um nome que corresponda a mais de um produto (ex.: o mesmo item refrigerado e congelado) gera erro. Produtos que já têm ficha técnica são ignorados (e listados no aviso final), então arquivos com receitas em comum podem ser importados em sequência; a mesma ficha repetida dentro de um arquivo gera erro.
+
+Cada ficha de exemplo termina com linhas só de `observacao`: o código e a origem da receita, o modo de preparo e “Ajustes da importação: …”, que registra as diferenças em relação à ficha original (unidades convertidas, como 2 dentes de alho ≈ 10 g, e valores estimados, como rendimentos e tempos das fases). Uma linha com apenas `ficha` e `observacao` é válida para esse fim.
+
+Exemplos, em ordem de importação (os de produtos pela página **Produtos**, os de fichas pela página **Fichas técnicas**):
+
+1. [`produtos_machry.csv`](docs/exemplos/produtos_machry.csv): catálogo de insumos.
+2. [`produtos_apostila_ft01-10.csv`](docs/exemplos/produtos_apostila_ft01-10.csv) e [`fichas_apostila_ft01-10.csv`](docs/exemplos/fichas_apostila_ft01-10.csv): as 10 primeiras fichas da Apostila Cozinheiro 2024 (FT 01 fundo de legumes, FT 02 velouté, FT 03 bouquet garni, FT 04 crispy de couve, FT 05 e FT 06 sopas creme de cenoura e de tomate, FT 07 croûtons, FT 08 gratin, FT 09 potage e FT 10 purê), com o hortifrúti e os preparos que faltam no catálogo. O mirepoix entra como produto intermediário, sem ficha (a apostila só descreve a proporção).
+3. [`produtos_aula4.csv`](docs/exemplos/produtos_aula4.csv) e [`fichas_aula4.csv`](docs/exemplos/fichas_aula4.csv): Aula 4 (batatas). Repete FT 08 a FT 10, que são ignoradas se o passo 2 já foi importado, e acrescenta a batata parmentier e as batatas duchesse (FT 11).
+
+As fichas usam os nomes do catálogo (ex.: “Manteiga” → Manteiga sem sal, “Batatas” → Batata asterix). Nata e creme de leite, pesados em g nas receitas, foram lançados em ml porque estão cadastrados em L.
 
 ## Identidade visual
 

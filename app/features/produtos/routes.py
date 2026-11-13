@@ -36,8 +36,12 @@ def criar():
 
 @bp.post("/lote")
 def criar_lote():
-    produtos = get_service().criar_lote(entrada(ProdutoLoteCreate))
-    return {"items": [_saida(produto) for produto in produtos], "total": len(produtos)}, 201
+    produtos, ignorados = get_service().criar_lote(entrada(ProdutoLoteCreate))
+    return {
+        "items": [_saida(produto) for produto in produtos],
+        "total": len(produtos),
+        "ignorados": ignorados,
+    }, 201
 
 
 @bp.put("/<int:produto_id>")

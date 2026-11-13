@@ -1,0 +1,25 @@
+﻿nome;tipo;unidade_medida;subdivisao;conservacao;validade_obrigatoria;validade_padrao_dias
+Cebola;INSUMO;kg;Hortifrúti;SECO;0;30
+Cenoura;INSUMO;kg;Hortifrúti;RESFRIADO;0;15
+Salsão;INSUMO;kg;Hortifrúti;RESFRIADO;0;10
+Alho-poró;INSUMO;kg;Hortifrúti;RESFRIADO;0;10
+Alho;INSUMO;kg;Hortifrúti;SECO;0;30
+Salsa;INSUMO;un;Hortifrúti;RESFRIADO;0;5
+Tomilho;INSUMO;un;Hortifrúti;RESFRIADO;0;7
+Couve;INSUMO;un;Hortifrúti;RESFRIADO;0;5
+Tomate italiano;INSUMO;kg;Hortifrúti;RESFRIADO;0;7
+Batata asterix;INSUMO;kg;Hortifrúti;SECO;0;30
+Louro;INSUMO;un;Temperos e especiarias;SECO;1;365
+Barbante;INSUMO;m;Utensílios;SECO;0;
+Bouquet garni;INTERMEDIARIO;un;Preparos;RESFRIADO;1;2
+Mirepoix;INTERMEDIARIO;kg;Preparos;RESFRIADO;1;2
+Fundo de legumes;INTERMEDIARIO;L;Preparos;RESFRIADO;1;3
+Velouté de legumes;INTERMEDIARIO;L;Preparos;RESFRIADO;1;3
+Croûtons;INTERMEDIARIO;kg;Preparos;SECO;1;7
+Batata parmentier;INTERMEDIARIO;kg;Preparos;RESFRIADO;1;1
+Crispy de couve;INTERMEDIARIO;kg;Guarnições;SECO;1;2
+Sopa creme de cenoura;FINAL;L;Sopas;RESFRIADO;1;2
+Sopa creme de tomate;FINAL;L;Sopas;RESFRIADO;1;2
+Gratin dauphinois;FINAL;kg;Batatas;RESFRIADO;1;2
+Potage aux deux pommes de terre;FINAL;L;Sopas;RESFRIADO;1;2
+Purê de batata;FINAL;kg;Batatas;RESFRIADO;1;2

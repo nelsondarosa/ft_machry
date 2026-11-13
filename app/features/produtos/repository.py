@@ -12,6 +12,9 @@ class ProdutoRepository(RepositorioBase):
             paginacao,
         )
 
+    def ativos(self) -> list[Produto]:
+        return db.session.query(Produto).filter_by(ativo=1).all()
+
     def obter_ativo(self, produto_id: int) -> Produto | None:
         return db.session.query(Produto).filter_by(id=produto_id, ativo=1).first()
 

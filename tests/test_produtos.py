@@ -98,6 +98,11 @@ def test_criar_lote(client):
     assert r.get_json()["total"] == 2
     assert sorted(p["nome"] for p in client.get(URL).get_json()["items"]) == ["Bolo", "Farinha"]
 
+    # Reimportar ignora nome+conservação já cadastrados; outra conservação é criada.
+    r = client.post(f"{URL}/lote", json={"produtos": [{**FARINHA, "nome": " farinha "}, {**FARINHA, "conservacao": "CONGELADO"}]})
+    assert r.status_code == 201
+    assert r.get_json()["total"] == 1 and r.get_json()["ignorados"] == ["farinha"]
+
 
 def test_criar_lote_atomico(client):
     r = client.post(f"{URL}/lote", json={"produtos": [FARINHA, {**FARINHA, "tipo": "OUTRO"}]})
