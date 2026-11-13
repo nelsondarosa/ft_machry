@@ -180,3 +180,77 @@ def test_atualizar_localizacao_do_lote(seeded_client):
 def test_sugestao_saida_validacoes(client):
     assert client.get('/api/estoque/sugestao-saida/1').status_code == 400  # sem quantidade
     assert client.get('/api/estoque/sugestao-saida/9999?quantidade=1').status_code == 404
+
+
+def test_nao_permite_cadastrar_lote_vencido(seeded_client):
+    from datetime import date, timedelta
+
+    c = seeded_client
+    validade = (date.today() - timedelta(days=1)).isoformat()
+    lote = c.post('/api/estoque/lotes', json={
+        'produto_id': 1, 'localizacao_id': 1,
+        'data_producao': validade, 'data_validade': validade,
+    })
+    assert lote.status_code == 400
+    assert 'vencido' in lote.get_json()['erro'].lower()
+
+
+def test_lote_que_venceu_so_permite_baixa_por_perda_ou_descarte(seeded_client):
+    from datetime import date, timedelta
+
+    from app.features.estoque.models import Lote
+    from db.database_config import db
+
+    c = seeded_client
+    lote = c.post('/api/estoque/lotes', json={
+        'produto_id': 1, 'localizacao_id': 1,
+        'data_validade': (date.today() + timedelta(days=1)).isoformat(),
+    })
+    assert lote.status_code == 201, lote.json
+    lote_id = lote.get_json()['id']
+    assert c.post('/api/estoque/movimentacoes', json={
+        'tipo': 'ENTRADA', 'lote_id': lote_id, 'usuario_id': 1, 'quantidade': 10,
+    }).status_code == 201
+
+    with c.application.app_context():
+        registro = db.session.get(Lote, lote_id)
+        registro.data_validade = (date.today() - timedelta(days=1)).isoformat()
+        db.session.commit()
+
+    consumo = c.post('/api/estoque/movimentacoes', json={
+        'tipo': 'SAIDA', 'lote_id': lote_id, 'usuario_id': 1,
+        'quantidade': 2, 'motivo': 'consumo',
+    })
+    assert consumo.status_code == 400
+    assert 'vencido' in consumo.get_json()['erro']
+
+    descarte = c.post('/api/estoque/movimentacoes', json={
+        'tipo': 'AJUSTE_SAIDA', 'lote_id': lote_id, 'usuario_id': 1,
+        'quantidade': 2, 'motivo': 'descarte por validade',
+    })
+    assert descarte.status_code == 201
+
+
+def test_transferencia_para_localizacao_cria_lote_destino(seeded_client):
+    c = seeded_client
+    origem = c.post('/api/estoque/lotes', json={
+        'produto_id': 1, 'localizacao_id': 1,
+        'data_producao': '2099-01-01', 'data_validade': '2099-02-01',
+        'fornecedor': 'Fornecedor teste', 'nota_fiscal': 'NF-1',
+    }).get_json()
+    c.post('/api/estoque/movimentacoes', json={
+        'tipo': 'ENTRADA', 'lote_id': origem['id'], 'usuario_id': 1, 'quantidade': 10,
+    })
+
+    transferencia = c.post('/api/estoque/movimentacoes', json={
+        'tipo': 'TRANSFERENCIA', 'lote_id': origem['id'], 'usuario_id': 1,
+        'quantidade': 4, 'localizacao_destino_id': 5,
+    })
+    assert transferencia.status_code == 201, transferencia.json
+    destino = c.get(f"/api/estoque/lotes/{transferencia.get_json()['lote_destino_id']}").get_json()
+    assert destino['produto_id'] == origem['produto_id']
+    assert destino['localizacao_id'] == 5
+    assert destino['quantidade'] == 4
+    assert destino['data_validade'] == origem['data_validade']
+    assert destino['fornecedor'] == 'Fornecedor teste'
+    assert c.get(f"/api/estoque/lotes/{origem['id']}").get_json()['quantidade'] == 6

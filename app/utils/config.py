@@ -24,6 +24,7 @@ class Config(BaseSettings):
     SESSION_COOKIE_HTTPONLY: bool = True
     SESSION_COOKIE_SAMESITE: str = "Lax"
     SESSION_COOKIE_SECURE: bool = False
+    SESSION_IDLE_MINUTES: int = 60
 
     OWNER_USERNAME: str = "dona"
     OWNER_INITIAL_PASSWORD: str = "Dona@123"
@@ -34,6 +35,6 @@ class Config(BaseSettings):
 
     # Pasta em branding/ (ou caminho absoluto) com a identidade visual.
     # Vazio desativa a pasta e usa os valores embutidos no frontend.
-    BRANDING: str | None = "machry"
+    BRANDING: str | None = "cozinha_plus"
 
 config = Config()

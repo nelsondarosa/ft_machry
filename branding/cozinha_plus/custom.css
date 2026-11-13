@@ -8,7 +8,8 @@
 
 /* Símbolo do infinito é horizontal: alarga a marca em vez do círculo. */
 .brand-mark.has-logo { width: 58px; height: 38px; border-radius: 0; }
-.login-mark.has-logo { width: 120px; height: 76px; border-radius: 0; }
+.login-mark.has-logo { width: min(320px, 78%); height: 92px; border-radius: 0; }
+.sheet-brand-mark.has-logo { width: 168px; height: 52px; border: 0; border-radius: 0; }
 
 /* Terracota pede texto claro nos botões principais. */
 .primary { color: #fff; }

@@ -11,9 +11,6 @@ def _produtos(client):
         {"nome": "Bacalhau", "tipo": "INSUMO", "unidade_medida": "kg", "conservacao": "RESFRIADO"},
     ]
     assert client.post("/api/produtos/lote", json={"produtos": lote}).status_code == 201
-    # o lote ignora nomes repetidos; um homônimo só existe se cadastrado à mão
-    homonimo = {"nome": "Bacalhau", "tipo": "INSUMO", "unidade_medida": "kg", "conservacao": "CONGELADO"}
-    assert client.post("/api/produtos", json=homonimo).status_code == 201
 
 
 def _ficha(**extra):
@@ -48,7 +45,7 @@ def test_importa_por_nome_converte_unidade_e_cria_fase(client):
     assert ficha["produto"] == "Purê de batata"
     assert ficha["observacao"] == "Cozinhar e amassar.\nA gosto (q.b.): Sal."
     quantidades = {c["produto"]: c["quantidade"] for c in ficha["componentes"]}
-    assert quantidades == {"Batata Asterix": 0.3, "Leite integral": 0.02, "Louro": 1.0}
+    assert quantidades == {"Batata asterix": 0.3, "Leite integral": 0.02, "Louro": 1.0}
     assert [f["fase"] for f in ficha["fases"]] == ["Cozir", "Passar na peneira"]
 
 
@@ -56,7 +53,6 @@ def test_lote_atomico_e_erros_com_posicao(client):
     _produtos(client)
     casos = [
         ({"produto": "Inexistente"}, "ficha 2 (Inexistente): produto 'Inexistente' não encontrado"),
-        ({"componentes": [{"produto": "Bacalhau", "quantidade": 1}]}, "mais de um produto"),
         ({"componentes": [{"produto": "Leite integral", "quantidade": 1, "unidade": "g"}]}, "não pode ser convertida"),
         ({"produto": "Batata asterix"}, "um insumo não pode possuir ficha técnica"),
     ]

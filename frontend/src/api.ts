@@ -16,7 +16,12 @@ export async function api<T>(path: string, options: RequestInit = {}): Promise<T
   }
 
   const body = response.status === 204 ? null : await response.json().catch(() => null)
-  if (!response.ok) throw new ApiError(body?.erro || `Erro HTTP ${response.status}`, response.status)
+  if (!response.ok) {
+    if (response.status === 401 && path !== '/api/auth/login') {
+      window.dispatchEvent(new CustomEvent('machry:session-expired'))
+    }
+    throw new ApiError(body?.erro || `Erro HTTP ${response.status}`, response.status)
+  }
   return body as T
 }
 

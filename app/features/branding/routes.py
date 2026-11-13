@@ -2,8 +2,8 @@
 
 A variável de ambiente BRANDING aponta para uma pasta com `brand.json`:
 o nome de uma subpasta de `branding/` na raiz do projeto ou um caminho
-absoluto. O padrão é `machry`; com a variável vazia, a rota devolve `{}` e o
-frontend usa os textos embutidos (os mesmos da pasta `machry`).
+absoluto. O padrão é `cozinha_plus`; com a variável vazia, a rota devolve `{}`
+e o frontend usa os textos embutidos da Cozinha+.
 """
 import hashlib
 import json
@@ -15,7 +15,14 @@ bp = Blueprint("branding", __name__)
 
 ROOT_PATH = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 TEXTOS = ("nome", "subtitulo", "sigla", "titulo")
-ARQUIVOS = ("logo", "favicon", "apple_touch_icon", "css")
+ARQUIVOS = (
+    "logo",
+    "logo_horizontal",
+    "logo_impressao",
+    "favicon",
+    "apple_touch_icon",
+    "css",
+)
 
 
 def pasta_branding() -> str | None:

@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 
 from flask import Flask, send_from_directory
 
@@ -17,6 +18,10 @@ def create_app(config: dict | None = None) -> Flask:
     app.config.from_object(app_config)
     if config:
         app.config.update(config)
+    if not config or "PERMANENT_SESSION_LIFETIME" not in config:
+        app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(
+            minutes=int(app.config["SESSION_IDLE_MINUTES"])
+        )
 
     init_db(app)
 

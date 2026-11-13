@@ -6,6 +6,13 @@ NOVO = {
 }
 
 
+def test_sessao_expira_apos_inatividade(app):
+    from datetime import timedelta
+
+    assert app.config["PERMANENT_SESSION_LIFETIME"] == timedelta(minutes=60)
+    assert app.config["SESSION_REFRESH_EACH_REQUEST"] is True
+
+
 def test_login_logout_e_me(client):
     resposta = client.get("/api/auth/me")
     assert resposta.status_code == 200

@@ -643,7 +643,7 @@ components:
       properties:
         nome: {type: string, example: Farinha de trigo}
         tipo: {type: string, enum: [INSUMO, INTERMEDIARIO, FINAL]}
-        unidade_medida: {type: string, example: g}
+        unidade_medida: {type: string, enum: [kg, g, mg, L, ml, un, pct, cx, dz, pç], example: g}
         grupo_id: {type: integer, nullable: true, description: FK para grupo_produto}
         subdivisao: {type: string, nullable: true, maxLength: 100, example: Farinhas}
         conservacao: {type: string, enum: [CONGELADO, RESFRIADO, SECO], default: SECO}
@@ -814,7 +814,8 @@ components:
         usuario_id: {type: integer, minimum: 1, description: Usuário precisa estar ativo}
         quantidade: {type: number, minimum: 0, exclusiveMinimum: true, description: Obrigatória sem item_ids; com item_ids é a soma dos saldos}
         item_ids: {type: array, items: {type: integer}, nullable: true, description: Itens do lote de origem usados por inteiro (saídas, transferência, transformação)}
-        lote_destino_id: {type: integer, minimum: 1, nullable: true, description: Obrigatório para TRANSFERENCIA/TRANSFORMACAO; precisa ser diferente de lote_id}
+        lote_destino_id: {type: integer, minimum: 1, nullable: true, description: Obrigatório para TRANSFORMACAO; em TRANSFERENCIA é uma alternativa a localizacao_destino_id}
+        localizacao_destino_id: {type: integer, minimum: 1, nullable: true, description: Em TRANSFERENCIA, cria automaticamente o lote de destino nesta localização; use exatamente um dos dois campos de destino}
         quantidade_destino: {type: number, minimum: 0, exclusiveMinimum: true, nullable: true, description: Obrigatória apenas para TRANSFORMACAO}
         motivo: {type: string, nullable: true, description: Obrigatório para SAIDA/AJUSTE_ENTRADA/AJUSTE_SAIDA}
         observacao: {type: string, nullable: true}

@@ -25,6 +25,9 @@ class Constantes:
     TipoConservacao = Literal["CONGELADO", "RESFRIADO", "SECO"]
     TIPOS_CONSERVACAO = get_args(TipoConservacao)
 
+    UnidadeMedida = Literal["kg", "g", "mg", "L", "ml", "un", "pct", "cx", "dz", "pç"]
+    UNIDADES_MEDIDA = get_args(UnidadeMedida)
+
     # Tipos que podem ser lançados manualmente pela API de movimentações.
     TipoMovimentacaoManual = Literal[
         "ENTRADA", "SAIDA", "AJUSTE_ENTRADA", "AJUSTE_SAIDA",

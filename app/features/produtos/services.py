@@ -25,6 +25,7 @@ class ProdutoService:
 
     def criar(self, dados: ProdutoCreate) -> Produto:
         with self.repository.transacao():
+            self._validar_nome_unico(dados.nome)
             self._validar_grupo(dados.grupo_id)
             return self.repository.inserir(dados.model_dump())
 
@@ -63,6 +64,8 @@ class ProdutoService:
         with self.repository.transacao():
             produto = self.obter(produto_id)
             campos = dados.model_dump(exclude_unset=True)
+            if "nome" in campos:
+                self._validar_nome_unico(campos["nome"], ignorar_id=produto_id)
             if "grupo_id" in campos:
                 self._validar_grupo(campos["grupo_id"])
             if campos.get("tipo") == "INSUMO" and self.repository.possui_ficha(produto_id):
@@ -76,3 +79,11 @@ class ProdutoService:
     def _validar_grupo(self, grupo_id: int | None) -> None:
         if grupo_id is not None and not self.repository.grupo_existe(grupo_id):
             raise ValueError("grupo de produto não encontrado")
+
+    def _validar_nome_unico(self, nome: str, ignorar_id: int | None = None) -> None:
+        chave = normalizar_nome(nome)
+        if any(
+            produto.id != ignorar_id and normalizar_nome(produto.nome) == chave
+            for produto in self.repository.ativos()
+        ):
+            raise ValueError("já existe um produto com nome equivalente")

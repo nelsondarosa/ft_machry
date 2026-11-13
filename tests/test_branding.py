@@ -3,15 +3,21 @@ import json
 URL = "/api/branding"
 
 
-def test_padrao_machry(app, monkeypatch):
+def test_padrao_cozinha_plus(app, monkeypatch):
     from app.utils.config import Config
 
     monkeypatch.delenv("BRANDING", raising=False)
-    assert Config(_env_file=None).BRANDING == "machry"
-    app.config["BRANDING"] = "machry"
+    assert Config(_env_file=None).BRANDING == "cozinha_plus"
+    app.config["BRANDING"] = "cozinha_plus"
     dados =app.test_client().get(URL).get_json()  # rota pública, sem login
-    assert dados["nome"] == "Machry Armazém e Bistrô" and dados["sigla"] == "M"
-    assert dados["logo"].startswith(f"{URL}/arquivos/logo.png?v=")
+    assert dados["nome"] == "Cozinha+" and dados["sigla"] == "C+"
+    assert dados["logo"].startswith(f"{URL}/arquivos/simbolo_branco.png?v=")
+    assert dados["logo_horizontal"].startswith(
+        f"{URL}/arquivos/Logo Cozinha+_branco_horizontal.png?v="
+    )
+    assert dados["logo_impressao"].startswith(
+        f"{URL}/arquivos/Logo Cozinha+_horizontal.png?v="
+    )
     assert dados["favicon"].startswith(f"{URL}/arquivos/favicon-32.png?v=")
 
 

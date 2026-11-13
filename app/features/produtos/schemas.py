@@ -1,6 +1,7 @@
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from app.utils.constantes import Constantes
+from app.utils.texto import padronizar_nome
 
 
 
@@ -10,7 +11,7 @@ class ProdutoCreate(BaseModel):
 
     nome: str = Field(min_length=1, max_length=150)
     tipo: Constantes.TipoProduto
-    unidade_medida: str = Field(min_length=1, max_length=20)
+    unidade_medida: Constantes.UnidadeMedida
     grupo_id: int | None = Field(default=None, gt=0)
     subdivisao: str | None = Field(default=None, max_length=100)
     conservacao: Constantes.TipoConservacao = "SECO"
@@ -18,13 +19,13 @@ class ProdutoCreate(BaseModel):
     validade_padrao_dias: int | None = Field(default=None, ge=0)
     foto_url: str | None = None
 
-    @field_validator("nome", "unidade_medida")
+    @field_validator("nome")
     @classmethod
-    def limpar_texto_obrigatorio(cls, valor: str) -> str:
+    def limpar_nome(cls, valor: str) -> str:
         valor = valor.strip()
         if not valor:
             raise ValueError("campo obrigatório não pode ser vazio")
-        return valor
+        return padronizar_nome(valor)
 
 
 class ProdutoLoteCreate(BaseModel):
@@ -38,7 +39,7 @@ class ProdutoUpdate(BaseModel):
 
     nome: str | None = Field(default=None, min_length=1, max_length=150)
     tipo: Constantes.TipoProduto | None = None
-    unidade_medida: str | None = Field(default=None, min_length=1, max_length=20)
+    unidade_medida: Constantes.UnidadeMedida | None = None
     grupo_id: int | None = Field(default=None, gt=0)
     subdivisao: str | None = Field(default=None, max_length=100)
     conservacao: Constantes.TipoConservacao | None = None
@@ -46,14 +47,21 @@ class ProdutoUpdate(BaseModel):
     validade_padrao_dias: int | None = Field(default=None, ge=0)
     foto_url: str | None = None
 
-    @field_validator("nome", "unidade_medida")
+    @field_validator("nome")
     @classmethod
-    def limpar_texto(cls, valor: str | None) -> str:
+    def limpar_nome(cls, valor: str | None) -> str:
         if valor is None:
             raise ValueError("campo não pode ser nulo")
         valor = valor.strip()
         if not valor:
             raise ValueError("campo não pode ser vazio")
+        return padronizar_nome(valor)
+
+    @field_validator("unidade_medida")
+    @classmethod
+    def unidade_nao_nula(cls, valor):
+        if valor is None:
+            raise ValueError("campo não pode ser nulo")
         return valor
 
     @model_validator(mode="after")

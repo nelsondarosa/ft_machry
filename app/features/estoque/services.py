@@ -2,10 +2,8 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from typing import Optional
-
-from datetime import date
 
 from flask_sqlalchemy.pagination import Pagination
 
@@ -55,14 +53,14 @@ class EstoqueService:
         with self.repository.transacao():
             origem = self._obter_lote_ou_falhar(dados.lote_id, para_atualizacao=True)
             self._validar_usuario_ativo(dados.usuario_id)
-            
-            if(not self.repository.lote_tem_itens(origem.id)
-                    and _vencido(origem.data_validade)
-                    and dados.tipo != "SAIDA"):
-                raise ValueError("Lote vencido: Só é permitida saída")
+            self._validar_saida_de_lote_vencido(origem, dados.tipo)
 
             destino = None
-            if dados.lote_destino_id is not None:
+            if dados.tipo == "TRANSFERENCIA" and dados.localizacao_destino_id is not None:
+                destino = self._criar_lote_para_transferencia(
+                    origem, dados.localizacao_destino_id
+                )
+            elif dados.lote_destino_id is not None:
                 destino = self._validar_lote_destino(origem, dados)
 
             if self.repository.lote_tem_itens(origem.id):
@@ -135,8 +133,10 @@ class EstoqueService:
                 raise ValueError(f"o item {item.codigo} não pertence ao lote {origem.id}")
             if item.status not in Constantes.STATUS_ITEM_LIVRES:
                 raise ValueError(f"o item {item.codigo} não está disponível ({item.status})")
-            if _vencido(item.data_validade) and tipo != "SAIDA":
-                raise ValueError(f"o item {item.codigo} está vencido: só é permitida a saída")
+            if _vencido(item.data_validade) and tipo != "AJUSTE_SAIDA":
+                raise ValueError(
+                    f"o item {item.codigo} está vencido: registre um ajuste de saída para descarte"
+                )
             usos.append(UsoDeItem(item=item, quantidade=item.saldo))
         return usos
 
@@ -152,7 +152,10 @@ class EstoqueService:
             falta = _arredondar(falta - usar)
 
         if falta > 0:
-            raise ValueError("saldo insuficiente nos itens disponíveis (itens vencidos só saem escolhendo-os em uma saída)")
+            raise ValueError(
+                "saldo insuficiente nos itens disponíveis "
+                "(itens vencidos só podem ser descartados por ajuste de saída)"
+            )
         return usos
 
     def _total_dos_usos(self, usos: list[UsoDeItem], origem) -> float:
@@ -261,6 +264,34 @@ class EstoqueService:
         ):
             raise ValueError("transformação não cadastrada entre os produtos")
         return destino
+
+    def _criar_lote_para_transferencia(self, origem, localizacao_id: int):
+        localizacao = self.repository.obter_localizacao(localizacao_id)
+        produto = self.repository.obter_produto(origem.produto_id)
+        if localizacao is None:
+            raise ValueError("localização de destino não encontrada")
+        if origem.localizacao_id == localizacao_id:
+            raise ValueError("a localização de destino deve ser diferente da origem")
+        self._validar_conservacao_compativel(produto, localizacao)
+        return self.repository.inserir_lote(
+            produto_id=origem.produto_id,
+            localizacao_id=localizacao_id,
+            data_producao=origem.data_producao,
+            data_validade=origem.data_validade,
+            custo_unitario=origem.custo_unitario,
+            fornecedor=origem.fornecedor,
+            nota_fiscal=origem.nota_fiscal,
+        )
+
+    def _validar_saida_de_lote_vencido(self, lote, tipo: str) -> None:
+        if (
+            tipo in {"SAIDA", "TRANSFERENCIA", "TRANSFORMACAO"}
+            and lote.data_validade
+            and lote.data_validade < date.today().isoformat()
+        ):
+            raise ValueError(
+                "lote vencido: registre a baixa como ajuste de saída para perda ou descarte"
+            )
 
     def listar_localizacoes(self, paginacao: PaginacaoQuery) -> Pagination:
         return self.repository.listar_localizacoes(paginacao)
@@ -516,8 +547,7 @@ class EstoqueService:
     def _validar_validade_obrigatoria(self, produto, data_validade, mensagem: str) -> None:
         if produto.validade_obrigatoria and not data_validade:
             raise ValueError(mensagem)
-        
-        
+
     def _validar_data_validade(self, data_validade) -> None:
         if _vencido(data_validade):
             raise ValueError("Não é permitido cadastrar lote vencido.")
@@ -553,6 +583,7 @@ def _limpar_texto(texto: Optional[str]) -> Optional[str]:
         return None
     return texto.strip() or None
 
+
 def _como_data(valor) -> Optional[date]:
     if valor is None or valor == "":
         return None
@@ -561,6 +592,7 @@ def _como_data(valor) -> Optional[date]:
     if isinstance(valor, date):
         return valor
     return date.fromisoformat(str(valor)[:10])
+
 
 def _vencido(valor) -> bool:
     data = _como_data(valor)

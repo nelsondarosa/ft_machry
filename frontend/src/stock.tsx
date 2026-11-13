@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react'
 import { api, apiListAll } from './api'
 import { EmptyState, Metric, Modal, MoneyInput, PageHeading, SearchSelect } from './components'
+import { normalizeSearch } from './text'
 import type { ItemLote, Localizacao, Lote, Produto, StatusItem, TipoProduto } from './types'
 
 type Situacao = 'EM_DIA' | 'ATENCAO' | 'VENCIDO' | 'SEM_VALIDADE' | 'ESGOTADO'
@@ -130,12 +131,12 @@ export function StockPage({ lotes, produtos, localizacoes, usuarioId, onChanged 
   const lotesAtivos = comSaldo.length - contar('VENCIDO')
   const unidadesCadastradas = comSaldo.reduce((total, lote) => total + itensAtivos(lote), 0)
 
-  const termo = busca.trim().toLocaleLowerCase('pt-BR').replace(/^#/, '')
+  const termo = normalizeSearch(busca).replace(/^#/, '')
   const visiveis = lotes
     .filter((lote) => situacao === 'ESGOTADO' ? lote.quantidade <= 0 : lote.quantidade > 0)
     .filter((lote) => situacao === 'TODAS' || situacao === 'ESGOTADO' || situacoes.get(lote.id)?.tipo === situacao)
     .filter((lote) => tipo === 'TODOS' || contexto.produtosPorId.get(lote.produto_id)?.tipo === tipo)
-    .filter((lote) => !termo || String(lote.id) === termo || lote.produto.toLocaleLowerCase('pt-BR').includes(termo))
+    .filter((lote) => !termo || String(lote.id) === termo || normalizeSearch(lote.produto).includes(termo))
     .sort((a, b) => (a.data_validade ?? '9999').localeCompare(b.data_validade ?? '9999') || a.id - b.id)
 
   const loteAberto = aberto?.loteId ? lotes.find((lote) => lote.id === aberto.loteId) ?? null : null
@@ -484,12 +485,18 @@ function ItemsTable({ loteId, usuarioId, itens, erro, unidade, onItemChanged }: 
   }
 
   function consumir(item: ItemLote) {
-  const vencido = itemVencido(item)
-  void executar(item, () => api('/api/estoque/movimentacoes', {
-    method: 'POST',
-    body: JSON.stringify({ tipo: 'SAIDA', lote_id: loteId, usuario_id: usuarioId, item_ids: [item.id], motivo: vencido ? 'Item vencido' : 'Item consumido' }),
-  }), vencido ? `${item.codigo} saiu do estoque (vencido).` : `${item.codigo} consumido.`)
-}
+    const vencido = itemVencido(item)
+    void executar(item, () => api('/api/estoque/movimentacoes', {
+      method: 'POST',
+      body: JSON.stringify({
+        tipo: vencido ? 'AJUSTE_SAIDA' : 'SAIDA',
+        lote_id: loteId,
+        usuario_id: usuarioId,
+        item_ids: [item.id],
+        motivo: vencido ? 'Descarte de item vencido' : 'Item consumido',
+      }),
+    }), vencido ? `${item.codigo} descartado por vencimento.` : `${item.codigo} consumido.`)
+  }
 
   if (erro) return <p className="form-error">{erro}</p>
   if (!itens) return <p className="helper">Carregando itens…</p>
@@ -530,7 +537,7 @@ function ItemsTable({ loteId, usuarioId, itens, erro, unidade, onItemChanged }: 
             <td><div className="item-actions">
               {itemEmAcao === item.id && <span className="helper">Salvando…</span>}
               {itemEmAcao !== item.id && item.status === 'DISPONIVEL' && !itemVencido(item) && <button type="button" className="text-button" disabled={itemEmAcao !== null} onClick={() => abrir(item)}>Abrir</button>}
-              {itemEmAcao !== item.id && (item.status === 'DISPONIVEL' || item.status === 'EM_USO') && <button type="button" className="text-button" disabled={itemEmAcao !== null} onClick={() => consumir(item)}>{itemVencido(item) ? 'Dar saída' : 'Consumir'}</button>}
+              {itemEmAcao !== item.id && (item.status === 'DISPONIVEL' || item.status === 'EM_USO') && <button type="button" className="text-button" disabled={itemEmAcao !== null} onClick={() => consumir(item)}>{itemVencido(item) ? 'Descartar' : 'Consumir'}</button>}
             </div></td>
           </tr>)}
         </tbody>
@@ -862,17 +869,17 @@ function MoveForm({ lote, unidade, usuarioId, onSaving, onSaved }: {
 }) {
   const porItens = temItens(lote)
   const vencido = situacaoDo(lote).tipo === 'VENCIDO'
-  const [tipo, setTipo] = useState<TipoMovimento>(porItens || vencido ? 'SAIDA' : 'ENTRADA')
+  const [tipo, setTipo] = useState<TipoMovimento>(vencido ? 'AJUSTE_SAIDA' : porItens ? 'SAIDA' : 'ENTRADA')
   const [quantidade, setQuantidade] = useState('')
   const [motivo, setMotivo] = useState('')
   const [observacao, setObservacao] = useState('')
   const [erro, setErro] = useState('')
 
   const opcoes: { value: TipoMovimento; label: string }[] = vencido
-    ? [{ value: 'SAIDA', label: 'Saída' }]
+    ? [{ value: 'AJUSTE_SAIDA', label: 'Descarte / perda (ajuste de saída)' }]
     : porItens
-        ? [{ value: 'SAIDA', label: 'Saída' }, { value: 'AJUSTE_SAIDA', label: 'Ajuste de saída' }]
-        : [{ value: 'ENTRADA', label: 'Entrada' }, { value: 'SAIDA', label: 'Saída' }, { value: 'AJUSTE_ENTRADA', label: 'Ajuste de entrada' }, { value: 'AJUSTE_SAIDA', label: 'Ajuste de saída' }]
+    ? [{ value: 'SAIDA', label: 'Saída' }, { value: 'AJUSTE_SAIDA', label: 'Ajuste de saída' }]
+    : [{ value: 'ENTRADA', label: 'Entrada' }, { value: 'SAIDA', label: 'Saída' }, { value: 'AJUSTE_ENTRADA', label: 'Ajuste de entrada' }, { value: 'AJUSTE_SAIDA', label: 'Ajuste de saída' }]
   const pedeMotivo = tipo !== 'ENTRADA'
   const qtd = numeroDe(quantidade) || 0
   const somaNoLote = tipo === 'ENTRADA' || tipo === 'AJUSTE_ENTRADA'
@@ -891,6 +898,7 @@ function MoveForm({ lote, unidade, usuarioId, onSaving, onSaved }: {
 
   return <form id="move-form" className="lot-form" onSubmit={salvar}>
     {erro && <p className="form-error">{erro}</p>}
+    {vencido && <p className="notice danger-notice">Este lote está vencido. Somente a baixa por perda ou descarte é permitida.</p>}
     {porItens && <p className="notice">Lote com itens: a saída consome primeiro os itens abertos e depois os que vencem antes. Para escolher os itens, use a aba “Transferir ou transformar” ou o botão “Consumir” na lista de itens.</p>}
     {vencido && <p className="notice">Lote vencido: só é permitida saída. {porItens && 'Itens vencidos saem pelo botão “Dar saída” na lista de itens; a saída por quantidade usa só os itens dentro da validade.'}</p>}
     <div className="form-grid">
@@ -921,6 +929,7 @@ function TransferForm({ origem, lotes, produtos, contexto, usuarioId, onSaving, 
   const [selecionados, setSelecionados] = useState<number[]>([])
   const [produtoDestinoId, setProdutoDestinoId] = useState<number | ''>('')
   const [destinoId, setDestinoId] = useState<number | ''>('')
+  const [localizacaoDestinoId, setLocalizacaoDestinoId] = useState<number | ''>('')
   const [rendimento, setRendimento] = useState('')
   const [observacao, setObservacao] = useState('')
   const [erro, setErro] = useState('')
@@ -940,13 +949,17 @@ function TransferForm({ origem, lotes, produtos, contexto, usuarioId, onSaving, 
     return porItens ? temItens(lote) || lote.quantidade === 0 : !temItens(lote)
   })
   const loteDestino = lotes.find((lote) => lote.id === destinoId)
+  const localizacoesDestino = [...contexto.locaisPorId.values()].filter(
+    (local) => local.id !== origem.localizacao_id && local.tipo === produtoOrigem?.conservacao,
+  )
+  const localizacaoDestino = localizacaoDestinoId === '' ? undefined : contexto.locaisPorId.get(localizacaoDestinoId)
 
   const qtd = porItens ? escolhidos.reduce((total, item) => total + item.saldo, 0) : numeroDe(quantidade)
   const qtdDestino = operacao === 'TRANSFERENCIA' ? qtd : numeroDe(rendimento)
   const qtdValida = qtd > 0 && qtd <= origem.quantidade
   const fator = qtd > 0 && qtdDestino > 0 ? qtdDestino / qtd : null
 
-  const trocarOperacao = (valor: Operacao) => { setOperacao(valor); setDestinoId(''); setProdutoDestinoId(''); setRendimento('') }
+  const trocarOperacao = (valor: Operacao) => { setOperacao(valor); setDestinoId(''); setLocalizacaoDestinoId(''); setProdutoDestinoId(''); setRendimento('') }
   const alternar = (id: number) => setSelecionados((atual) => atual.includes(id) ? atual.filter((valor) => valor !== id) : [...atual, id])
   const usarPrimeiros = (quantos: number) => setSelecionados(livres.slice(0, Math.max(0, quantos)).map((item) => item.id))
 
@@ -955,7 +968,8 @@ function TransferForm({ origem, lotes, produtos, contexto, usuarioId, onSaving, 
     setErro('')
     if (porItens && !escolhidos.length) { setErro('Selecione os itens a usar.'); return }
     if (!qtdValida) { setErro(`Informe uma quantidade entre 0 e ${numero.format(origem.quantidade)} ${unidadeOrigem}.`); return }
-    if (!loteDestino) { setErro('Selecione o lote de destino.'); return }
+    if (operacao === 'TRANSFERENCIA' && !localizacaoDestino) { setErro('Selecione a localização de destino.'); return }
+    if (operacao === 'TRANSFORMACAO' && !loteDestino) { setErro('Selecione o lote de destino.'); return }
     if (operacao === 'TRANSFORMACAO' && !(qtdDestino > 0)) { setErro('Informe o rendimento da transformação.'); return }
     onSaving(true)
     try {
@@ -964,7 +978,8 @@ function TransferForm({ origem, lotes, produtos, contexto, usuarioId, onSaving, 
         body: JSON.stringify({
           tipo: operacao,
           lote_id: origem.id,
-          lote_destino_id: loteDestino.id,
+          lote_destino_id: operacao === 'TRANSFORMACAO' ? loteDestino?.id : null,
+          localizacao_destino_id: operacao === 'TRANSFERENCIA' ? localizacaoDestino?.id : null,
           usuario_id: usuarioId,
           quantidade: porItens ? null : qtd,
           item_ids: porItens ? escolhidos.map((item) => item.id) : null,
@@ -1040,7 +1055,21 @@ function TransferForm({ origem, lotes, produtos, contexto, usuarioId, onSaving, 
             options={[{ value: '', label: 'Selecione' }, ...produtos.filter((item) => item.id !== origem.produto_id).map((item) => ({ value: item.id, label: `${item.nome} (${tipoLabels[item.tipo].toLowerCase()})` }))]}
           />
         </label>}
-        <label>
+        {operacao === 'TRANSFERENCIA' ? <label>
+          Localização de destino
+          <SearchSelect<number | ''>
+            required
+            ariaLabel="Localização de destino"
+            placeholder="Buscar localização"
+            value={localizacaoDestinoId}
+            onChange={setLocalizacaoDestinoId}
+            options={[{ value: '', label: 'Selecione' }, ...localizacoesDestino.map((local) => ({
+              value: local.id,
+              label: caminhoLocalizacao(local.id, contexto.locaisPorId, local.nome),
+            }))]}
+          />
+          <small>Um novo lote será criado automaticamente, mantendo produto, validade e rastreabilidade da origem.</small>
+        </label> : <label>
           Lote de destino
           <SearchSelect<number | ''>
             required
@@ -1054,13 +1083,13 @@ function TransferForm({ origem, lotes, produtos, contexto, usuarioId, onSaving, 
               label: `#${lote.id} — ${caminhoLocalizacao(lote.localizacao_id, contexto.locaisPorId, lote.localizacao)} · ${numero.format(lote.quantidade)} ${unidadeDestino}`,
             }))]}
           />
-        </label>
+        </label>}
         {operacao === 'TRANSFORMACAO' && <label>
           Rendimento ({unidadeDestino || 'un. do produto'})
           <input type="number" min="0" step="any" required value={rendimento} onChange={(event) => setRendimento(event.target.value)} placeholder="Quantidade obtida" />
         </label>}
         <label><Rotulo texto="Observação" opcional /><input value={observacao} onChange={(event) => setObservacao(event.target.value)} /></label>
-        {produtoDestino && !lotesDestino.length && <p className="helper">Cadastre antes um lote de {produtoDestino.nome} pelo botão “+ Novo lote”.</p>}
+        {operacao === 'TRANSFORMACAO' && produtoDestino && !lotesDestino.length && <p className="helper">Cadastre antes um lote de {produtoDestino.nome} pelo botão “+ Novo lote”.</p>}
       </section>
     </div>
 
@@ -1074,7 +1103,7 @@ function TransferForm({ origem, lotes, produtos, contexto, usuarioId, onSaving, 
       <div><span>Destino recebe</span><strong>{qtdDestino > 0 && produtoDestino ? `+${numero.format(qtdDestino)} ${unidadeDestino} de ${produtoDestino.nome}` : '—'}</strong></div>
       <div><span>{operacao === 'TRANSFORMACAO' ? 'Rendimento' : 'Destino'}</span><strong>{operacao === 'TRANSFORMACAO'
         ? (fator ? `${numero.format(fator)} ${unidadeDestino} por ${unidadeOrigem}` : '—')
-        : (loteDestino ? `Lote #${loteDestino.id} · ${caminhoLocalizacao(loteDestino.localizacao_id, contexto.locaisPorId, loteDestino.localizacao)}` : '—')}</strong></div>
+        : (localizacaoDestino ? caminhoLocalizacao(localizacaoDestino.id, contexto.locaisPorId, localizacaoDestino.nome) : '—')}</strong></div>
     </div>
   </form>
 }

@@ -24,12 +24,12 @@ def test_padrao_primeira_pagina_com_metadados(client):
 def test_consumidor_escolhe_pagina_e_tamanho(client):
     _criar_produtos(client, 7)
     corpo = client.get(f"{PRODUTOS}?page=2&per_page=3").get_json()
-    assert [p["nome"] for p in corpo["items"]] == ["p03", "p04", "p05"]
+    assert [p["nome"] for p in corpo["items"]] == ["P03", "P04", "P05"]
     assert corpo["page"] == 2 and corpo["per_page"] == 3
     assert corpo["total"] == 7 and corpo["pages"] == 3
 
     ultima = client.get(f"{PRODUTOS}?page=3&per_page=3").get_json()
-    assert [p["nome"] for p in ultima["items"]] == ["p06"]
+    assert [p["nome"] for p in ultima["items"]] == ["P06"]
 
 
 def test_pagina_alem_do_fim_vem_vazia(client):

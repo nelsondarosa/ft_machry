@@ -50,6 +50,13 @@ export function App() {
   useEffect(() => {
     api<Usuario>('/api/auth/me').then((loggedUser) => { setUsuario(loggedUser); setView(loggedUser.papel === 'USER' ? 'producao' : 'inicio'); void load(loggedUser) }).catch(() => setUsuario(null))
   }, [load])
+  useEffect(() => {
+    const expire = () => {
+      setUsuario(null); setProdutos([]); setFichas([]); setLotes([]); setSolicitacoes([])
+    }
+    window.addEventListener('machry:session-expired', expire)
+    return () => window.removeEventListener('machry:session-expired', expire)
+  }, [])
   useEffect(() => { if (!toast) return; const timeout = window.setTimeout(() => setToast(null), 3200); return () => window.clearTimeout(timeout) }, [toast])
   const navigate = (target: View) => { setView(target); setMenuOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }) }
   const mutationDone = async (message: string) => { setProductModal(null); setImportModal(false); setSheetImportModal(false); setSheetModal(null); if (usuario) await load(usuario); setToast({ text: message }) }
@@ -72,21 +79,21 @@ export function App() {
   let page
   if (loading) page = <section className="panel load-error">Carregando dados da operação…</section>
   else if (loadError) page = <section className="panel load-error"><strong>Não foi possível acessar a API</strong><p>{loadError}</p><button className="primary" onClick={() => void load(usuario)}>Tentar novamente</button></section>
-  else if (view === 'inicio') page = <DashboardPage produtos={produtos} fichas={fichas} lotes={lotes} canManage={canManageCatalog} onNewSheet={() => setSheetModal('new')} onEditSheet={setSheetModal} />
+  else if (view === 'inicio') page = <DashboardPage produtos={produtos} fichas={fichas} lotes={lotes} canManage={canManageCatalog} onNewSheet={() => setSheetModal('new')} onViewSheet={setSheetModal} />
   else if (view === 'produtos') page = <ProductsPage produtos={produtos} onNew={() => setProductModal('new')} onImport={() => setImportModal(true)} onEdit={setProductModal} />
-  else if (view === 'fichas') page = <SheetsPage fichas={fichas} canManage={canManageCatalog} onNew={() => setSheetModal('new')} onImport={() => setSheetImportModal(true)} onEdit={setSheetModal} />
+  else if (view === 'fichas') page = <SheetsPage fichas={fichas} canManage={canManageCatalog} onNew={() => setSheetModal('new')} onImport={() => setSheetImportModal(true)} onView={setSheetModal} />
   else if (view === 'estoque') page = <StockPage lotes={lotes} produtos={produtos} localizacoes={localizacoes} usuarioId={usuario.id} onChanged={stockChanged} />
   else if (view === 'historico') page = <HistoryPage lotes={lotes} produtos={produtos} reload={() => void load(usuario)} />
   else if (view === 'locais') page = <LocationsPage locations={localizacoes} onChanged={() => load(usuario)} />
   else if (view === 'usuarios') page = usuario.papel === 'OWNER' ? <UsersPage current={usuario} /> : <section className="panel">Acesso restrito.</section>
-  else if (view === 'producao') page = <ProductionPage solicitacoes={solicitacoes} fichas={fichas} canPlan={usuario.papel !== 'USER'} onCreate={createProduction} onStatus={updateProduction} />
-  else page = <ProductionPage solicitacoes={solicitacoes} fichas={fichas} canPlan={usuario.papel !== 'USER'} onCreate={createProduction} onStatus={updateProduction} />
+  else if (view === 'producao') page = <ProductionPage solicitacoes={solicitacoes} fichas={fichas} canPlan={usuario.papel !== 'USER'} onCreate={createProduction} onStatus={updateProduction} onViewSheet={setSheetModal} />
+  else page = <ProductionPage solicitacoes={solicitacoes} fichas={fichas} canPlan={usuario.papel !== 'USER'} onCreate={createProduction} onStatus={updateProduction} onViewSheet={setSheetModal} />
 
   return <><Shell view={view} menuOpen={menuOpen} apiOnline={!loadError} usuario={usuario} onNavigate={navigate} onMenuToggle={() => setMenuOpen((open) => !open)} onLogout={() => void logout()}>{page}</Shell>
     {productModal && <ProductModal produto={productModal === 'new' ? null : productModal} onClose={() => setProductModal(null)} onSaved={() => void mutationDone('Produto salvo com sucesso.')} onDeleted={() => void mutationDone('Produto excluído.')} />}
     {importModal && <ProductImportModal onClose={() => setImportModal(false)} onSaved={(total, ignorados) => void mutationDone(`${total} produto(s) importado(s).${ignorados.length ? ` ${ignorados.length} já cadastrado(s) foram ignorados.` : ''}`)} />}
     {sheetImportModal && <SheetImportModal onClose={() => setSheetImportModal(false)} onSaved={(total, fasesCriadas, ignoradas) => void mutationDone(`${total} ficha(s) importada(s).${fasesCriadas.length ? ` Fases criadas: ${fasesCriadas.join(', ')}.` : ''}${ignoradas.length ? ` Já tinham ficha: ${ignoradas.join(', ')}.` : ''}`)} />}
-    {sheetModal && <SheetModal ficha={sheetModal === 'new' ? null : sheetModal} produtos={produtos} catalogoFases={fases} onClose={() => setSheetModal(null)} onSaved={() => void mutationDone('Ficha técnica salva com sucesso.')} onDeleted={() => void mutationDone('Ficha técnica excluída.')} />}
+    {sheetModal && <SheetModal ficha={sheetModal === 'new' ? null : sheetModal} produtos={produtos} catalogoFases={fases} canEdit={canManageCatalog} onClose={() => setSheetModal(null)} onSaved={() => void mutationDone('Ficha técnica salva com sucesso.')} onDeleted={() => void mutationDone('Ficha técnica excluída.')} />}
     {toast && <div className={`toast show ${toast.error ? 'error' : ''}`}>{toast.text}</div>}
   </>
 }

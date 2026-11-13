@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { api } from './api'
 import { Modal, SearchSelect } from './components'
+import { BrandMark, useBranding } from './branding'
 import type { Conservacao, FaseCatalogo, FichaTecnica, Produto, TipoProduto } from './types'
 
 const unidadesMedida = [
@@ -15,6 +16,7 @@ const unidadesMedida = [
   { valor: 'dz', nome: 'Dúzia (dz)' },
   { valor: 'pç', nome: 'Peça (pç)' },
 ] as const
+const unidadesPermitidas = new Set<string>(unidadesMedida.map((item) => item.valor))
 
 export function ProductModal({ produto, onClose, onSaved, onDeleted }: { produto: Produto | null; onClose: () => void; onSaved: () => void; onDeleted: () => void }) {
   const [nome, setNome] = useState(produto?.nome ?? '')
@@ -93,7 +95,7 @@ function converterCsv(texto: string): { linhas: LinhaCsv[]; erro?: string } {
       const erros: string[] = []
       const nome = valor('nome'), unidade = valor('unidade_medida'), subdivisao = valor('subdivisao')
       if (!nome) erros.push('nome vazio'); else if (nome.length > 150) erros.push('nome com mais de 150 caracteres')
-      if (!unidade) erros.push('unidade vazia'); else if (unidade.length > 20) erros.push('unidade com mais de 20 caracteres')
+      if (!unidade) erros.push('unidade vazia'); else if (!unidadesPermitidas.has(unidade)) erros.push(`unidade inválida “${unidade}”`)
       if (subdivisao.length > 100) erros.push('subdivisão com mais de 100 caracteres')
       const tipo = tiposCsv[normalizar(valor('tipo'))]
       if (!tipo) erros.push(`tipo inválido “${valor('tipo')}”`)
@@ -291,7 +293,45 @@ const key = () => {
   return `${Date.now().toString(36)}-${keySequence.toString(36)}-${Math.random().toString(36).slice(2)}`
 }
 
-export function SheetModal({ ficha, produtos, catalogoFases, onClose, onSaved, onDeleted }: { ficha: FichaTecnica | null; produtos: Produto[]; catalogoFases: FaseCatalogo[]; onClose: () => void; onSaved: () => void; onDeleted: () => void }) {
+const numeroFicha = new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 3 })
+
+function SheetDocument({ ficha }: { ficha: FichaTecnica }) {
+  const branding = useBranding()
+  const fases = [...ficha.fases].sort((a, b) => a.ordem - b.ordem)
+  const semEtapa = ficha.componentes.filter((item) => item.fase_ordem == null)
+  return <article className="sheet-document">
+    <header className="sheet-document-head">
+      <BrandMark className="sheet-brand-mark" variant="print" />
+      <div><span>{branding.nome}</span><small>{branding.subtitulo}</small></div>
+      <strong>FICHA TÉCNICA #{ficha.id}</strong>
+    </header>
+    <div className="sheet-title-block">
+      <span className="eyebrow">RECEITA PADRONIZADA</span>
+      <h1>{ficha.produto}</h1>
+      <div className="sheet-summary"><span>Rendimento</span><strong>{numeroFicha.format(ficha.rendimento)} {ficha.unidade_rendimento}</strong><span>Tempo total</span><strong>{fases.reduce((total, fase) => total + fase.tempo_previsto_min, 0)} min</strong></div>
+    </div>
+    <section className="sheet-section">
+      <h2>Componentes</h2>
+      <table><thead><tr><th>Ingrediente ou preparo</th><th>Quantidade</th><th>Etapa</th></tr></thead><tbody>
+        {ficha.componentes.map((item) => <tr key={item.id}><td>{item.produto}</td><td>{numeroFicha.format(item.quantidade)} {item.unidade_medida}</td><td>{item.fase_ordem == null ? 'Geral' : `Etapa ${item.fase_ordem}`}</td></tr>)}
+      </tbody></table>
+    </section>
+    <section className="sheet-section">
+      <h2>Modo de preparo</h2>
+      <ol className="sheet-steps">
+        {fases.map((fase) => {
+          const componentes = ficha.componentes.filter((item) => item.fase_ordem === fase.ordem)
+          return <li key={fase.id}><span>{fase.ordem}</span><div><h3>{fase.fase}<small>{fase.tempo_previsto_min} min</small></h3>{componentes.length > 0 && <p>{componentes.map((item) => `${item.produto} (${numeroFicha.format(item.quantidade)} ${item.unidade_medida})`).join(' · ')}</p>}</div></li>
+        })}
+      </ol>
+      {semEtapa.length > 0 && <p className="sheet-general-components"><strong>Componentes gerais:</strong> {semEtapa.map((item) => item.produto).join(', ')}.</p>}
+    </section>
+    <section className="sheet-section sheet-notes"><h2>Observações</h2><p>{ficha.observacao || 'Sem observações adicionais.'}</p></section>
+    <footer className="sheet-document-foot">Documento gerado pelo {branding.nome} · Ficha #{ficha.id}</footer>
+  </article>
+}
+
+function SheetEditor({ ficha, produtos, catalogoFases, saving, setSaving, onSaved }: { ficha: FichaTecnica | null; produtos: Produto[]; catalogoFases: FaseCatalogo[]; saving: boolean; setSaving: (value: boolean) => void; onSaved: () => void }) {
   const productsForSheet = produtos.filter((produto) => produto.tipo !== 'INSUMO')
   const componentOptions = produtos.map((produto) => ({ value: produto.id, label: `${produto.nome} (${produto.unidade_medida})` }))
   const [produtoId, setProdutoId] = useState(ficha?.produto_id ?? productsForSheet[0]?.id ?? 0)
@@ -300,7 +340,6 @@ export function SheetModal({ ficha, produtos, catalogoFases, onClose, onSaved, o
   const [fases, setFases] = useState<DraftPhase[]>(ficha?.fases.map((fase) => ({ key: key(), fase_id: fase.fase_id, ordem: fase.ordem, tempo_previsto_min: fase.tempo_previsto_min })) ?? [{ key: key(), fase_id: catalogoFases[0]?.id ?? 0, ordem: 1, tempo_previsto_min: 10 }])
   const [componentes, setComponentes] = useState<DraftComponent[]>(ficha?.componentes.map((item) => ({ key: key(), produto_id: item.produto_id, quantidade: item.quantidade, fase_ordem: item.fase_ordem })) ?? [{ key: key(), produto_id: produtos[0]?.id ?? 0, quantidade: 1, fase_ordem: 1 }])
   const [error, setError] = useState('')
-  const [saving, setSaving] = useState(false)
 
   const updatePhase = (rowKey: string, change: Partial<DraftPhase>) => setFases((rows) => rows.map((row) => row.key === rowKey ? { ...row, ...change } : row))
   const updateComponent = (rowKey: string, change: Partial<DraftComponent>) => setComponentes((rows) => rows.map((row) => row.key === rowKey ? { ...row, ...change } : row))
@@ -311,23 +350,11 @@ export function SheetModal({ ficha, produtos, catalogoFases, onClose, onSaved, o
       await api(ficha ? `/api/fichas-tecnicas/${ficha.id}` : '/api/fichas-tecnicas', { method: ficha ? 'PUT' : 'POST', body: JSON.stringify(body) }); onSaved()
     } catch (reason) { setError(reason instanceof Error ? reason.message : 'Não foi possível salvar a ficha.') } finally { setSaving(false) }
   }
-  async function remove() {
-    if (!ficha || !window.confirm(`Excluir a ficha de “${ficha.produto}”?`)) return
-    setSaving(true); setError('')
-    try { await api(`/api/fichas-tecnicas/${ficha.id}`, { method: 'DELETE' }); onDeleted() } catch (reason) { setError(reason instanceof Error ? reason.message : 'Não foi possível excluir a ficha.'); setSaving(false) }
-  }
   const addPhase = () => setFases((rows) => [...rows, { key: key(), fase_id: catalogoFases[0]?.id ?? 0, ordem: rows.length + 1, tempo_previsto_min: 10 }])
   const addComponent = () => setComponentes((rows) => [...rows, { key: key(), produto_id: produtos[0]?.id ?? 0, quantidade: 1, fase_ordem: fases[0]?.ordem ?? null }])
   const etapaOptions = [{ value: '' as const, label: 'Sem vínculo' }, ...fases.map((fase) => ({ value: fase.ordem, label: `Etapa ${fase.ordem}` }))]
 
-  const footer = <>
-    {ficha && <button className="danger-link" onClick={remove} disabled={saving}>Excluir ficha</button>}
-    <button className="secondary" onClick={onClose} type="button">Cancelar</button>
-    <button className="primary" form="sheet-form" disabled={saving}>{saving ? 'Salvando…' : 'Salvar ficha'}</button>
-  </>
-
-  return <Modal eyebrow="PADRONIZAÇÃO" title={ficha ? 'Editar ficha técnica' : 'Nova ficha técnica'} wide onClose={onClose} footer={footer}>
-    <form className="dialog-body" id="sheet-form" onSubmit={save}>
+  return <form className="dialog-body sheet-editor" id="sheet-form" onSubmit={save}>
       {error && <p className="form-error">{error}</p>}
       {!productsForSheet.length && <p className="form-error">Cadastre um produto intermediário ou final antes de criar uma ficha.</p>}
 
@@ -419,6 +446,47 @@ export function SheetModal({ ficha, produtos, catalogoFases, onClose, onSaved, o
           </div>
         ))}
       </section>
-    </form>
+  </form>
+}
+
+export function SheetModal({ ficha, produtos, catalogoFases, canEdit, onClose, onSaved, onDeleted }: { ficha: FichaTecnica | null; produtos: Produto[]; catalogoFases: FaseCatalogo[]; canEdit: boolean; onClose: () => void; onSaved: () => void; onDeleted: () => void }) {
+  const [editing, setEditing] = useState(ficha === null)
+  const [saving, setSaving] = useState(false)
+
+  async function remove() {
+    if (!ficha || !window.confirm(`Excluir a ficha de “${ficha.produto}”?`)) return
+    setSaving(true)
+    try {
+      await api(`/api/fichas-tecnicas/${ficha.id}`, { method: 'DELETE' })
+      onDeleted()
+    } catch (reason) {
+      window.alert(reason instanceof Error ? reason.message : 'Não foi possível excluir a ficha técnica.')
+    } finally { setSaving(false) }
+  }
+  function cancel() {
+    if (editing && ficha) setEditing(false)
+    else onClose()
+  }
+  function print() {
+    if (!ficha || editing) return
+    const cleanup = () => document.body.classList.remove('printing-sheet')
+    document.body.classList.add('printing-sheet')
+    window.addEventListener('afterprint', cleanup, { once: true })
+    window.print()
+    cleanup()
+  }
+
+  const footer = <>
+    {ficha && canEdit && <button className="secondary outline" type="button" disabled={editing || saving} onClick={() => setEditing(true)}>Editar</button>}
+    {editing && <button className="primary" form="sheet-form" disabled={saving}>{saving ? 'Salvando…' : 'Salvar'}</button>}
+    <button className="secondary" onClick={cancel} type="button" disabled={saving}>Cancelar</button>
+    {ficha && <button className="primary print-action" type="button" onClick={print} disabled={editing || saving}>Imprimir</button>}
+    {ficha && canEdit && editing && <button className="danger-link" type="button" onClick={() => void remove()} disabled={saving}>Excluir ficha</button>}
+  </>
+
+  return <Modal className="sheet-dialog" eyebrow="PADRONIZAÇÃO" title={ficha ? (editing ? 'Editar ficha técnica' : 'Ficha técnica') : 'Nova ficha técnica'} wide onClose={cancel} footer={footer}>
+    {editing
+      ? <SheetEditor key={`${ficha?.id ?? 'new'}-${editing}`} ficha={ficha} produtos={produtos} catalogoFases={catalogoFases} saving={saving} setSaving={setSaving} onSaved={onSaved} />
+      : ficha && <SheetDocument ficha={ficha} />}
   </Modal>
 }

@@ -32,7 +32,7 @@ def test_crud_completo(client):
 def test_lista_ordenada_por_nome(client):
     criar(client, nome="b")
     criar(client, nome="a")
-    assert [p["nome"] for p in client.get(URL).get_json()['items']] == ["a", "b"]
+    assert [p["nome"] for p in client.get(URL).get_json()['items']] == ["A", "B"]
 
 
 def test_validacao(client):
@@ -42,6 +42,7 @@ def test_validacao(client):
     assert criar(client, nome=" ").status_code == 400
     assert criar(client, tipo="OUTRO").status_code == 400  # CHECK
     assert criar(client, conservacao="QUENTE").status_code == 400  # CHECK
+    assert criar(client, unidade_medida="xyz123").status_code == 400
     assert criar(client, grupo_id=999).status_code == 400  # FOREIGN KEY
 
     pid = criar(client).get_json()["id"]
@@ -86,7 +87,7 @@ def test_subdivisao(client):
     r = client.put(f"{URL}/{p['id']}", json={"subdivisao": None})
     assert r.get_json()["subdivisao"] is None
 
-    assert criar(client).get_json()["subdivisao"] is None
+    assert criar(client, nome="Outra farinha").get_json()["subdivisao"] is None
 
 
 def test_criar_lote(client):
@@ -101,13 +102,13 @@ def test_criar_lote(client):
     # Reimportar ignora nomes já cadastrados, mesmo com outra conservação.
     r = client.post(f"{URL}/lote", json={"produtos": [{**FARINHA, "nome": " farinha "}, {**FARINHA, "conservacao": "CONGELADO"}, {**FARINHA, "nome": "Fubá"}]})
     assert r.status_code == 201
-    assert r.get_json()["total"] == 1 and r.get_json()["ignorados"] == ["farinha", "Farinha"]
+    assert r.get_json()["total"] == 1 and r.get_json()["ignorados"] == ["Farinha", "Farinha"]
 
 
 def test_criar_lote_ignora_repetidos_no_arquivo(client):
     r = client.post(f"{URL}/lote", json={"produtos": [FARINHA, {**FARINHA, "nome": "FARINHA "}, FARINHA]})
     assert r.status_code == 201
-    assert r.get_json()["total"] == 1 and r.get_json()["ignorados"] == ["FARINHA", "Farinha"]
+    assert r.get_json()["total"] == 1 and r.get_json()["ignorados"] == ["Farinha", "Farinha"]
     assert [p["nome"] for p in client.get(URL).get_json()["items"]] == ["Farinha"]
 
 
@@ -120,3 +121,18 @@ def test_criar_lote_atomico(client):
     assert r.get_json()["erro"].startswith("produto 2:")
     assert client.get(URL).get_json()["items"] == []
     assert client.post(f"{URL}/lote", json={"produtos": []}).status_code == 400
+
+
+def test_cadastro_manual_padroniza_nome_e_bloqueia_equivalentes(client):
+    primeiro = criar(client, nome="  RÚCULA  ")
+    assert primeiro.status_code == 201
+    assert primeiro.get_json()["nome"] == "Rúcula"
+
+    repetido = criar(client, nome="rucula")
+    assert repetido.status_code == 400
+    assert "nome equivalente" in repetido.get_json()["erro"]
+
+    outro = criar(client, nome="Alface")
+    assert outro.status_code == 201
+    conflito = client.put(f"{URL}/{outro.get_json()['id']}", json={"nome": "RUCULA"})
+    assert conflito.status_code == 400

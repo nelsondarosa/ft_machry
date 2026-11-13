@@ -13,13 +13,14 @@ services:
       DB_PASSWORD: ${DB_PASSWORD:-}
       SECRET_KEY: ${SECRET_KEY:-machry-desenvolvimento-troque-em-producao}
       SESSION_COOKIE_SECURE: ${SESSION_COOKIE_SECURE:-0}
+      SESSION_IDLE_MINUTES: ${SESSION_IDLE_MINUTES:-60}
       OWNER_USERNAME: ${OWNER_USERNAME:-dona}
       OWNER_INITIAL_PASSWORD: ${OWNER_INITIAL_PASSWORD:-Dona@123}
       MANAGER_USERNAME: ${MANAGER_USERNAME:-gestor}
       MANAGER_INITIAL_PASSWORD: ${MANAGER_INITIAL_PASSWORD:-Gestor@123}
       COOK_USERNAME: ${COOK_USERNAME:-cozinha}
       COOK_INITIAL_PASSWORD: ${COOK_INITIAL_PASSWORD:-Cozinha@123}
-      BRANDING: ${BRANDING:-machry}
+      BRANDING: ${BRANDING:-cozinha_plus}
     volumes:
       - ./data:/app/data
       - ./branding:/app/branding:ro

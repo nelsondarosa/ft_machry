@@ -1,22 +1,24 @@
 import { createContext, useContext } from 'react'
 
-/** Identidade visual. Os valores padrão (textos de branding/machry) valem quando a API não fornece outros. */
+/** Identidade visual. Os valores padrão valem quando a API não fornece outros. */
 export interface Branding {
   nome: string
   subtitulo: string
   sigla: string
   titulo: string
   logo?: string
+  logo_horizontal?: string
+  logo_impressao?: string
   favicon?: string
   apple_touch_icon?: string
   css?: string
 }
 
 export const brandingPadrao: Branding = {
-  nome: 'Machry Armazém e Bistrô',
-  subtitulo: 'COZINHA+ · GESTÃO DE COZINHA',
-  sigla: 'M',
-  titulo: 'Machry Armazém e Bistrô · Cozinha+ Gestão de cozinha',
+  nome: 'Cozinha+',
+  subtitulo: 'GESTÃO DE COZINHA',
+  sigla: 'C+',
+  titulo: 'Cozinha+ · Operação de cozinha',
 }
 
 const BrandingContext = createContext<Branding>(brandingPadrao)
@@ -46,8 +48,9 @@ export async function carregarBranding(): Promise<Branding> {
   return branding
 }
 
-/** Logo da identidade: imagem quando configurada, senão a sigla em texto. */
-export function BrandMark({ className }: { className: string }) {
-  const { logo, sigla, nome } = useBranding()
-  return <div className={`${className}${logo ? ' has-logo' : ''}`}>{logo ? <img src={logo} alt={nome} /> : sigla}</div>
+/** Escolhe a aplicação adequada da marca para fundos escuros ou impressão. */
+export function BrandMark({ className, variant = 'symbol' }: { className: string; variant?: 'symbol' | 'horizontal' | 'print' }) {
+  const { logo, logo_horizontal, logo_impressao, sigla, nome } = useBranding()
+  const source = variant === 'horizontal' ? logo_horizontal ?? logo : variant === 'print' ? logo_impressao ?? logo : logo
+  return <div className={`${className}${source ? ' has-logo' : ''}`}>{source ? <img src={source} alt={nome} /> : sigla}</div>
 }
