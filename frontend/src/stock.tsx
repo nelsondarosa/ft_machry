@@ -49,7 +49,9 @@ const mensagemErro = (reason: unknown) => reason instanceof Error ? reason.messa
 
 const dataEntrada = (lote: Lote) => lote.data_producao ?? lote.criado_em
 const temItens = (lote: Lote) => lote.itens_total > 0
-const itensAtivos = (lote: Lote) => lote.itens_total - lote.itens_consumidos
+const itensAtivos = (lote: Lote) => lote.itens_total - lote.itens_consumidos - lote.itens_vencidos
+const itemVencido = (item: ItemLote) =>
+  item.status !== 'CONSUMIDA' && (diasAte(item.data_validade) ?? 0) < 0
 
 function situacaoDo(lote: Lote): { tipo: Situacao; texto: string } {
   if (lote.quantidade <= 0) return { tipo: 'ESGOTADO', texto: 'Esgotado' }
@@ -125,6 +127,7 @@ export function StockPage({ lotes, produtos, localizacoes, usuarioId, onChanged 
   const comSaldo = lotes.filter((lote) => lote.quantidade > 0)
   const situacoes = new Map(lotes.map((lote) => [lote.id, situacaoDo(lote)]))
   const contar = (alvo: Situacao) => comSaldo.filter((lote) => situacoes.get(lote.id)?.tipo === alvo).length
+  const lotesAtivos = comSaldo.length - contar('VENCIDO')
   const unidadesCadastradas = comSaldo.reduce((total, lote) => total + itensAtivos(lote), 0)
 
   const termo = busca.trim().toLocaleLowerCase('pt-BR').replace(/^#/, '')
@@ -149,7 +152,7 @@ export function StockPage({ lotes, produtos, localizacoes, usuarioId, onChanged 
     />
 
     <section className="metrics four">
-      <Metric label="LOTES ATIVOS" value={comSaldo.length} detail="com saldo disponível" />
+      <Metric label="LOTES ATIVOS" value={lotesAtivos} detail="com saldo disponível e dentro de validade" />
       <Metric label="UNIDADES CADASTRADAS" value={unidadesCadastradas} detail="itens rastreados individualmente" />
       <article className="metric warning">
         <span>ATENÇÃO À VALIDADE</span>
@@ -256,7 +259,7 @@ function ResumoItens({ lote, unidade, vencido }: { lote: Lote; unidade: string; 
     </div>
   }
   return <div className="item-summary">
-    <span><strong>{itensAtivos(lote)} un</strong> · {lote.itens_disponiveis} {lote.itens_disponiveis === 1 ? 'disponível' : 'disponíveis'}</span>
+    <span><strong>{itensAtivos(lote)} un</strong> · {lote.itens_disponiveis} {lote.itens_disponiveis === 1 ? 'disponível' : 'disponíveis'}{lote.itens_vencidos > 0 && ` · ${lote.itens_vencidos} ${lote.itens_vencidos === 1 ? 'vencida' : 'vencidas'}`}</span>
     <BarraStatus lote={lote} vencido={vencido} />
   </div>
 }
@@ -267,6 +270,7 @@ function BarraStatus({ lote, vencido }: { lote: Lote; vencido?: boolean }) {
     ['disponivel', lote.itens_disponiveis],
     ['reservada', lote.itens_reservados],
     ['em_uso', lote.itens_em_uso],
+    ['vencido', lote.itens_vencidos],
     ['consumida', lote.itens_consumidos],
   ]
   return <div className="status-bar">
@@ -421,6 +425,7 @@ function LotDetails({ lote, contexto, usuarioId, itens, erroItens, onItemChanged
             <span><i className="disponivel" /><strong>{lote.itens_disponiveis}</strong> disponíveis</span>
             <span><i className="reservada" /><strong>{lote.itens_reservados}</strong> reservadas</span>
             <span><i className="em_uso" /><strong>{lote.itens_em_uso}</strong> em uso</span>
+            <span><i className="vencido" /><strong>{lote.itens_vencidos}</strong> vencidas</span>
             <span><i className="consumida" /><strong>{lote.itens_consumidos}</strong> consumidas</span>
           </div>
         </div>
@@ -462,7 +467,7 @@ function ItemsTable({ loteId, usuarioId, itens, erro, unidade, onItemChanged }: 
   unidade: string
   onItemChanged: (mensagem: string) => Promise<void>
 }) {
-  const [filtro, setFiltro] = useState<StatusItem | 'TODOS'>('TODOS')
+  const [filtro, setFiltro] = useState<StatusItem | 'VENCIDA' | 'TODOS'>('TODOS')
   const [itemEmAcao, setItemEmAcao] = useState<number | null>(null)
   const [erroAcao, setErroAcao] = useState('')
 
@@ -479,22 +484,27 @@ function ItemsTable({ loteId, usuarioId, itens, erro, unidade, onItemChanged }: 
   }
 
   function consumir(item: ItemLote) {
-    void executar(item, () => api('/api/estoque/movimentacoes', {
-      method: 'POST',
-      body: JSON.stringify({ tipo: 'SAIDA', lote_id: loteId, usuario_id: usuarioId, item_ids: [item.id], motivo: 'Item consumido' }),
-    }), `${item.codigo} consumido.`)
-  }
+  const vencido = itemVencido(item)
+  void executar(item, () => api('/api/estoque/movimentacoes', {
+    method: 'POST',
+    body: JSON.stringify({ tipo: 'SAIDA', lote_id: loteId, usuario_id: usuarioId, item_ids: [item.id], motivo: vencido ? 'Item vencido' : 'Item consumido' }),
+  }), vencido ? `${item.codigo} saiu do estoque (vencido).` : `${item.codigo} consumido.`)
+}
 
   if (erro) return <p className="form-error">{erro}</p>
   if (!itens) return <p className="helper">Carregando itens…</p>
-  const visiveis = filtro === 'TODOS' ? itens : itens.filter((item) => item.status === filtro)
-  const ativos = itens.filter((item) => item.status !== 'CONSUMIDA').length
+  const visiveis = itens.filter((item) => {
+    if (filtro === 'TODOS') return true
+    if (filtro === 'VENCIDA') return itemVencido(item)
+    return item.status === filtro && !itemVencido(item)
+  })
+  const ativos = itens.filter((item) => item.status !== 'CONSUMIDA' && !itemVencido(item)).length
 
   return <div className="lot-section">
     <div className="lot-section-head">
       <h3>Itens do lote ({ativos})</h3>
       <div className="stock-tabs compact">
-        {([['TODOS', 'Todos'], ['DISPONIVEL', 'Disponíveis'], ['RESERVADA', 'Reservadas'], ['EM_USO', 'Em uso'], ['CONSUMIDA', 'Consumidas']] as const).map(([valor, label]) =>
+        {([['TODOS', 'Todos'], ['DISPONIVEL', 'Disponíveis'], ['RESERVADA', 'Reservadas'], ['EM_USO', 'Em uso'], ['VENCIDA', 'Vencidas'], ['CONSUMIDA', 'Consumidas']] as const).map(([valor, label]) =>
           <button type="button" key={valor} className={filtro === valor ? 'active' : ''} onClick={() => setFiltro(valor)}>{label}</button>)}
       </div>
     </div>
@@ -513,12 +523,14 @@ function ItemsTable({ loteId, usuarioId, itens, erro, unidade, onItemChanged }: 
             <td>{item.saldo < item.quantidade && item.saldo > 0
               ? `${numero.format(item.saldo)} de ${numero.format(item.quantidade)} ${unidade}`
               : `${numero.format(item.quantidade)} ${unidade}`}</td>
-            <td><span className={`pill item-${item.status.toLowerCase()}`}>{statusLabels[item.status]}</span></td>
+            <td>{itemVencido(item)
+              ? <span className="pill vencido">Vencido</span>
+              : <span className={`pill item-${item.status.toLowerCase()}`}>{statusLabels[item.status]}</span>}</td>
             <td>{destinoDoItem(item)}</td>
             <td><div className="item-actions">
               {itemEmAcao === item.id && <span className="helper">Salvando…</span>}
-              {itemEmAcao !== item.id && item.status === 'DISPONIVEL' && <button type="button" className="text-button" disabled={itemEmAcao !== null} onClick={() => abrir(item)}>Abrir</button>}
-              {itemEmAcao !== item.id && (item.status === 'DISPONIVEL' || item.status === 'EM_USO') && <button type="button" className="text-button" disabled={itemEmAcao !== null} onClick={() => consumir(item)}>Consumir</button>}
+              {itemEmAcao !== item.id && item.status === 'DISPONIVEL' && !itemVencido(item) && <button type="button" className="text-button" disabled={itemEmAcao !== null} onClick={() => abrir(item)}>Abrir</button>}
+              {itemEmAcao !== item.id && (item.status === 'DISPONIVEL' || item.status === 'EM_USO') && <button type="button" className="text-button" disabled={itemEmAcao !== null} onClick={() => consumir(item)}>{itemVencido(item) ? 'Dar saída' : 'Consumir'}</button>}
             </div></td>
           </tr>)}
         </tbody>
@@ -849,15 +861,18 @@ function MoveForm({ lote, unidade, usuarioId, onSaving, onSaved }: {
   onSaved: (mensagem: string) => Promise<void>
 }) {
   const porItens = temItens(lote)
-  const [tipo, setTipo] = useState<TipoMovimento>(porItens ? 'SAIDA' : 'ENTRADA')
+  const vencido = situacaoDo(lote).tipo === 'VENCIDO'
+  const [tipo, setTipo] = useState<TipoMovimento>(porItens || vencido ? 'SAIDA' : 'ENTRADA')
   const [quantidade, setQuantidade] = useState('')
   const [motivo, setMotivo] = useState('')
   const [observacao, setObservacao] = useState('')
   const [erro, setErro] = useState('')
 
-  const opcoes: { value: TipoMovimento; label: string }[] = porItens
-    ? [{ value: 'SAIDA', label: 'Saída' }, { value: 'AJUSTE_SAIDA', label: 'Ajuste de saída' }]
-    : [{ value: 'ENTRADA', label: 'Entrada' }, { value: 'SAIDA', label: 'Saída' }, { value: 'AJUSTE_ENTRADA', label: 'Ajuste de entrada' }, { value: 'AJUSTE_SAIDA', label: 'Ajuste de saída' }]
+  const opcoes: { value: TipoMovimento; label: string }[] = vencido
+    ? [{ value: 'SAIDA', label: 'Saída' }]
+    : porItens
+        ? [{ value: 'SAIDA', label: 'Saída' }, { value: 'AJUSTE_SAIDA', label: 'Ajuste de saída' }]
+        : [{ value: 'ENTRADA', label: 'Entrada' }, { value: 'SAIDA', label: 'Saída' }, { value: 'AJUSTE_ENTRADA', label: 'Ajuste de entrada' }, { value: 'AJUSTE_SAIDA', label: 'Ajuste de saída' }]
   const pedeMotivo = tipo !== 'ENTRADA'
   const qtd = numeroDe(quantidade) || 0
   const somaNoLote = tipo === 'ENTRADA' || tipo === 'AJUSTE_ENTRADA'
@@ -877,6 +892,7 @@ function MoveForm({ lote, unidade, usuarioId, onSaving, onSaved }: {
   return <form id="move-form" className="lot-form" onSubmit={salvar}>
     {erro && <p className="form-error">{erro}</p>}
     {porItens && <p className="notice">Lote com itens: a saída consome primeiro os itens abertos e depois os que vencem antes. Para escolher os itens, use a aba “Transferir ou transformar” ou o botão “Consumir” na lista de itens.</p>}
+    {vencido && <p className="notice">Lote vencido: só é permitida saída. {porItens && 'Itens vencidos saem pelo botão “Dar saída” na lista de itens; a saída por quantidade usa só os itens dentro da validade.'}</p>}
     <div className="form-grid">
       <label>Movimento<SearchSelect ariaLabel="Tipo de movimentação" value={tipo} onChange={setTipo} options={opcoes} /></label>
       <label>Quantidade ({unidade || 'unidade'})<input required type="number" min="0.001" step="any" value={quantidade} onChange={(event) => setQuantidade(event.target.value)} /></label>
@@ -911,7 +927,7 @@ function TransferForm({ origem, lotes, produtos, contexto, usuarioId, onSaving, 
 
   const porItens = temItens(origem)
   const { itens } = useItensDoLote(origem.id, porItens)
-  const livres = (itens ?? []).filter((item) => item.status === 'DISPONIVEL' || item.status === 'EM_USO').sort(ordemDeUso)
+  const livres = (itens ?? []).filter((item) => (item.status === 'DISPONIVEL' || item.status === 'EM_USO') && !itemVencido(item)).sort(ordemDeUso)
   const escolhidos = livres.filter((item) => selecionados.includes(item.id))
 
   const produtoOrigem = contexto.produtosPorId.get(origem.produto_id)

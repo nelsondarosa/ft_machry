@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import date
 from typing import Optional
 
-from sqlalchemy import text
+from sqlalchemy import or_, text
 
 from db.database_config import db
 
@@ -144,24 +144,37 @@ class EstoqueRepository(RepositorioBase):
         localizacao_id: Optional[int] = None,
     ):
         sql = """SELECT l.*, p.nome AS produto, loc.nome AS localizacao,
+                    CASE 
+                        WHEN l.data_validade IS NOT NULL AND l.data_validade < :hoje
+                        THEN TRUE
+                        ELSE FALSE
+                    END AS vencido
+               ,
                         COALESCE(i.total, 0) AS itens_total,
                         COALESCE(i.disponiveis, 0) AS itens_disponiveis,
                         COALESCE(i.reservados, 0) AS itens_reservados,
                         COALESCE(i.em_uso, 0) AS itens_em_uso,
-                        COALESCE(i.consumidos, 0) AS itens_consumidos
+                        COALESCE(i.consumidos, 0) AS itens_consumidos,
+                        COALESCE(i.vencidos, 0) AS itens_vencidos
                    FROM lote l
-                   JOIN produto p ON p.id = l.produto_id
-                   JOIN localizacao loc ON loc.id = l.localizacao_id
+                  JOIN produto p ON p.id = l.produto_id
+                  JOIN localizacao loc ON loc.id = l.localizacao_id
+               
                    LEFT JOIN (
                         SELECT lote_id, COUNT(*) AS total,
-                               SUM(CASE WHEN status = 'DISPONIVEL' THEN 1 ELSE 0 END) AS disponiveis,
-                               SUM(CASE WHEN status = 'RESERVADA' THEN 1 ELSE 0 END) AS reservados,
-                               SUM(CASE WHEN status = 'EM_USO' THEN 1 ELSE 0 END) AS em_uso,
-                               SUM(CASE WHEN status = 'CONSUMIDA' THEN 1 ELSE 0 END) AS consumidos
+                               SUM(CASE WHEN status = 'DISPONIVEL'
+                                    AND (data_validade IS NULL OR data_validade >= :hoje) THEN 1 ELSE 0 END) AS disponiveis,
+                               SUM(CASE WHEN status = 'RESERVADA'
+                                    AND (data_validade IS NULL OR data_validade >= :hoje) THEN 1 ELSE 0 END) AS reservados,
+                               SUM(CASE WHEN status = 'EM_USO'
+                                    AND (data_validade IS NULL OR data_validade >= :hoje) THEN 1 ELSE 0 END) AS em_uso,
+                               SUM(CASE WHEN status = 'CONSUMIDA' THEN 1 ELSE 0 END) AS consumidos,
+                               SUM(CASE WHEN status IN ('DISPONIVEL', 'RESERVADA', 'EM_USO') AND data_validade < :hoje THEN 1 ELSE 0 END) AS vencidos
                           FROM item_lote GROUP BY lote_id
                    ) i ON i.lote_id = l.id
                   WHERE 1=1"""
-        params: dict = {}
+                
+        params: dict = {"hoje": date.today().isoformat()}
         if produto_id is not None:
             sql += " AND l.produto_id = :produto_id"
             params["produto_id"] = produto_id
@@ -232,10 +245,12 @@ class EstoqueRepository(RepositorioBase):
 
     def itens_fefo(self, lote_id: int) -> list[ItemLote]:
         """Itens que podem ser usados, na ordem em que devem sair do estoque."""
+        hoje = date.today().isoformat()
         consulta = (
             db.select(ItemLote)
             .where(ItemLote.lote_id == lote_id)
             .where(ItemLote.status.in_(Constantes.STATUS_ITEM_LIVRES))
+            .where(or_(ItemLote.data_validade.is_(None), ItemLote.data_validade >= hoje))
             .order_by(
                 ItemLote.status != "EM_USO",
                 ItemLote.data_validade.is_(None),
