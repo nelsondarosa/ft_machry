@@ -128,10 +128,18 @@ Cada ficha de exemplo termina com linhas só de `observacao`: o código e a orig
 Exemplos, em ordem de importação (os de produtos pela página **Produtos**, os de fichas pela página **Fichas técnicas**):
 
 1. [`produtos_machry.csv`](docs/exemplos/produtos_machry.csv): catálogo de insumos.
-2. [`produtos_apostila_ft01-10.csv`](docs/exemplos/produtos_apostila_ft01-10.csv) e [`fichas_apostila_ft01-10.csv`](docs/exemplos/fichas_apostila_ft01-10.csv): as 10 primeiras fichas da Apostila Cozinheiro 2024 (FT 01 fundo de legumes, FT 02 velouté, FT 03 bouquet garni, FT 04 crispy de couve, FT 05 e FT 06 sopas creme de cenoura e de tomate, FT 07 croûtons, FT 08 gratin, FT 09 potage e FT 10 purê), com o hortifrúti e os preparos que faltam no catálogo. O mirepoix entra como produto intermediário, sem ficha (a apostila só descreve a proporção).
-3. [`produtos_aula4.csv`](docs/exemplos/produtos_aula4.csv) e [`fichas_aula4.csv`](docs/exemplos/fichas_aula4.csv): Aula 4 (batatas). Repete FT 08 a FT 10, que são ignoradas se o passo 2 já foi importado, e acrescenta a batata parmentier e as batatas duchesse (FT 11).
+2. [`produtos_apostila_1.csv`](docs/exemplos/produtos_apostila_1.csv) e [`produtos_apostila_2.csv`](docs/exemplos/produtos_apostila_2.csv), depois [`fichas_apostila_1.csv`](docs/exemplos/fichas_apostila_1.csv), [`_2`](docs/exemplos/fichas_apostila_2.csv) e [`_3`](docs/exemplos/fichas_apostila_3.csv): todas as 405 receitas da Apostila Cozinheiro 2024, divididas em partes por causa do limite de 500 produtos e 200 fichas por importação. Os produtos trazem o hortifrúti, os insumos que faltam no catálogo e um produto intermediário ou final para cada receita.
+3. [`produtos_aula4.csv`](docs/exemplos/produtos_aula4.csv) e [`fichas_aula4.csv`](docs/exemplos/fichas_aula4.csv): Aula 4 (batatas). Só acrescenta a batata parmentier; as demais fichas já vêm da apostila e são ignoradas.
 
-As fichas usam os nomes do catálogo (ex.: “Manteiga” → Manteiga sem sal, “Batatas” → Batata asterix). Nata e creme de leite, pesados em g nas receitas, foram lançados em ml porque estão cadastrados em L.
+Sobre as fichas da apostila:
+
+- **FT 01 a FT 10** foram revisadas à mão. As demais foram convertidas automaticamente e merecem revisão antes do uso em produção.
+- **Nomes:** os insumos usam os nomes do catálogo (ex.: “Manteiga” → Manteiga sem sal, “Sal” → Sal fino, “Batatas” → Batata asterix). Quando a receita tem o mesmo nome de um produto comprado, ganha “caseiro(a)” ou “cozido” (ex.: Ketchup caseiro, Arroz integral cozido).
+- **Fases:** saem do modo de preparo, pelo verbo de cada passo. Rendimento e tempos não informados na apostila são estimados.
+- **Unidades:** são convertidas (dentes, maços, colheres, fatias). Unidades erradas ou ausentes na apostila são corrigidas, como “110 un” de cebola lido como 110 g. Nata e creme de leite pesados em g são lançados em ml, porque estão cadastrados em L.
+- **Fora dos componentes:** água, gelo e utensílios não são controlados no estoque.
+- **Receitas repetidas:** são importadas uma vez. Ficam de fora a segunda e a terceira versão do molho bechamel e as versões repetidas de arroz, fundo bovino, molho demi-glace, polenta cremosa e salsa verde.
+- **Observação de cada ficha:** “Ajustes da importação” registra cada conversão e estimativa.
 
 ## Identidade visual
 
