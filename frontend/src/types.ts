@@ -96,6 +96,7 @@ export interface Lote {
   itens_reservados: number
   itens_em_uso: number
   itens_consumidos: number
+  itens_vencidos: number
 }
 
 export type StatusItem = 'DISPONIVEL' | 'RESERVADA' | 'EM_USO' | 'CONSUMIDA'

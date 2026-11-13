@@ -147,11 +147,13 @@ class LoteOut(BaseModel):
 class LoteListadoOut(LoteOut):
     produto: str
     localizacao: str
+    vencido: bool = False
     itens_total: int = 0
     itens_disponiveis: int = 0
     itens_reservados: int = 0
     itens_em_uso: int = 0
     itens_consumidos: int = 0
+    itens_vencidos: int = 0
 
 
 class ItensLoteCreate(BaseModel):

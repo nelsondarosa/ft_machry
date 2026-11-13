@@ -192,11 +192,13 @@ class LoteListado:
     criado_em: str
     produto: str
     localizacao: str
+    vencido: bool
     itens_total: int
     itens_disponiveis: int
     itens_reservados: int
     itens_em_uso: int
     itens_consumidos: int
+    itens_vencidos: int = 0
 
     @classmethod
     def from_row(cls, row) -> "LoteListado":

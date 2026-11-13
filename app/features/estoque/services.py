@@ -5,6 +5,8 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Optional
 
+from datetime import date
+
 from flask_sqlalchemy.pagination import Pagination
 
 from app.utils.constantes import Constantes
@@ -53,6 +55,11 @@ class EstoqueService:
         with self.repository.transacao():
             origem = self._obter_lote_ou_falhar(dados.lote_id, para_atualizacao=True)
             self._validar_usuario_ativo(dados.usuario_id)
+            
+            if(not self.repository.lote_tem_itens(origem.id)
+                    and _vencido(origem.data_validade)
+                    and dados.tipo != "SAIDA"):
+                raise ValueError("Lote vencido: Só é permitida saída")
 
             destino = None
             if dados.lote_destino_id is not None:
@@ -89,7 +96,7 @@ class EstoqueService:
             )
 
         if dados.item_ids is not None:
-            usos = self._usar_itens_escolhidos(origem, dados.item_ids)
+            usos = self._usar_itens_escolhidos(origem, dados.item_ids, dados.tipo)
         elif dados.tipo == "TRANSFERENCIA":
             raise ValueError("lote controlado por itens: informe os itens a transferir (item_ids)")
         else:
@@ -116,7 +123,7 @@ class EstoqueService:
             self._recalcular_lote(destino)
         return movimentacao
 
-    def _usar_itens_escolhidos(self, origem, item_ids: list[int]) -> list[UsoDeItem]:
+    def _usar_itens_escolhidos(self, origem, item_ids: list[int], tipo: str) -> list[UsoDeItem]:
         """Itens escolhidos pelo usuário saem por inteiro."""
         itens = self.repository.itens_por_ids(item_ids)
         if len(itens) != len(item_ids):
@@ -128,6 +135,8 @@ class EstoqueService:
                 raise ValueError(f"o item {item.codigo} não pertence ao lote {origem.id}")
             if item.status not in Constantes.STATUS_ITEM_LIVRES:
                 raise ValueError(f"o item {item.codigo} não está disponível ({item.status})")
+            if _vencido(item.data_validade) and tipo != "SAIDA":
+                raise ValueError(f"o item {item.codigo} está vencido: só é permitida a saída")
             usos.append(UsoDeItem(item=item, quantidade=item.saldo))
         return usos
 
@@ -143,7 +152,7 @@ class EstoqueService:
             falta = _arredondar(falta - usar)
 
         if falta > 0:
-            raise ValueError("saldo insuficiente nos itens disponíveis")
+            raise ValueError("saldo insuficiente nos itens disponíveis (itens vencidos só saem escolhendo-os em uma saída)")
         return usos
 
     def _total_dos_usos(self, usos: list[UsoDeItem], origem) -> float:
@@ -330,6 +339,7 @@ class EstoqueService:
             self._validar_validade_obrigatoria(
                 produto, dados.data_validade, "produto exige data_validade"
             )
+            self._validar_data_validade(dados.data_validade)
             self._validar_conservacao_compativel(produto, localizacao)
             lote = self.repository.inserir_lote(
                 produto_id=dados.produto_id,
@@ -401,6 +411,8 @@ class EstoqueService:
         validade = _data_iso(grupo.data_validade) or lote.data_validade
         if produto.validade_obrigatoria and not validade:
             raise ValueError("produto exige data_validade nos itens")
+        if _vencido(validade):
+            raise ValueError("a validade do grupo já venceu; informe uma validade futura")
         return validade
 
     def _novo_item(self, lote, sequencia: int, *, quantidade, data_validade,
@@ -442,6 +454,8 @@ class EstoqueService:
             fabricacao = campos.get("data_fabricacao", item.data_fabricacao)
             validade = campos.get("data_validade", item.data_validade)
             self._validar_validade_obrigatoria(produto, validade, "produto exige data_validade")
+            if "data_validade" in campos and campos["data_validade"] != item.data_validade:
+                self._validar_data_validade(validade)
             if fabricacao and validade and fabricacao > validade:
                 raise ValueError("validade do item anterior à fabricação")
             for campo, valor in campos.items():
@@ -457,6 +471,8 @@ class EstoqueService:
             if item.status != "DISPONIVEL":
                 raise ValueError(f"somente itens disponíveis podem ser abertos (atual: {item.status})")
             item.status = "EM_USO"
+            if _vencido(item.data_validade):
+                raise ValueError("item vencido não pode ser aberto")
             item.aberto_em = _agora()
             return item
 
@@ -472,6 +488,8 @@ class EstoqueService:
             producao = campos.get("data_producao", lote.data_producao)
             produto = self.repository.obter_produto(lote.produto_id)
             self._validar_validade_obrigatoria(produto, validade, "validade obrigatória")
+            if "data_validade" in campos and campos["data_validade"] != lote.data_validade:
+                self._validar_data_validade(validade)
             if producao and validade and producao > validade:
                 raise ValueError("validade anterior à produção")
             if "localizacao_id" in campos:
@@ -498,6 +516,11 @@ class EstoqueService:
     def _validar_validade_obrigatoria(self, produto, data_validade, mensagem: str) -> None:
         if produto.validade_obrigatoria and not data_validade:
             raise ValueError(mensagem)
+        
+        
+    def _validar_data_validade(self, data_validade) -> None:
+        if _vencido(data_validade):
+            raise ValueError("Não é permitido cadastrar lote vencido.")
 
     def _validar_conservacao_compativel(self, produto, localizacao) -> None:
         if produto.conservacao != localizacao.tipo:
@@ -529,3 +552,16 @@ def _limpar_texto(texto: Optional[str]) -> Optional[str]:
     if texto is None:
         return None
     return texto.strip() or None
+
+def _como_data(valor) -> Optional[date]:
+    if valor is None or valor == "":
+        return None
+    if isinstance(valor, datetime):
+        return valor.date()
+    if isinstance(valor, date):
+        return valor
+    return date.fromisoformat(str(valor)[:10])
+
+def _vencido(valor) -> bool:
+    data = _como_data(valor)
+    return data is not None and data < date.today()
