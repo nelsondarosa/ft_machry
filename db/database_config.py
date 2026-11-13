@@ -173,6 +173,36 @@ def init_db_command(seed: bool):
     click.echo("Banco inicializado." + (" (com seeds)" if seed else ""))
 
 
+def _tabelas_do_catalogo() -> list:
+    """Tabela `produto` e todas as que dependem dela (fichas, estoque, produção), na ordem de exclusão."""
+    alvo = {"produto"}
+    mudou = True
+    while mudou:
+        mudou = False
+        for tabela in db.metadata.tables.values():
+            if tabela.name not in alvo and any(fk.column.table.name in alvo for fk in tabela.foreign_keys):
+                alvo.add(tabela.name)
+                mudou = True
+    return [t for t in reversed(db.metadata.sorted_tables) if t.name in alvo]
+
+
+@click.command("limpar-catalogo")
+@click.option("--sim", is_flag=True, help="Não pede confirmação.")
+def limpar_catalogo_command(sim: bool):
+    """Apaga produtos e fichas técnicas (e lotes, estoque e produção ligados a eles).
+
+    Usuários, fases de produção, grupos e localizações são mantidos.
+    """
+    tabelas = _tabelas_do_catalogo()
+    nomes = ", ".join(t.name for t in tabelas)
+    if not sim:
+        click.confirm(f"Apagar todos os registros de: {nomes}?", abort=True)
+    for tabela in tabelas:
+        db.session.execute(tabela.delete())
+    db.session.commit()
+    click.echo(f"Catálogo limpo: {nomes}.")
+
+
 def init_app(app: Flask):
     if "SQLALCHEMY_DATABASE_URI" not in app.config:
         app.config["SQLALCHEMY_DATABASE_URI"] = _montar_database_uri(app.config)
@@ -184,3 +214,4 @@ def init_app(app: Flask):
             _configurar_sqlite(db.engine)
 
     app.cli.add_command(init_db_command)
+    app.cli.add_command(limpar_catalogo_command)

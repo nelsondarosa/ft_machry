@@ -31,8 +31,9 @@ class ProdutoService:
     def criar_lote(self, dados: ProdutoLoteCreate) -> tuple[list[Produto], list[str]]:
         """Cria todos os produtos ou nenhum; erros indicam a posição do item.
 
-        Produtos com o mesmo nome e conservação de um produto ativo são ignorados,
-        para que reimportar um arquivo não duplique o catálogo.
+        Produtos com o mesmo nome de um produto ativo, ou de uma linha anterior
+        do mesmo arquivo, são ignorados, mesmo com outra conservação: reimportar
+        não duplica o catálogo e cada nome continua único para as fichas técnicas.
         """
         itens: list[ProdutoCreate] = []
         for posicao, bruto in enumerate(dados.produtos, start=1):
@@ -43,12 +44,14 @@ class ProdutoService:
                 detalhe = f"{campo}: " if campo else ""
                 raise ValueError(f"produto {posicao}: {detalhe}{mensagem_validacao(exc)}") from exc
         with self.repository.transacao():
-            existentes = {(normalizar_nome(p.nome), p.conservacao) for p in self.repository.ativos()}
+            existentes = {normalizar_nome(p.nome) for p in self.repository.ativos()}
             criados, ignorados = [], []
             for posicao, item in enumerate(itens, start=1):
-                if (normalizar_nome(item.nome), item.conservacao) in existentes:
+                chave = normalizar_nome(item.nome)
+                if chave in existentes:
                     ignorados.append(item.nome)
                     continue
+                existentes.add(chave)
                 try:
                     self._validar_grupo(item.grupo_id)
                 except ValueError as exc:

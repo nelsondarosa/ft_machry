@@ -87,9 +87,24 @@ pnpm exec tsc --noEmit
 pnpm build
 ```
 
+### Limpar produtos e fichas para testar
+
+Para recomeçar a importação dos CSVs de exemplo com o Docker rodando:
+
+```bash
+docker compose exec api flask --app app limpar-catalogo
+```
+
+O comando pede confirmação antes de apagar. Use `--sim` para pular a confirmação.
+
+- **Apaga:** produtos, fichas técnicas e tudo que depende deles (lotes, movimentações de estoque e solicitações de produção).
+- **Mantém:** usuários, fases de produção, grupos e localizações.
+- **Bancos:** funciona com SQLite e PostgreSQL. Fora do Docker, rode `flask --app app limpar-catalogo` com o venv ativo.
+- **Primeira vez:** se o container foi criado antes deste comando existir, reconstrua a API com `docker compose up -d --build api`.
+
 ## Importação de produtos via CSV
 
-Na página **Produtos**, o botão **Importar CSV** cadastra vários produtos de uma vez. A tela mostra uma prévia com os erros de cada linha antes de enviar, e a importação é tudo ou nada (limite de 500 produtos por arquivo). Produtos com o mesmo nome e conservação de um produto já cadastrado são ignorados, então reimportar um arquivo não duplica o catálogo. O mesmo recurso está disponível na API em `POST /api/produtos/lote`.
+Na página **Produtos**, o botão **Importar CSV** cadastra vários produtos de uma vez. A tela mostra uma prévia com os erros de cada linha antes de enviar, e a importação é tudo ou nada (limite de 500 produtos por arquivo). Produtos com o mesmo nome de um produto já cadastrado, ou de uma linha anterior do arquivo, são ignorados, mesmo com outra conservação. Assim, reimportar um arquivo não duplica o catálogo, e cada nome continua único para as fichas técnicas. O mesmo recurso está disponível na API em `POST /api/produtos/lote`.
 
 Colunas (separador `;` ou `,`, UTF-8):
 
@@ -103,7 +118,7 @@ Colunas (separador `;` ou `,`, UTF-8):
 | `validade_obrigatoria` | não | `1`/`sim` ou `0`/`não` (padrão) |
 | `validade_padrao_dias` | não | número inteiro de dias |
 
-Exemplo completo: [`docs/exemplos/produtos_machry.csv`](docs/exemplos/produtos_machry.csv), com 366 insumos do estoque do Machry gerados a partir das planilhas de validade. Unidades e prazos de validade desse arquivo são estimativas por categoria; revise antes de usar em produção.
+Exemplo completo: [`docs/exemplos/produtos_machry.csv`](docs/exemplos/produtos_machry.csv), com os insumos do estoque do Machry (366 linhas; Bacalhau e Linguiça calabresa aparecem resfriados e congelados, e só a primeira linha de cada é importada) gerados a partir das planilhas de validade. Unidades e prazos de validade desse arquivo são estimativas por categoria; revise antes de usar em produção.
 
 ## Importação de fichas técnicas via CSV
 
@@ -121,17 +136,24 @@ O arquivo tem **uma linha por componente**; as linhas com o mesmo valor em `fich
 | `quantidade` | número (vírgula ou ponto); `q.b.` ou vazio vira "A gosto (q.b.)" na observação |
 | `unidade` | opcional; `mg`/`g`/`kg` e `ml`/`L` são convertidos para a unidade do produto |
 
-Produtos e fases são buscados pelo nome, sem diferenciar maiúsculas, acentos e espaços. Um nome que corresponda a mais de um produto (ex.: o mesmo item refrigerado e congelado) gera erro. Produtos que já têm ficha técnica são ignorados (e listados no aviso final), então arquivos com receitas em comum podem ser importados em sequência; a mesma ficha repetida dentro de um arquivo gera erro.
+Produtos e fases são buscados pelo nome, sem diferenciar maiúsculas, acentos e espaços. Um nome que corresponda a mais de um produto (ex.: dois produtos de mesmo nome cadastrados à mão) gera erro. Produtos que já têm ficha técnica são ignorados (e listados no aviso final), então arquivos com receitas em comum podem ser importados em sequência; a mesma ficha repetida dentro de um arquivo gera erro.
 
 Cada ficha de exemplo termina com linhas só de `observacao`: o código e a origem da receita, o modo de preparo e “Ajustes da importação: …”, que registra as diferenças em relação à ficha original (unidades convertidas, como 2 dentes de alho ≈ 10 g, e valores estimados, como rendimentos e tempos das fases). Uma linha com apenas `ficha` e `observacao` é válida para esse fim.
 
 Exemplos, em ordem de importação (os de produtos pela página **Produtos**, os de fichas pela página **Fichas técnicas**):
 
 1. [`produtos_machry.csv`](docs/exemplos/produtos_machry.csv): catálogo de insumos.
-2. [`produtos_apostila_ft01-10.csv`](docs/exemplos/produtos_apostila_ft01-10.csv) e [`fichas_apostila_ft01-10.csv`](docs/exemplos/fichas_apostila_ft01-10.csv): as 10 primeiras fichas da Apostila Cozinheiro 2024 (FT 01 fundo de legumes, FT 02 velouté, FT 03 bouquet garni, FT 04 crispy de couve, FT 05 e FT 06 sopas creme de cenoura e de tomate, FT 07 croûtons, FT 08 gratin, FT 09 potage e FT 10 purê), com o hortifrúti e os preparos que faltam no catálogo. O mirepoix entra como produto intermediário, sem ficha (a apostila só descreve a proporção).
-3. [`produtos_aula4.csv`](docs/exemplos/produtos_aula4.csv) e [`fichas_aula4.csv`](docs/exemplos/fichas_aula4.csv): Aula 4 (batatas). Repete FT 08 a FT 10, que são ignoradas se o passo 2 já foi importado, e acrescenta a batata parmentier e as batatas duchesse (FT 11).
+2. [`produtos_apostila_1.csv`](docs/exemplos/produtos_apostila_1.csv) e [`produtos_apostila_2.csv`](docs/exemplos/produtos_apostila_2.csv), depois [`fichas_apostila_1.csv`](docs/exemplos/fichas_apostila_1.csv), [`_2`](docs/exemplos/fichas_apostila_2.csv) e [`_3`](docs/exemplos/fichas_apostila_3.csv): todas as 405 receitas da Apostila Cozinheiro 2024, divididas em partes por causa do limite de 500 produtos e 200 fichas por importação. Os produtos trazem o hortifrúti, os insumos que faltam no catálogo e um produto intermediário ou final para cada receita. O último arquivo também traz a ficha da batata parmentier, o corte usado no potage (FT 09), que a apostila não detalha.
 
-As fichas usam os nomes do catálogo (ex.: “Manteiga” → Manteiga sem sal, “Batatas” → Batata asterix). Nata e creme de leite, pesados em g nas receitas, foram lançados em ml porque estão cadastrados em L.
+Sobre as fichas da apostila:
+
+- **FT 01 a FT 10** foram revisadas à mão. As demais foram convertidas automaticamente e merecem revisão antes do uso em produção.
+- **Nomes:** os insumos usam os nomes do catálogo (ex.: “Manteiga” → Manteiga sem sal, “Sal” → Sal fino, “Batatas” → Batata asterix). Quando a receita tem o mesmo nome de um produto comprado, ganha “caseiro(a)” ou “cozido” (ex.: Ketchup caseiro, Arroz integral cozido).
+- **Fases:** saem do modo de preparo, pelo verbo de cada passo. Rendimento e tempos não informados na apostila são estimados.
+- **Unidades:** são convertidas (dentes, maços, colheres, fatias). Unidades erradas ou ausentes na apostila são corrigidas, como “110 un” de cebola lido como 110 g. Nata e creme de leite pesados em g são lançados em ml, porque estão cadastrados em L.
+- **Fora dos componentes:** água, gelo e utensílios não são controlados no estoque.
+- **Receitas repetidas:** são importadas uma vez. Ficam de fora a segunda e a terceira versão do molho bechamel e as versões repetidas de arroz, fundo bovino, molho demi-glace, polenta cremosa e salsa verde.
+- **Observação de cada ficha:** “Ajustes da importação” registra cada conversão e estimativa.
 
 ## Identidade visual
 
