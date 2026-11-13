@@ -1,0 +1,156 @@
+﻿ficha;rendimento;observacao;fase_ordem;fase;tempo_min;componente;quantidade;unidade
+Tonkatsu, gohan e sunomono;3,04;;1;Montar;10;Copa lombo suína;0,8;kg
+Tonkatsu, gohan e sunomono;;;2;Temperar;10;Alho em pó;0,01;kg
+Tonkatsu, gohan e sunomono;;;2;;;Gengibre em pó;0,01;kg
+Tonkatsu, gohan e sunomono;;;2;;;Sal fino;0,01;kg
+Tonkatsu, gohan e sunomono;;;3;Fritar;10;Ovo;3;un
+Tonkatsu, gohan e sunomono;;;3;;;Farinha de trigo tipo 1;0,1;kg
+Tonkatsu, gohan e sunomono;;;3;;;Farinha panko;0,25;kg
+Tonkatsu, gohan e sunomono;;;3;;;Óleo de algodão;1;L
+Tonkatsu, gohan e sunomono;;;4;Descansar;30;;;
+Tonkatsu, gohan e sunomono;;;5;Montar;30;Arroz japonês;0,3;kg
+Tonkatsu, gohan e sunomono;;;5;;;Vinagre de arroz;0,12;L
+Tonkatsu, gohan e sunomono;;;6;Cozir;20;;;
+Tonkatsu, gohan e sunomono;;;7;Montar;20;Pepino japonês;2;un
+Tonkatsu, gohan e sunomono;;;8;Cortar;30;;;
+Tonkatsu, gohan e sunomono;;;9;Cozir;20;Açúcar branco;0,06;kg
+Tonkatsu, gohan e sunomono;;;10;Montar;10;;;
+Tonkatsu, gohan e sunomono;;;11;Resfriar;60;;;
+Tonkatsu, gohan e sunomono;;;12;Montar;10;Gergelim preto;0,03;kg
+Tonkatsu, gohan e sunomono;;;;;;Sal fino;q.b.;
+Tonkatsu, gohan e sunomono;;;;;;Pimenta-do-reino em pó;q.b.;
+Tonkatsu, gohan e sunomono;;Sem código – Apostila Cozinheiro 2024.;;;;;;
+Tonkatsu, gohan e sunomono;;Partes: TONKATSU, GOHAN, SUNOMONO.;;;;;;
+Tonkatsu, gohan e sunomono;;Para o Tonkatsu:;;;;;;
+Tonkatsu, gohan e sunomono;;Porcione os bifes e tempere com sal, pimenta, alho e gengibre em pó.;;;;;;
+Tonkatsu, gohan e sunomono;;Empane com farinha, ovos e farinha panko.;;;;;;
+Tonkatsu, gohan e sunomono;;Frite no óleo de algodão até estarem dourador e crocantes.;;;;;;
+Tonkatsu, gohan e sunomono;;Deixe descansar antes de servir.;;;;;;
+Tonkatsu, gohan e sunomono;;Para o Gohan:;;;;;;
+Tonkatsu, gohan e sunomono;;Lave o arroz 5 ou 6 vezes, ou até que a água não tenha mais resíduos de amido e saia totalmente transparente.;;;;;;
+Tonkatsu, gohan e sunomono;;Deixe o arroz de molho em água por 30min.;;;;;;
+Tonkatsu, gohan e sunomono;;Cozinhe conforme determina o fabricante, olhando na embalagem.;;;;;;
+Tonkatsu, gohan e sunomono;;Após levantar fervura, tampe e cozinhe em fogo baixo por 15 a 20 minutos.;;;;;;
+Tonkatsu, gohan e sunomono;;Deixe tampado por mais 20min.;;;;;;
+Tonkatsu, gohan e sunomono;;Para o Sunomono:;;;;;;
+Tonkatsu, gohan e sunomono;;Lamine o pepino japonês com o auxílio de um mandolim ou faça na faca.;;;;;;
+Tonkatsu, gohan e sunomono;;Salpique sal sobre as fatias e deixe sobre uma peneira por 30min para escorrer o líquido em excesso.;;;;;;
+Tonkatsu, gohan e sunomono;;Enquanto isso, leve o vinagre, o açúcar e a água para ferver. Após a fervura, desligue e deixe esfriar.;;;;;;
+Tonkatsu, gohan e sunomono;;Lave o pepino para retirar o excesso de sal restante.;;;;;;
+Tonkatsu, gohan e sunomono;;Junte com a solução de vinagre e deixe na geladeira até o momento de consumir.;;;;;;
+Tonkatsu, gohan e sunomono;;Sirva o tonkatsu com o Gohan e o sounomo juntos. Salpique gergelim por cima.;;;;;;
+Tonkatsu, gohan e sunomono;;"Ajustes da importação: não controlados no estoque e fora dos componentes: Água (350 ml), Água (60 ml); “Farinha de trigo” → Farinha de trigo tipo 1; “Óleo de algodão para fritar” → Óleo de algodão; “Sal” → Sal fino; Açúcar: 60 ml lançado(a) como 60 g; fases agrupadas a partir do modo de preparo; rendimento estimado pela soma dos insumos; tempos sem indicação na apostila estimados.";;;;;;
+Pad thai;2,325;;1;Descansar;30;Macarrão de arroz;0,45;kg
+Pad thai;;;1;;;Molho de peixe;0,06;L
+Pad thai;;;2;Bater/Misturar;10;Pasta de pimenta thai- vermelha;0,03;kg
+Pad thai;;;2;;;Vinagre de arroz;0,03;L
+Pad thai;;;2;;;Açúcar de palma;0,025;kg
+Pad thai;;;3;Cozir;20;Camarão;0,1;kg
+Pad thai;;;3;;;Óleo de girassol;0,03;L
+Pad thai;;;3;;;Alho;0,015;kg
+Pad thai;;;3;;;Alho-poró;0,25;kg
+Pad thai;;;3;;;Tofu;0,35;kg
+Pad thai;;;4;Refogar;10;Ovo;3;un
+Pad thai;;;5;Bater/Misturar;10;Cebolinha;2;un
+Pad thai;;;6;Temperar;10;Broto de feijão;0,25;kg
+Pad thai;;;6;;;Coentro;0,3;un
+Pad thai;;;6;;;Limão taiti;5;un
+Pad thai;;;6;;;Amendoim;0,07;kg
+Pad thai;;Sem código – Apostila Cozinheiro 2024.;;;;;;
+Pad thai;;Demolhe o macarrão em água morna por 30 minutos. Escorra-o bem.;;;;;;
+Pad thai;;Bata juntos a pasta de pimenta, o molho de peixe, o vinagre e açúcar.;;;;;;
+Pad thai;;Aqueça o óleo em uma wok, em fogo médio adicione o camarão, o alho, o alho-poró e o tofu. Salteie até o alho-poró fique brilhante e ligeiramente mais macio. O alho deve ter começado a ganhar cor, mas ainda não estar dourado.;;;;;;
+Pad thai;;Junte o macarrão e envolva-o no óleo. Salteie por 30 segundos. Empurre o macarrão para a parte superior da lateral da wok. Acrescente um pouquinho de óleo no espaço criado no wok, depois coloque os ovos batidos e espalhe-os com uma espátula, para começar a cozinhar. Deixe que os ovos cozinhem por 10 segundos antes de começar a saltear a mistura de macarrão e ovos.;;;;;;
+Pad thai;;Acrescente a mistura de molho de peixe e cebolinhas verdes. Salteie até que o macarrão esteja macio, juntando água, se necessário.;;;;;;
+Pad thai;;Adicione os brotos de feijão e o coentro. Acerte o tempero com a pasta de pimenta, o molho de peixe e o açúcar, se necessário. Guarneça com os gomos de limão e o amendoim. Sirva imediatamente.;;;;;;
+Pad thai;;"Ajustes da importação: “Macarrão de Arroz (BANH PHO)” → Macarrão de arroz; “Camarão Rosa” → Camarão; “Nampla (molho de peixe)” → Molho de peixe; Óleo vegetal: 30 g lançado(a) como 30 ml; Alho-poró: 1 un ≈ 250 g; “Broto de feijão (Moyashi)” → Broto de feijão; Coentro: 15 g ≈ 0,3 un; “Gomos de limão” → Limão taiti; “Amendoim Tostado” → Amendoim; fases agrupadas a partir do modo de preparo; rendimento estimado pela soma dos insumos; tempos sem indicação na apostila estimados.";;;;;;
+Tom kha gai;3,25;;1;Montar;10;Tomate cereja;0,2;kg
+Tom kha gai;;;1;;;Gengibre;0,06;kg
+Tom kha gai;;;1;;;Leite de coco;0,5;L
+Tom kha gai;;;2;Cozir;20;Peito de frango;1;kg
+Tom kha gai;;;2;;;Cogumelo Paris;0,2;kg
+Tom kha gai;;;2;;;Capim-limão;0,08;kg
+Tom kha gai;;;2;;;Folha de limão kaffir;5;un
+Tom kha gai;;;2;;;Pimenta vermelha;0,5;kg
+Tom kha gai;;;2;;;Suco de limão;0,08;L
+Tom kha gai;;;3;Bater/Misturar;5;Molho de peixe;0,05;L
+Tom kha gai;;;3;;;Açúcar de palma;0,03;kg
+Tom kha gai;;;4;Montar;10;Coentro;1;un
+Tom kha gai;;Sem código – Apostila Cozinheiro 2024.;;;;;;
+Tom kha gai;;Coloque o leite de coco em uma panela grande e aqueça em fogo médio até começar a ferver.;;;;;;
+Tom kha gai;;Adicione o capim-limão, a galanga, as folhas de limão kaffir e as pimentas tailandesas. Cozinhe por cerca de 5 minutos para infusionar os sabores no leite de coco.;;;;;;
+Tom kha gai;;Adicione o peito de frango e os cogumelos à panela. Cozinhe em fogo médio-baixo até que o frango esteja cozido, cerca de 10 a 15 minutos.;;;;;;
+Tom kha gai;;Adicione o suco de limão, o molho de peixe e o açúcar. Mexa bem e continue a cozinhar por mais 5 minutos. Prove e ajuste os temperos conforme necessário.;;;;;;
+Tom kha gai;;Sirva a sopa quente, guarnecida com coentro fresco.;;;;;;
+Tom kha gai;;"Ajustes da importação: Pimenta Vermelha ou de Cheiro: 5 un ≈ 500 g; Coentro Fresco: 1 maço = 1 un; fases agrupadas a partir do modo de preparo; rendimento estimado pela soma dos insumos; tempos sem indicação na apostila estimados.";;;;;;
+Banh xeo;1,25;;1;Bater/Misturar;30;Farinha de arroz;0,2;kg
+Banh xeo;;;1;;;Leite de coco;0,2;L
+Banh xeo;;;1;;;Cúrcuma;0,005;kg
+Banh xeo;;;1;;;Sal fino;0,005;kg
+Banh xeo;;;1;;;Cebolinha;0,6;un
+Banh xeo;;;2;Cozir;20;Lombo de porco;0,2;kg
+Banh xeo;;;2;;;Camarão;0,2;kg
+Banh xeo;;;2;;;Óleo de girassol;0,05;L
+Banh xeo;;;3;Montar;10;;;
+Banh xeo;;;4;Cortar;10;Broto de feijão;0,15;kg
+Banh xeo;;;4;;;Cebola;0,05;kg
+Banh xeo;;;5;Cozir;4;;;
+Banh xeo;;;6;Montar;10;;;
+Banh xeo;;;7;Bater/Misturar;10;;;
+Banh xeo;;;8;Montar;10;Hortelã;0,02;kg
+Banh xeo;;;8;;;Coentro;0,4;un
+Banh xeo;;;8;;;Manjericão;0,02;kg
+Banh xeo;;;8;;;Molho de peixe;0,1;L
+Banh xeo;;;;;;Alface;q.b.;
+Banh xeo;;Sem código – Apostila Cozinheiro 2024.;;;;;;
+Banh xeo;;Partes: Massa, Recheio, Ingredientes para servir.;;;;;;
+Banh xeo;;Em uma tigela grande, misture a farinha de arroz, leite de coco, água, açafrão e sal até formar uma massa lisa. Adicione a cebolinha picada e misture bem. Deixe descansar por 30 minutos.;;;;;;
+Banh xeo;;Aqueça uma frigideira com um pouco de óleo em fogo médio-alto. Adicione as fatias de lombo de porco e frite até que estejam douradas. Adicione os camarões e cozinhe até que fiquem rosados. Retire e reserve.;;;;;;
+Banh xeo;;Na mesma frigideira, adicione um pouco mais de óleo e despeje uma concha da massa, espalhando-a finamente na frigideira.;;;;;;
+Banh xeo;;Adicione uma porção de carne, camarões, brotos de feijão e fatias de cebola sobre metade da panqueca.;;;;;;
+Banh xeo;;Tampe a frigideira e cozinhe por cerca de 3-4 minutos até que a massa esteja crocante nas bordas.;;;;;;
+Banh xeo;;Dobre a panqueca ao meio, cobrindo o recheio, e transfira para um prato.;;;;;;
+Banh xeo;;Repita o processo com o restante da massa e do recheio.;;;;;;
+Banh xeo;;Sirva o Banh Xeo com folhas de alface, hortelã, coentro e manjericão.;;;;;;
+Banh xeo;;Acompanhe com o molho de peixe (nuoc cham) para mergulhar as panquecas.;;;;;;
+Banh xeo;;"Ajustes da importação: não controlados no estoque e fora dos componentes: Água (250 ml); “Açafrão-da-terra (cúrcuma)” → Cúrcuma; “Sal” → Sal fino; Cebolinha picada: 30 g ≈ 0,6 un; “Camarões médios” → Camarão; “Óleo vegetal” → Óleo de girassol; Alface: 100 g sem conversão para un (a gosto); “Hortelã fresca” → Hortelã; Coentro fresco: 20 g ≈ 0,4 un; fases agrupadas a partir do modo de preparo; rendimento estimado pela soma dos insumos; tempos sem indicação na apostila estimados.";;;;;;
+Pho bo;5,733;;1;Montar;5;Ossos bovinos;1,5;kg
+Pho bo;;;2;Fritar;10;;;
+Pho bo;;;3;Assar;30;Cebola;0,2;kg
+Pho bo;;;3;;;Gengibre;0,05;kg
+Pho bo;;;4;Cozir;360;Anis-estrelado;0,01;kg
+Pho bo;;;4;;;Canela em pau;0,015;kg
+Pho bo;;;4;;;Cravo-da-índia;0,003;kg
+Pho bo;;;4;;;Coentro em grão;0,005;kg
+Pho bo;;;4;;;Coentro;0,4;un
+Pho bo;;;5;Bater/Misturar;20;Molho de peixe;0,06;L
+Pho bo;;;5;;;Sal fino;0,01;kg
+Pho bo;;;5;;;Açúcar mascavo;0,01;kg
+Pho bo;;;6;Cozir;20;Macarrão de arroz;0,3;kg
+Pho bo;;;7;Cortar;10;Filé de carne bovina;0,3;kg
+Pho bo;;;8;Montar;10;;;
+Pho bo;;;9;Cozir;20;;;
+Pho bo;;;10;Montar;10;Broto de feijão;0,1;kg
+Pho bo;;;10;;;Cebolinha;0,6;un
+Pho bo;;;10;;;Manjericão;0,02;kg
+Pho bo;;;10;;;Hortelã;0,02;kg
+Pho bo;;;10;;;Limão taiti;1;un
+Pho bo;;;;;;Pimenta malagueta;q.b.;
+Pho bo;;;;;;Molho de hoisin e sriracha;q.b.;
+Pho bo;;Sem código – Apostila Cozinheiro 2024.;;;;;;
+Pho bo;;Partes: Montagem.;;;;;;
+Pho bo;;Coloque os ossos de boi em uma panela grande e cubra com água. Leve à fervura por 5 minutos e escorra para remover as impurezas.;;;;;;
+Pho bo;;Enxágue os ossos em água fria e reserve.;;;;;;
+Pho bo;;Em uma grelha ou frigideira seca, toste as cebolas e o gengibre até ficarem levemente carbonizados nas bordas.;;;;;;
+Pho bo;;Em uma panela grande, adicione os ossos, cebolas, gengibre, anis estrelado, canela, cravo e sementes de coentro. Adicione 3 litros de água e leve à fervura.;;;;;;
+Pho bo;;Reduza o fogo e cozinhe em fogo baixo por 4-6 horas, retirando a espuma que subir à superfície.;;;;;;
+Pho bo;;Coe o caldo em uma peneira fina e descarte os sólidos. Retorne o caldo à panela, adicione o molho de peixe, sal e açúcar, e cozinhe em fogo baixo por mais 20 minutos.;;;;;;
+Pho bo;;Cozinhe o macarrão de arroz conforme as instruções da embalagem e divida entre as tigelas de servir.;;;;;;
+Pho bo;;Corte o filé de carne em fatias finíssimas.;;;;;;
+Pho bo;;Coloque as fatias de carne crua sobre o macarrão nas tigelas.;;;;;;
+Pho bo;;Despeje o caldo fervente sobre a carne e o macarrão. A carne deve cozinhar ligeiramente com o calor do caldo.;;;;;;
+Pho bo;;Adicione brotos de feijão, cebolinha, coentro, manjericão, hortelã e pimenta malagueta a gosto.;;;;;;
+Pho bo;;Sirva com limão, molho hoisin e sriracha à parte.;;;;;;
+Pho bo;;"Ajustes da importação: não controlados no estoque e fora dos componentes: Água (3 L); “Ossos de boi” → Ossos bovinos; Canela em pau: 5 un ≈ 15 g; “Sementes de coentro” → Coentro em grão; “Sal” → Sal fino; “Macarrão de arroz (tipo pho)” → Macarrão de arroz; “Filé de carne bovina (tipo contra-filé)” → Filé de carne bovina; Cebolinha picada: 30 g ≈ 0,6 un; Coentro fresco: 20 g ≈ 0,4 un; “Hortelã fresca” → Hortelã; “Limão” → Limão taiti; Pimenta malagueta fatiada: 10 g sem conversão para un (a gosto); fases agrupadas a partir do modo de preparo; rendimento estimado pela soma dos insumos; tempos sem indicação na apostila estimados.";;;;;;
+Batata parmentier;0,1;Corte parmentier (cubos de 1 cm). Aparas seguem para purê e potage.;1;Cortar;15;Batata asterix;150;g
+Batata parmentier;;Ajustes da importação: quantidade de batata, rendimento e tempo estimados.;;;;;;

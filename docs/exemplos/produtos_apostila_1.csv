@@ -1,0 +1,501 @@
+﻿nome;tipo;unidade_medida;subdivisao;conservacao;validade_obrigatoria;validade_padrao_dias
+Cebola;INSUMO;kg;Hortifrúti;SECO;0;30
+Cenoura;INSUMO;kg;Hortifrúti;RESFRIADO;0;15
+Salsão;INSUMO;kg;Hortifrúti;RESFRIADO;0;10
+Alho-poró;INSUMO;kg;Hortifrúti;RESFRIADO;0;10
+Alho;INSUMO;kg;Hortifrúti;SECO;0;30
+Salsa;INSUMO;un;Hortifrúti;RESFRIADO;0;5
+Tomilho;INSUMO;un;Hortifrúti;RESFRIADO;0;7
+Couve;INSUMO;un;Hortifrúti;RESFRIADO;0;5
+Tomate italiano;INSUMO;kg;Hortifrúti;RESFRIADO;0;7
+Batata asterix;INSUMO;kg;Hortifrúti;SECO;0;30
+Louro;INSUMO;un;Temperos e especiarias;SECO;1;365
+Barbante;INSUMO;m;Utensílios;SECO;0;
+Bouquet garni;INTERMEDIARIO;un;Preparos;RESFRIADO;1;2
+Mirepoix;INTERMEDIARIO;kg;Preparos;RESFRIADO;1;2
+Fundo de legumes;INTERMEDIARIO;L;Preparos;RESFRIADO;1;3
+Velouté de legumes;INTERMEDIARIO;L;Preparos;RESFRIADO;1;3
+Croûtons;INTERMEDIARIO;kg;Preparos;SECO;1;7
+Batata parmentier;INTERMEDIARIO;kg;Preparos;RESFRIADO;1;1
+Crispy de couve;INTERMEDIARIO;kg;Guarnições;SECO;1;2
+Sopa creme de cenoura;FINAL;L;Sopas;RESFRIADO;1;2
+Sopa creme de tomate;FINAL;L;Sopas;RESFRIADO;1;2
+Gratin dauphinois;FINAL;kg;Batatas;RESFRIADO;1;2
+Potage aux deux pommes de terre;FINAL;L;Sopas;RESFRIADO;1;2
+Purê de batata;FINAL;kg;Batatas;RESFRIADO;1;2
+Vinho licoroso;INSUMO;L;Bebidas;SECO;0;365
+Vinho Marsala;INSUMO;L;Bebidas;SECO;0;365
+Acém;INSUMO;kg;Carnes;RESFRIADO;1;3
+Arroz parboilizado;INSUMO;kg;Carnes;RESFRIADO;1;3
+Barriga de porco;INSUMO;kg;Carnes;RESFRIADO;1;3
+Bife de copa lombo;INSUMO;un;Carnes;RESFRIADO;1;3
+Bisteca suína;INSUMO;un;Carnes;RESFRIADO;1;3
+Carcaça de frango;INSUMO;kg;Carnes;RESFRIADO;1;3
+Carcaça de peixe;INSUMO;un;Carnes;RESFRIADO;1;3
+Carne;INSUMO;kg;Carnes;RESFRIADO;1;3
+Carne bovina;INSUMO;kg;Carnes;RESFRIADO;1;3
+Carne de porco moída;INSUMO;kg;Carnes;RESFRIADO;1;3
+Carne seca;INSUMO;kg;Carnes;RESFRIADO;1;3
+Chouriço de porco;INSUMO;kg;Carnes;RESFRIADO;1;3
+Copa lombo suína;INSUMO;kg;Carnes;RESFRIADO;1;3
+Coração bovino;INSUMO;un;Carnes;RESFRIADO;1;3
+Coração de galinha;INSUMO;kg;Carnes;RESFRIADO;1;3
+Costela defumada;INSUMO;kg;Carnes;RESFRIADO;1;3
+Costela salgada;INSUMO;kg;Carnes;RESFRIADO;1;3
+Coxas e sobrecoxas de frango;INSUMO;kg;Carnes;RESFRIADO;1;3
+Ensopado de carne picante;INSUMO;kg;Carnes;RESFRIADO;1;3
+Escalopes finos de filé mignon;INSUMO;un;Carnes;RESFRIADO;1;3
+Fígado bovino;INSUMO;kg;Carnes;RESFRIADO;1;3
+Fígado de frango;INSUMO;kg;Carnes;RESFRIADO;1;3
+Filé de anchova;INSUMO;un;Carnes;RESFRIADO;1;3
+Filé de carne bovina;INSUMO;kg;Carnes;RESFRIADO;1;3
+Filé de peixe branco;INSUMO;un;Carnes;RESFRIADO;1;3
+Filé de salmão;INSUMO;un;Carnes;RESFRIADO;1;3
+Filé de tilápia;INSUMO;kg;Carnes;RESFRIADO;1;3
+Filé suíno;INSUMO;kg;Carnes;RESFRIADO;1;3
+Frango;INSUMO;un;Carnes;RESFRIADO;1;3
+Galinha;INSUMO;kg;Carnes;RESFRIADO;1;3
+Galinha caipira;INSUMO;kg;Carnes;RESFRIADO;1;3
+Guanciale, pancetta curada;INSUMO;kg;Carnes;RESFRIADO;1;3
+Guisado bovino;INSUMO;kg;Carnes;RESFRIADO;1;3
+Guisado suíno;INSUMO;kg;Carnes;RESFRIADO;1;3
+Língua bovina;INSUMO;un;Carnes;RESFRIADO;1;3
+Linguiça;INSUMO;kg;Carnes;RESFRIADO;1;3
+Linguiça calabresa defumada;INSUMO;kg;Carnes;RESFRIADO;1;3
+Linguiça tipo portuguesa;INSUMO;kg;Carnes;RESFRIADO;1;3
+Lombo de porco;INSUMO;kg;Carnes;RESFRIADO;1;3
+Lombo de salmão com pele;INSUMO;kg;Carnes;RESFRIADO;1;3
+Lombo suíno;INSUMO;kg;Carnes;RESFRIADO;1;3
+Massa para lasanha;INSUMO;kg;Carnes;RESFRIADO;1;3
+Meio da asa de frango;INSUMO;kg;Carnes;RESFRIADO;1;3
+Miolo de alcatra;INSUMO;kg;Carnes;RESFRIADO;1;3
+Moela galinha;INSUMO;kg;Carnes;RESFRIADO;1;3
+Osso buco bovino;INSUMO;kg;Carnes;RESFRIADO;1;3
+Ossos bovinos;INSUMO;kg;Carnes;RESFRIADO;1;3
+Ovo de codorna;INSUMO;un;Carnes;RESFRIADO;1;3
+Paleta bovina;INSUMO;kg;Carnes;RESFRIADO;1;3
+Paleta de cordeiro;INSUMO;un;Carnes;RESFRIADO;1;3
+Paleta sem osso;INSUMO;kg;Carnes;RESFRIADO;1;3
+Pescoço de frango;INSUMO;kg;Carnes;RESFRIADO;1;3
+Rins;INSUMO;kg;Carnes;RESFRIADO;1;3
+Sobrecoxa de frango;INSUMO;kg;Carnes;RESFRIADO;1;3
+Sobrecoxa desossada;INSUMO;kg;Carnes;RESFRIADO;1;3
+Sobrecoxas;INSUMO;kg;Carnes;RESFRIADO;1;3
+Toucinho defumado;INSUMO;kg;Carnes;RESFRIADO;1;3
+Açúcar de palma;INSUMO;kg;Confeitaria;SECO;0;180
+Açúcar granulado;INSUMO;kg;Confeitaria;SECO;0;180
+Ameixa seca;INSUMO;kg;Confeitaria;SECO;0;180
+Chocolate;INSUMO;kg;Confeitaria;SECO;0;180
+Chocolate 60%;INSUMO;kg;Confeitaria;SECO;0;180
+Chocolate barra 50%;INSUMO;kg;Confeitaria;SECO;0;180
+Confeito;INSUMO;kg;Confeitaria;SECO;0;180
+Damascos secos;INSUMO;kg;Confeitaria;SECO;0;180
+Melado de cana;INSUMO;kg;Confeitaria;SECO;0;180
+Tâmaras sem caroço;INSUMO;kg;Confeitaria;SECO;0;180
+Xarope de milho;INSUMO;kg;Confeitaria;SECO;0;180
+Abacate;INSUMO;kg;Hortifrúti;RESFRIADO;1;7
+Abacaxi;INSUMO;kg;Hortifrúti;RESFRIADO;1;7
+Abobrinha;INSUMO;un;Hortifrúti;RESFRIADO;1;7
+Aipim;INSUMO;kg;Hortifrúti;RESFRIADO;1;7
+Alface;INSUMO;un;Hortifrúti;RESFRIADO;1;5
+Alface americana;INSUMO;un;Hortifrúti;RESFRIADO;1;5
+Alface lisa;INSUMO;un;Hortifrúti;RESFRIADO;1;5
+Alface romana;INSUMO;un;Hortifrúti;RESFRIADO;1;5
+Aspargos;INSUMO;un;Hortifrúti;RESFRIADO;1;7
+Banana-da-terra;INSUMO;un;Hortifrúti;RESFRIADO;1;7
+Banana nanica;INSUMO;un;Hortifrúti;RESFRIADO;1;7
+Banana prata;INSUMO;un;Hortifrúti;RESFRIADO;1;7
+Batata baby;INSUMO;kg;Hortifrúti;RESFRIADO;1;7
+Batata baroa;INSUMO;kg;Hortifrúti;RESFRIADO;1;7
+Batata doce;INSUMO;kg;Hortifrúti;RESFRIADO;1;7
+Batata mini;INSUMO;kg;Hortifrúti;RESFRIADO;1;7
+Batata rosa;INSUMO;kg;Hortifrúti;RESFRIADO;1;7
+Berinjela;INSUMO;kg;Hortifrúti;RESFRIADO;1;7
+Beterraba;INSUMO;un;Hortifrúti;RESFRIADO;1;7
+Beterraba crua;INSUMO;kg;Hortifrúti;RESFRIADO;1;7
+Brócolis;INSUMO;kg;Hortifrúti;RESFRIADO;1;7
+Brócolis ramoso;INSUMO;un;Hortifrúti;RESFRIADO;1;7
+Broto de feijão;INSUMO;kg;Hortifrúti;RESFRIADO;1;5
+Capim-limão;INSUMO;kg;Hortifrúti;RESFRIADO;1;5
+Cebola pequena;INSUMO;un;Hortifrúti;RESFRIADO;1;7
+Cebola pérola;INSUMO;kg;Hortifrúti;RESFRIADO;1;7
+Cebola roxa;INSUMO;un;Hortifrúti;RESFRIADO;1;7
+Cebolas para conserva;INSUMO;kg;Hortifrúti;RESFRIADO;1;7
+Cebolinha;INSUMO;un;Hortifrúti;RESFRIADO;1;5
+Chuchu;INSUMO;kg;Hortifrúti;RESFRIADO;1;7
+Coentro;INSUMO;un;Hortifrúti;RESFRIADO;1;5
+Cogumelo;INSUMO;kg;Hortifrúti;RESFRIADO;1;7
+Cogumelo porcini;INSUMO;kg;Hortifrúti;RESFRIADO;1;7
+Couve-flor;INSUMO;un;Hortifrúti;RESFRIADO;1;7
+Croutons de alho para guarnecer;INSUMO;kg;Hortifrúti;RESFRIADO;1;7
+Espiga de milho;INSUMO;un;Hortifrúti;RESFRIADO;1;7
+Espinafre;INSUMO;kg;Hortifrúti;RESFRIADO;1;5
+Folha de limão kaffir;INSUMO;un;Hortifrúti;RESFRIADO;1;5
+Framboesas;INSUMO;kg;Hortifrúti;RESFRIADO;1;7
+Frutas;INSUMO;kg;Hortifrúti;RESFRIADO;1;7
+Funcho;INSUMO;un;Hortifrúti;RESFRIADO;1;7
+Gengibre;INSUMO;kg;Hortifrúti;RESFRIADO;1;7
+Hortelã;INSUMO;kg;Hortifrúti;RESFRIADO;1;5
+Inhame;INSUMO;kg;Hortifrúti;RESFRIADO;1;7
+Laranja;INSUMO;un;Hortifrúti;RESFRIADO;1;7
+Limão siciliano;INSUMO;un;Hortifrúti;RESFRIADO;1;7
+Limão taiti;INSUMO;un;Hortifrúti;RESFRIADO;1;7
+Maçã;INSUMO;un;Hortifrúti;RESFRIADO;1;7
+Maçã fuji;INSUMO;un;Hortifrúti;RESFRIADO;1;7
+Maçã verde;INSUMO;un;Hortifrúti;RESFRIADO;1;7
+Macarrão de arroz;INSUMO;kg;Hortifrúti;RESFRIADO;1;7
+Macarrão para yakisoba;INSUMO;kg;Hortifrúti;RESFRIADO;1;7
+Macarrão tipo cotovelo;INSUMO;kg;Hortifrúti;RESFRIADO;1;7
+Manga;INSUMO;kg;Hortifrúti;RESFRIADO;1;7
+Manga palmer;INSUMO;un;Hortifrúti;RESFRIADO;1;7
+Manjerona;INSUMO;un;Hortifrúti;RESFRIADO;1;5
+Milho verde com palha;INSUMO;un;Hortifrúti;RESFRIADO;1;7
+Mini batata;INSUMO;kg;Hortifrúti;RESFRIADO;1;7
+Mirtilo;INSUMO;kg;Hortifrúti;RESFRIADO;1;7
+Moranga cabotiá;INSUMO;kg;Hortifrúti;RESFRIADO;1;7
+Nabo;INSUMO;kg;Hortifrúti;RESFRIADO;1;7
+Passata de tomate;INSUMO;L;Hortifrúti;RESFRIADO;1;7
+Pepino;INSUMO;kg;Hortifrúti;RESFRIADO;1;7
+Pepino japonês;INSUMO;un;Hortifrúti;RESFRIADO;1;7
+Pimenta de cheiro;INSUMO;un;Hortifrúti;RESFRIADO;1;7
+Pimenta dedo-de-moça;INSUMO;un;Hortifrúti;RESFRIADO;1;7
+Pimenta jalapeño;INSUMO;un;Hortifrúti;RESFRIADO;1;7
+Pimenta malagueta;INSUMO;un;Hortifrúti;RESFRIADO;1;7
+Pimentão amarelo;INSUMO;un;Hortifrúti;RESFRIADO;1;7
+Pimentão verde;INSUMO;un;Hortifrúti;RESFRIADO;1;7
+Pimentão vermelho;INSUMO;un;Hortifrúti;RESFRIADO;1;7
+Polpa de maracujá;INSUMO;kg;Hortifrúti;RESFRIADO;1;7
+Purê de tomate;INSUMO;L;Hortifrúti;RESFRIADO;1;7
+Quiabo;INSUMO;kg;Hortifrúti;RESFRIADO;1;7
+Radicci;INSUMO;un;Hortifrúti;RESFRIADO;1;5
+Repolho;INSUMO;un;Hortifrúti;RESFRIADO;1;5
+Repolho roxo;INSUMO;kg;Hortifrúti;RESFRIADO;1;5
+Repolho verde;INSUMO;kg;Hortifrúti;RESFRIADO;1;5
+Rúcula;INSUMO;un;Hortifrúti;RESFRIADO;1;5
+Sálvia;INSUMO;un;Hortifrúti;RESFRIADO;1;5
+Semente de erva doce;INSUMO;kg;Hortifrúti;RESFRIADO;1;7
+Suco de laranja;INSUMO;L;Hortifrúti;RESFRIADO;1;7
+Suco de limão;INSUMO;L;Hortifrúti;RESFRIADO;1;7
+Suco de meio limão;INSUMO;kg;Hortifrúti;RESFRIADO;1;7
+Suco limão;INSUMO;un;Hortifrúti;RESFRIADO;1;7
+Tomate cereja;INSUMO;kg;Hortifrúti;RESFRIADO;1;7
+Tomate gaúcho;INSUMO;un;Hortifrúti;RESFRIADO;1;7
+Tomate verde;INSUMO;un;Hortifrúti;RESFRIADO;1;7
+Tomilho seco;INSUMO;kg;Hortifrúti;RESFRIADO;1;5
+Uva;INSUMO;kg;Hortifrúti;RESFRIADO;1;7
+Uvas sem semente;INSUMO;kg;Hortifrúti;RESFRIADO;1;7
+Vagem;INSUMO;kg;Hortifrúti;RESFRIADO;1;7
+Vagem holandesa;INSUMO;kg;Hortifrúti;RESFRIADO;1;7
+Leite vegetal;INSUMO;kg;Laticínios;RESFRIADO;1;10
+Manteiga clarificada;INSUMO;L;Laticínios;RESFRIADO;1;10
+Mascarpone;INSUMO;kg;Laticínios;RESFRIADO;1;10
+Queijo;INSUMO;kg;Laticínios;RESFRIADO;1;10
+Queijo cheddar;INSUMO;un;Laticínios;RESFRIADO;1;10
+Queijo feta;INSUMO;kg;Laticínios;RESFRIADO;1;10
+Queijo manteiga;INSUMO;kg;Laticínios;RESFRIADO;1;10
+Queijo meia cura;INSUMO;kg;Laticínios;RESFRIADO;1;10
+Queijo minas;INSUMO;kg;Laticínios;RESFRIADO;1;10
+Queijo prato;INSUMO;kg;Laticínios;RESFRIADO;1;10
+Resíduo de leite de amêndoas;INSUMO;un;Laticínios;RESFRIADO;1;10
+Alcachofra;INSUMO;kg;Mercearia;SECO;0;180
+Alga nori;INSUMO;un;Mercearia;SECO;0;180
+Arroz bomba;INSUMO;kg;Mercearia;SECO;0;180
+Arroz de grão longo;INSUMO;kg;Mercearia;SECO;0;180
+Aspic;INSUMO;L;Mercearia;SECO;0;180
+Azeitonas;INSUMO;kg;Mercearia;SECO;0;180
+Bico;INSUMO;kg;Mercearia;SECO;0;180
+Café forte e frio;INSUMO;L;Mercearia;SECO;0;180
+Café passado;INSUMO;L;Mercearia;SECO;0;180
+Cerejas sem caroço;INSUMO;kg;Mercearia;SECO;0;180
+Chili base;INSUMO;kg;Mercearia;SECO;0;180
+Chili em pó;INSUMO;kg;Mercearia;SECO;0;180
+Chimichurri desidratado;INSUMO;kg;Mercearia;SECO;0;180
+Chouriço;INSUMO;kg;Mercearia;SECO;0;180
+Coco;INSUMO;kg;Mercearia;SECO;0;180
+Coco seco;INSUMO;kg;Mercearia;SECO;0;180
+Crepe;INSUMO;kg;Mercearia;SECO;0;180
+Cumaru;INSUMO;kg;Mercearia;SECO;0;180
+Disco de massa;INSUMO;un;Mercearia;SECO;0;180
+Duxelle;INSUMO;kg;Mercearia;SECO;0;180
+Ervilha verde;INSUMO;kg;Mercearia;SECO;0;180
+Esponja;INSUMO;kg;Mercearia;SECO;0;180
+Estrogonofe;INSUMO;kg;Mercearia;SECO;0;180
+Farinha de grão de bico;INSUMO;kg;Mercearia;SECO;0;180
+Farinha de rosca;INSUMO;kg;Mercearia;SECO;0;180
+Fatias de pão de forma sem casca;INSUMO;un;Mercearia;SECO;0;180
+Feijão carioca;INSUMO;kg;Mercearia;SECO;0;180
+Fubá;INSUMO;kg;Mercearia;SECO;0;180
+Fufu;INSUMO;kg;Mercearia;SECO;0;180
+Gim;INSUMO;L;Mercearia;SECO;0;180
+Grapa;INSUMO;L;Mercearia;SECO;0;180
+Guarnição;INSUMO;kg;Mercearia;SECO;0;180
+Lagarto;INSUMO;un;Mercearia;SECO;0;180
+Massa para crepes;INSUMO;kg;Mercearia;SECO;0;180
+Medalhão de entrecot;INSUMO;un;Mercearia;SECO;0;180
+Milho;INSUMO;un;Mercearia;SECO;0;180
+Mozzarela de búfala;INSUMO;kg;Mercearia;SECO;0;180
+Oleaginosas;INSUMO;kg;Mercearia;SECO;0;180
+Orelha salgada;INSUMO;un;Mercearia;SECO;0;180
+Paio;INSUMO;kg;Mercearia;SECO;0;180
+Panada;INSUMO;kg;Mercearia;SECO;0;180
+Pão;INSUMO;kg;Mercearia;SECO;0;180
+Pão amanhecido;INSUMO;kg;Mercearia;SECO;0;180
+Pão de torta fria;INSUMO;un;Mercearia;SECO;0;180
+Pão dormido;INSUMO;kg;Mercearia;SECO;0;180
+Pão francês;INSUMO;kg;Mercearia;SECO;0;180
+Pão rústico amanhecido;INSUMO;kg;Mercearia;SECO;0;180
+Pão tipo bagel;INSUMO;un;Mercearia;SECO;0;180
+Pão tipo francês;INSUMO;un;Mercearia;SECO;0;180
+Pé salgado;INSUMO;un;Mercearia;SECO;0;180
+Polentina;INSUMO;kg;Mercearia;SECO;0;180
+Posta de cação;INSUMO;un;Mercearia;SECO;0;180
+Proteína de soja texturizada;INSUMO;kg;Mercearia;SECO;0;180
+Rabo salgado;INSUMO;un;Mercearia;SECO;0;180
+Recheio;INSUMO;kg;Mercearia;SECO;0;180
+Sachet d’épices;INSUMO;un;Mercearia;SECO;0;180
+Tofu firme;INSUMO;kg;Mercearia;SECO;0;180
+Tofu frescal;INSUMO;kg;Mercearia;SECO;0;180
+Extrato;INSUMO;kg;Molhos e condimentos;SECO;0;180
+Extrato de amêndoas;INSUMO;L;Molhos e condimentos;SECO;0;180
+Extrato de malte;INSUMO;kg;Molhos e condimentos;SECO;0;180
+Molho de hoisin e sriracha;INSUMO;kg;Molhos e condimentos;SECO;0;180
+Molho de pimenta tabasco;INSUMO;kg;Molhos e condimentos;SECO;0;180
+Molho taco;INSUMO;L;Molhos e condimentos;SECO;0;180
+Pasta de pimenta thai- vermelha;INSUMO;kg;Molhos e condimentos;SECO;0;180
+Pimenta tabasco;INSUMO;kg;Molhos e condimentos;SECO;0;180
+Sementes de mostarda;INSUMO;kg;Molhos e condimentos;SECO;0;180
+Atum;INSUMO;kg;Pescados;RESFRIADO;1;2
+Bacalhau dessalgado;INSUMO;kg;Pescados;RESFRIADO;1;2
+Base de tempero sírio;INSUMO;kg;Pescados;RESFRIADO;1;2
+Camarão seco;INSUMO;kg;Pescados;RESFRIADO;1;2
+Camarão seco moído;INSUMO;kg;Pescados;RESFRIADO;1;2
+Lula em anéis pré-cozidos;INSUMO;kg;Pescados;RESFRIADO;1;2
+Lulas;INSUMO;un;Pescados;RESFRIADO;1;2
+Molho de peixe;INSUMO;L;Pescados;RESFRIADO;1;2
+Peixe branco;INSUMO;kg;Pescados;RESFRIADO;1;2
+Tilápia;INSUMO;kg;Pescados;RESFRIADO;1;2
+Baunilha em pasta;INSUMO;kg;Temperos e especiarias;SECO;0;365
+Ervas;INSUMO;kg;Temperos e especiarias;SECO;0;365
+Especiarias;INSUMO;kg;Temperos e especiarias;SECO;0;365
+Especiarias para patê;INSUMO;kg;Temperos e especiarias;SECO;0;365
+Harissa;INSUMO;kg;Temperos e especiarias;SECO;0;365
+Linhaça;INSUMO;kg;Temperos e especiarias;SECO;0;365
+Pimenta vermelha;INSUMO;kg;Temperos e especiarias;SECO;0;365
+Sementes de cominho;INSUMO;kg;Temperos e especiarias;SECO;0;365
+Sementes de gergelim;INSUMO;kg;Temperos e especiarias;SECO;0;365
+Tempero verde;INSUMO;un;Temperos e especiarias;SECO;0;365
+Vinha chianti;INSUMO;L;Temperos e especiarias;SECO;0;365
+Batatas duchesse;FINAL;kg;Pratos;RESFRIADO;1;2
+Strogonoff;FINAL;kg;Pratos;RESFRIADO;1;2
+Fundo bovino;INTERMEDIARIO;L;Preparos;RESFRIADO;1;3
+Arroz pilaf;FINAL;kg;Pratos;RESFRIADO;1;2
+Salada de lentilha;FINAL;kg;Pratos;RESFRIADO;1;2
+Molho demi-glace;INTERMEDIARIO;L;Preparos;RESFRIADO;1;3
+Molho balsâmico;INTERMEDIARIO;L;Preparos;RESFRIADO;1;3
+Couscous marroquino;FINAL;kg;Pratos;RESFRIADO;1;2
+Arroz negro com vegetais, shitake e crispy alho poró;FINAL;kg;Pratos;RESFRIADO;1;2
+Molho marchand de vin;INTERMEDIARIO;L;Preparos;RESFRIADO;1;3
+Braciole al ragù;FINAL;kg;Pratos;RESFRIADO;1;2
+Rigatoni;INTERMEDIARIO;kg;Preparos;RESFRIADO;1;3
+Carne de panela;FINAL;kg;Pratos;RESFRIADO;1;2
+Polenta cremosa;FINAL;kg;Pratos;RESFRIADO;1;2
+Vinagrete de milho verde;FINAL;kg;Pratos;RESFRIADO;1;2
+Pão colonial;FINAL;kg;Pratos;RESFRIADO;1;2
+Salsa criolla;FINAL;kg;Pratos;RESFRIADO;1;2
+Moranga assada;FINAL;kg;Pratos;RESFRIADO;1;2
+Purê de moranga;INTERMEDIARIO;kg;Preparos;RESFRIADO;1;3
+Paleta de cordeiro assada;FINAL;kg;Pratos;RESFRIADO;1;2
+Molho barbecue;INTERMEDIARIO;L;Preparos;RESFRIADO;1;3
+Costela suína ao barbecue;FINAL;kg;Pratos;RESFRIADO;1;2
+Matambrito a la pizza;FINAL;kg;Pratos;RESFRIADO;1;2
+Maionese de leite;INTERMEDIARIO;kg;Preparos;RESFRIADO;1;3
+Salada morna de batatas;FINAL;kg;Pratos;RESFRIADO;1;2
+Salada de repolho com maçã verde;FINAL;kg;Pratos;RESFRIADO;1;2
+Língua com ervilha;FINAL;kg;Pratos;RESFRIADO;1;2
+Espetinhos de rins;FINAL;kg;Pratos;RESFRIADO;1;2
+Coração na brasa com chimichurri;FINAL;kg;Pratos;RESFRIADO;1;2
+Fígado acebolado com arroz com cúrcuma;FINAL;kg;Pratos;RESFRIADO;1;2
+Fundo claro de aves;INTERMEDIARIO;L;Preparos;RESFRIADO;1;3
+Batatas assadas com provolone;FINAL;kg;Pratos;RESFRIADO;1;2
+Farofa de cebola e alecrim;FINAL;kg;Pratos;RESFRIADO;1;2
+Frango assado;FINAL;kg;Pratos;RESFRIADO;1;2
+Sobrecoxa com harissa e laranja;FINAL;kg;Pratos;RESFRIADO;1;2
+Molho bechamel;INTERMEDIARIO;L;Preparos;RESFRIADO;1;3
+Marinada tipo salmoura;INTERMEDIARIO;L;Preparos;RESFRIADO;1;3
+Peito de frango a la reine;FINAL;kg;Pratos;RESFRIADO;1;2
+Galinhada;FINAL;kg;Pratos;RESFRIADO;1;2
+Brócolis salteado;FINAL;kg;Pratos;RESFRIADO;1;2
+Ragu de moela;FINAL;kg;Pratos;RESFRIADO;1;2
+Spaguetti;FINAL;kg;Pratos;RESFRIADO;1;2
+Patê de figado de galinha;FINAL;kg;Pratos;RESFRIADO;1;2
+Geleia de laranja;FINAL;kg;Pratos;RESFRIADO;1;2
+Molho mostarda;INTERMEDIARIO;L;Preparos;RESFRIADO;1;3
+Magret de pato grelhado;FINAL;kg;Pratos;RESFRIADO;1;2
+Cenouras assadas;FINAL;kg;Pratos;RESFRIADO;1;2
+Fumet de peixe;INTERMEDIARIO;L;Preparos;RESFRIADO;1;3
+Veloutè de peixe;INTERMEDIARIO;L;Preparos;RESFRIADO;1;3
+Peixe paupiette;FINAL;kg;Pratos;RESFRIADO;1;2
+Musseline de batata baroa;FINAL;kg;Pratos;RESFRIADO;1;2
+Espinafre refogado;FINAL;kg;Pratos;RESFRIADO;1;2
+Peixe em papilotte;FINAL;kg;Pratos;RESFRIADO;1;2
+Salmão grelhado;FINAL;kg;Pratos;RESFRIADO;1;2
+Beurre blanc;FINAL;L;Pratos;RESFRIADO;1;2
+Óleo de salsa;INTERMEDIARIO;L;Preparos;RESFRIADO;1;3
+Purê de couve flor;FINAL;kg;Pratos;RESFRIADO;1;2
+Couve-flor assada;FINAL;kg;Pratos;RESFRIADO;1;2
+Lula com molho romesco;FINAL;kg;Pratos;RESFRIADO;1;2
+Polvo à lagareiro;FINAL;kg;Pratos;RESFRIADO;1;2
+Espaguete nero com mexilhão;FINAL;kg;Pratos;RESFRIADO;1;2
+Pão rústico;FINAL;kg;Pratos;RESFRIADO;1;2
+Bisque de camarão;FINAL;L;Pratos;RESFRIADO;1;2
+Gambas al ajillo;FINAL;kg;Pratos;RESFRIADO;1;2
+Risoto de camarão com moranga;FINAL;kg;Pratos;RESFRIADO;1;2
+Caldo de camarão;INTERMEDIARIO;L;Preparos;RESFRIADO;1;3
+Picles rápido de moranga;FINAL;kg;Pratos;RESFRIADO;1;2
+Anéis de cebola em massa orly;FINAL;kg;Pratos;RESFRIADO;1;2
+Frango à romana e mix de folhas;FINAL;kg;Pratos;RESFRIADO;1;2
+Bife a parmegiana;FINAL;kg;Pratos;RESFRIADO;1;2
+Tempurá de vegetais com molho tarê;FINAL;kg;Pratos;RESFRIADO;1;2
+Omelete francês;FINAL;kg;Pratos;RESFRIADO;1;2
+Ovos pochê;FINAL;kg;Pratos;RESFRIADO;1;2
+Ovos frigidos ou estalados;FINAL;kg;Pratos;RESFRIADO;1;2
+Molho hollandaise;INTERMEDIARIO;L;Preparos;RESFRIADO;1;3
+English muffins;FINAL;kg;Pratos;RESFRIADO;1;2
+Molho pomodoro basílico;INTERMEDIARIO;L;Preparos;RESFRIADO;1;3
+Manteiga de sálvia;INTERMEDIARIO;kg;Preparos;RESFRIADO;1;3
+Massa tradicional;INTERMEDIARIO;kg;Preparos;RESFRIADO;1;3
+Recheio para ravioli;INTERMEDIARIO;kg;Preparos;RESFRIADO;1;3
+Massa de sêmola e ovos;INTERMEDIARIO;kg;Preparos;RESFRIADO;1;3
+Recheio para tortéi;INTERMEDIARIO;kg;Preparos;RESFRIADO;1;3
+Molho bolonhesa;INTERMEDIARIO;L;Preparos;RESFRIADO;1;3
+Molho pesto;INTERMEDIARIO;L;Preparos;RESFRIADO;1;3
+Nhoque de batata;FINAL;kg;Pratos;RESFRIADO;1;2
+Massa de ovos;INTERMEDIARIO;kg;Preparos;RESFRIADO;1;3
+Gnocchi romano de semolina;FINAL;kg;Pratos;RESFRIADO;1;2
+Lasanha;FINAL;kg;Pratos;RESFRIADO;1;2
+Pão de ló;FINAL;kg;Pratos;RESFRIADO;1;2
+Creme de confeiteiro;INTERMEDIARIO;kg;Preparos;RESFRIADO;1;3
+Geleia;FINAL;kg;Pratos;RESFRIADO;1;2
+Merengue italiano;INTERMEDIARIO;kg;Preparos;RESFRIADO;1;3
+Bolo amanteigado de mirtilo e limão;FINAL;kg;Pratos;RESFRIADO;1;2
+Bolo invertido de banana;FINAL;kg;Pratos;RESFRIADO;1;2
+Bolo de chocolate com cobertura de doce de leite;FINAL;kg;Pratos;RESFRIADO;1;2
+Bolo de cenoura com calda de brigadeiro;FINAL;kg;Pratos;RESFRIADO;1;2
+Pavlova – merengue base;FINAL;kg;Pratos;RESFRIADO;1;2
+Creme de maracujá;INTERMEDIARIO;kg;Preparos;RESFRIADO;1;3
+Compota de frutas amarelas;FINAL;kg;Pratos;RESFRIADO;1;2
+Massa sucrée;INTERMEDIARIO;kg;Preparos;RESFRIADO;1;3
+Massa sucrée com cacau;INTERMEDIARIO;kg;Preparos;RESFRIADO;1;3
+Massa sablée com amêndoas;INTERMEDIARIO;kg;Preparos;RESFRIADO;1;3
+Massa sablée breton;INTERMEDIARIO;kg;Preparos;RESFRIADO;1;3
+Tarte au citron;FINAL;kg;Pratos;RESFRIADO;1;2
+Torta banoffee;FINAL;kg;Pratos;RESFRIADO;1;2
+Torta de maçã e crumble;FINAL;kg;Pratos;RESFRIADO;1;2
+Torta de chocolate e coco;FINAL;kg;Pratos;RESFRIADO;1;2
+Galette de cenoura, gorgonzola e mel;FINAL;kg;Pratos;RESFRIADO;1;2
+Tarta de queso basca;FINAL;kg;Pratos;RESFRIADO;1;2
+Quiche de alho poró e queijo colonial;FINAL;kg;Pratos;RESFRIADO;1;2
+Quiche lorraine;FINAL;kg;Pratos;RESFRIADO;1;2
+Massa choux;INTERMEDIARIO;kg;Preparos;RESFRIADO;1;3
+Craquelin;INTERMEDIARIO;kg;Preparos;RESFRIADO;1;3
+Creme diplomata de cream cheese;INTERMEDIARIO;kg;Preparos;RESFRIADO;1;3
+Creme lègére de cumaru;INTERMEDIARIO;kg;Preparos;RESFRIADO;1;3
+Blondie;FINAL;kg;Pratos;RESFRIADO;1;2
+Calda de framboesa;INTERMEDIARIO;L;Preparos;RESFRIADO;1;3
+Cookie de chocolate;FINAL;kg;Pratos;RESFRIADO;1;2
+Brownie;FINAL;kg;Pratos;RESFRIADO;1;2
+Caramelo salgado;FINAL;kg;Pratos;RESFRIADO;1;2
+Chantily cítrico;FINAL;kg;Pratos;RESFRIADO;1;2
+Panna cotta de mel e baunilha;FINAL;kg;Pratos;RESFRIADO;1;2
+Crocante de mel - honeycomb;FINAL;kg;Pratos;RESFRIADO;1;2
+Bavaroise de café com calda de laranja;FINAL;kg;Pratos;RESFRIADO;1;2
+Mousse de chocolate;FINAL;kg;Pratos;RESFRIADO;1;2
+Praliné de avelã;FINAL;kg;Pratos;RESFRIADO;1;2
+Sorvete artesanal de baunilha;FINAL;kg;Pratos;RESFRIADO;1;2
+Petit gateau de chocolate;FINAL;kg;Pratos;RESFRIADO;1;2
+Petit gateau de chocolate branco e limão;FINAL;kg;Pratos;RESFRIADO;1;2
+Petit gateau de doce de leite;FINAL;kg;Pratos;RESFRIADO;1;2
+Financier com framboesa;FINAL;kg;Pratos;RESFRIADO;1;2
+Croissant;FINAL;kg;Pratos;RESFRIADO;1;2
+Brioche;INTERMEDIARIO;kg;Preparos;RESFRIADO;1;3
+Massa folhada rápida;INTERMEDIARIO;kg;Preparos;RESFRIADO;1;3
+Medialuna;FINAL;kg;Pratos;RESFRIADO;1;2
+Babka de chocolate;FINAL;kg;Pratos;RESFRIADO;1;2
+Creme de confeiteiro de doce de leite;INTERMEDIARIO;kg;Preparos;RESFRIADO;1;3
+Pão de xis;FINAL;kg;Pratos;RESFRIADO;1;2
+Maionese caseira;INTERMEDIARIO;kg;Preparos;RESFRIADO;1;3
+Saladas;FINAL;kg;Pratos;RESFRIADO;1;2
+Coração de frango;FINAL;kg;Pratos;RESFRIADO;1;2
+Bife de carne;FINAL;kg;Pratos;RESFRIADO;1;2
+Bacon caseiro;FINAL;kg;Pratos;RESFRIADO;1;2
+Torta fria de frango;FINAL;kg;Pratos;RESFRIADO;1;2
+Cuca de chocolate;FINAL;kg;Pratos;RESFRIADO;1;2
+Canudinho de maionese;FINAL;kg;Pratos;RESFRIADO;1;2
+Chimia de uva;FINAL;kg;Pratos;RESFRIADO;1;2
+Cueca virada;FINAL;kg;Pratos;RESFRIADO;1;2
+Matambre recheado;FINAL;kg;Pratos;RESFRIADO;1;2
+Pudim;FINAL;kg;Pratos;RESFRIADO;1;2
+Farofa;FINAL;kg;Pratos;RESFRIADO;1;2
+Tainha assada;FINAL;kg;Pratos;RESFRIADO;1;2
+Aipim cozido;FINAL;kg;Pratos;RESFRIADO;1;2
+Feijão cozido;FINAL;kg;Pratos;RESFRIADO;1;2
+Arroz;FINAL;kg;Pratos;RESFRIADO;1;2
+Ambrosia;FINAL;kg;Pratos;RESFRIADO;1;2
+Arroz de leite;FINAL;kg;Pratos;RESFRIADO;1;2
+Arroz carreteiro;FINAL;kg;Pratos;RESFRIADO;1;2
+Moranga caramelada;FINAL;kg;Pratos;RESFRIADO;1;2
+Feijão mexido;FINAL;kg;Pratos;RESFRIADO;1;2
+Salada gaúcha;FINAL;kg;Pratos;RESFRIADO;1;2
+Sopa de capeletti;FINAL;L;Pratos;RESFRIADO;1;2
+Galeto primo canto;FINAL;kg;Pratos;RESFRIADO;1;2
+Polenta frita;FINAL;kg;Pratos;RESFRIADO;1;2
+Salada de maionese;FINAL;kg;Pratos;RESFRIADO;1;2
+Salada de radicci com bacon;FINAL;kg;Pratos;RESFRIADO;1;2
+Sagu com creme;FINAL;kg;Pratos;RESFRIADO;1;2
+Salada laranja e erva doce;FINAL;kg;Pratos;RESFRIADO;1;2
+Focaccia com tomate manjericão;FINAL;kg;Pratos;RESFRIADO;1;2
+Creme de cogumelos;INTERMEDIARIO;L;Preparos;RESFRIADO;1;3
+Flan de doce de leite;FINAL;kg;Pratos;RESFRIADO;1;2
+Pamonha;FINAL;kg;Pratos;RESFRIADO;1;2
+Empadão de frango com palmito;FINAL;kg;Pratos;RESFRIADO;1;2
+Virado a paulista;FINAL;kg;Pratos;RESFRIADO;1;2
+Sonho de padaria;FINAL;kg;Pratos;RESFRIADO;1;2
+Angu de milho verde;FINAL;kg;Pratos;RESFRIADO;1;2
+Queijadinha;FINAL;kg;Pratos;RESFRIADO;1;2
+Pão de queijo;FINAL;kg;Pratos;RESFRIADO;1;2
+Frango com quiabo;FINAL;kg;Pratos;RESFRIADO;1;2
+Doce de leite caseiro;FINAL;kg;Pratos;RESFRIADO;1;2
+Fundo de ave escuro;INTERMEDIARIO;L;Preparos;RESFRIADO;1;3
+Barriga de porco a pururuca;FINAL;kg;Pratos;RESFRIADO;1;2
+Feijão tropeiro;FINAL;kg;Pratos;RESFRIADO;1;2
+Canjiquinha caseira;FINAL;kg;Pratos;RESFRIADO;1;2
+Vaca atolada;FINAL;kg;Pratos;RESFRIADO;1;2
+Bolo de fubá com goiabada;FINAL;kg;Pratos;RESFRIADO;1;2
+Carne de sol;INTERMEDIARIO;kg;Preparos;RESFRIADO;1;3
+Bolinho de bacalhau;FINAL;kg;Pratos;RESFRIADO;1;2
+Caldo verde;INTERMEDIARIO;L;Preparos;RESFRIADO;1;3
+Filé à oswaldo aranha;FINAL;kg;Pratos;RESFRIADO;1;2
+Manjar de coco com ameixa;FINAL;kg;Pratos;RESFRIADO;1;2
+Biscoito de polvilho;FINAL;kg;Pratos;RESFRIADO;1;2
+Baião de dois;FINAL;kg;Pratos;RESFRIADO;1;2
+Cuscuz com carne de sol na nata;FINAL;kg;Pratos;RESFRIADO;1;2
+Vinagrete de tomate verde;FINAL;kg;Pratos;RESFRIADO;1;2
+Bolo de rolo;FINAL;kg;Pratos;RESFRIADO;1;2
+Moqueca de peixe e camarão;FINAL;kg;Pratos;RESFRIADO;1;2
+Arroz de banana da terra;FINAL;kg;Pratos;RESFRIADO;1;2
+Farofa de castanha;FINAL;kg;Pratos;RESFRIADO;1;2
+Salada baiana;FINAL;kg;Pratos;RESFRIADO;1;2
+Mungunzá;FINAL;kg;Pratos;RESFRIADO;1;2
+Acarajé;FINAL;kg;Pratos;RESFRIADO;1;2
+Caruru;FINAL;kg;Pratos;RESFRIADO;1;2
+Vatapá;FINAL;kg;Pratos;RESFRIADO;1;2
+Molho de pimenta caseiro;INTERMEDIARIO;L;Preparos;RESFRIADO;1;3
+Salada de tomate verde;FINAL;kg;Pratos;RESFRIADO;1;2
+Cocada branca;FINAL;kg;Pratos;RESFRIADO;1;2
+Bobó de camarão;FINAL;kg;Pratos;RESFRIADO;1;2
+Xinxim de galinha;FINAL;kg;Pratos;RESFRIADO;1;2
+Farofa de banana;FINAL;kg;Pratos;RESFRIADO;1;2
+Arroz de coco;FINAL;kg;Pratos;RESFRIADO;1;2
+Bolo de aipim com coco;FINAL;kg;Pratos;RESFRIADO;1;2
+Cartola;FINAL;kg;Pratos;RESFRIADO;1;2
+Escondidinho de batata com carne seca;FINAL;kg;Pratos;RESFRIADO;1;2
