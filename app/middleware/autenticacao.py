@@ -39,7 +39,10 @@ def registrar_middleware_autenticacao(app: Flask) -> None:
     @app.before_request
     def autenticar_e_autorizar():
         _carregar_usuario()
-        if not request.path.startswith("/api/") or request.path in Constantes.ROTAS_PUBLICAS:
+        if not request.path.startswith("/api/") or (
+            request.path in Constantes.ROTAS_PUBLICAS
+            or request.path.startswith(Constantes.PREFIXOS_PUBLICOS)
+        ):
             return None
         if g.usuario is None:
             return {"erro": "autenticação necessária"}, 401

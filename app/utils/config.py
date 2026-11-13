@@ -32,4 +32,8 @@ class Config(BaseSettings):
     COOK_USERNAME: str = "cozinha"
     COOK_INITIAL_PASSWORD: str = "Cozinha@123"
 
+    # Pasta em branding/ (ou caminho absoluto) com a identidade visual.
+    # Vazio desativa a pasta e usa os valores embutidos no frontend.
+    BRANDING: str | None = "machry"
+
 config = Config()

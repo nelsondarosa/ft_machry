@@ -3,7 +3,7 @@ import os
 from flask import Flask, send_from_directory
 
 from app.utils.config import config as app_config
-from app.features import auth, estoque, fichas_tecnicas, producao, produtos, usuarios
+from app.features import auth, branding, estoque, fichas_tecnicas, producao, produtos, usuarios
 from app.middleware import registrar_middleware_autenticacao
 from db.database_config import init_app as init_db
 
@@ -23,6 +23,7 @@ def create_app(config: dict | None = None) -> Flask:
     registrar_middleware_autenticacao(app)
 
     app.register_blueprint(auth.bp, url_prefix=f"{prefixo_api}/auth")
+    app.register_blueprint(branding.bp, url_prefix=f"{prefixo_api}/branding")
     app.register_blueprint(usuarios.bp, url_prefix=f"{prefixo_api}/usuarios")
     app.register_blueprint(produtos.bp, url_prefix=f"{prefixo_api}/produtos")
     app.register_blueprint(

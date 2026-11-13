@@ -11,6 +11,7 @@ class Constantes:
     # -- autenticação --------------------------------------------------------
 
     ROTAS_PUBLICAS = {"/api/auth/login"}
+    PREFIXOS_PUBLICOS = ("/api/branding",)
     ROTAS_DE_SESSAO = {"/api/auth/me", "/api/auth/logout"}
 
     Papel = Literal["OWNER", "ADMIN", "USER"]

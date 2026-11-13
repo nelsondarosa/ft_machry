@@ -1,0 +1,6 @@
+/* Carregado depois do CSS padrão: sobrescreva variáveis ou classes. */
+:root {
+  --green: #3b2a5c;
+  --lime: #f2b84b;
+  --cream: #f6f1ea;
+}

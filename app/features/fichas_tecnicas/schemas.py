@@ -47,6 +47,41 @@ class FichaTecnicaInput(BaseModel):
         return self
 
 
+class FichaLoteFase(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    fase: str = Field(min_length=1, max_length=100)
+    ordem: int = Field(gt=0)
+    tempo_previsto_min: int = Field(gt=0)
+
+
+class FichaLoteComponente(BaseModel):
+    """Componente referenciado pelo nome. Quantidade nula significa "a gosto" (q.b.)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    produto: str = Field(min_length=1, max_length=150)
+    quantidade: Decimal | None = Field(default=None, gt=0, max_digits=18, decimal_places=6)
+    unidade: str | None = Field(default=None, max_length=20)
+    fase_ordem: int | None = Field(default=None, gt=0)
+
+
+class FichaLoteItem(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    produto: str = Field(min_length=1, max_length=150)
+    rendimento: Decimal = Field(gt=0, max_digits=18, decimal_places=3)
+    observacao: str | None = Field(default=None, max_length=2000)
+    fases: list[FichaLoteFase] = Field(min_length=1)
+    componentes: list[FichaLoteComponente] = Field(default_factory=list)
+
+
+class FichaLoteInput(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    fichas: list[dict] = Field(min_length=1, max_length=200)
+
+
 class FaseCatalogoOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 

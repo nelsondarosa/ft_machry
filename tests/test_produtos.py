@@ -87,3 +87,36 @@ def test_subdivisao(client):
     assert r.get_json()["subdivisao"] is None
 
     assert criar(client).get_json()["subdivisao"] is None
+
+
+def test_criar_lote(client):
+    r = client.post(f"{URL}/lote", json={"produtos": [
+        FARINHA,
+        {"nome": "Bolo", "tipo": "FINAL", "unidade_medida": "un", "conservacao": "RESFRIADO"},
+    ]})
+    assert r.status_code == 201
+    assert r.get_json()["total"] == 2
+    assert sorted(p["nome"] for p in client.get(URL).get_json()["items"]) == ["Bolo", "Farinha"]
+
+    # Reimportar ignora nomes já cadastrados, mesmo com outra conservação.
+    r = client.post(f"{URL}/lote", json={"produtos": [{**FARINHA, "nome": " farinha "}, {**FARINHA, "conservacao": "CONGELADO"}, {**FARINHA, "nome": "Fubá"}]})
+    assert r.status_code == 201
+    assert r.get_json()["total"] == 1 and r.get_json()["ignorados"] == ["farinha", "Farinha"]
+
+
+def test_criar_lote_ignora_repetidos_no_arquivo(client):
+    r = client.post(f"{URL}/lote", json={"produtos": [FARINHA, {**FARINHA, "nome": "FARINHA "}, FARINHA]})
+    assert r.status_code == 201
+    assert r.get_json()["total"] == 1 and r.get_json()["ignorados"] == ["FARINHA", "Farinha"]
+    assert [p["nome"] for p in client.get(URL).get_json()["items"]] == ["Farinha"]
+
+
+def test_criar_lote_atomico(client):
+    r = client.post(f"{URL}/lote", json={"produtos": [FARINHA, {**FARINHA, "tipo": "OUTRO"}]})
+    assert r.status_code == 400
+    assert r.get_json()["erro"].startswith("produto 2: tipo")
+    r = client.post(f"{URL}/lote", json={"produtos": [FARINHA, {**FARINHA, "nome": "Fubá", "grupo_id": 999}]})
+    assert r.status_code == 400
+    assert r.get_json()["erro"].startswith("produto 2:")
+    assert client.get(URL).get_json()["items"] == []
+    assert client.post(f"{URL}/lote", json={"produtos": []}).status_code == 400

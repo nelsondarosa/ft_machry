@@ -27,6 +27,12 @@ class ProdutoCreate(BaseModel):
         return valor
 
 
+class ProdutoLoteCreate(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    produtos: list[dict] = Field(min_length=1, max_length=500)
+
+
 class ProdutoUpdate(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
