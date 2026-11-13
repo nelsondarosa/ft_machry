@@ -143,8 +143,7 @@ Cada ficha de exemplo termina com linhas só de `observacao`: o código e a orig
 Exemplos, em ordem de importação (os de produtos pela página **Produtos**, os de fichas pela página **Fichas técnicas**):
 
 1. [`produtos_machry.csv`](docs/exemplos/produtos_machry.csv): catálogo de insumos.
-2. [`produtos_apostila_1.csv`](docs/exemplos/produtos_apostila_1.csv) e [`produtos_apostila_2.csv`](docs/exemplos/produtos_apostila_2.csv), depois [`fichas_apostila_1.csv`](docs/exemplos/fichas_apostila_1.csv), [`_2`](docs/exemplos/fichas_apostila_2.csv) e [`_3`](docs/exemplos/fichas_apostila_3.csv): todas as 405 receitas da Apostila Cozinheiro 2024, divididas em partes por causa do limite de 500 produtos e 200 fichas por importação. Os produtos trazem o hortifrúti, os insumos que faltam no catálogo e um produto intermediário ou final para cada receita.
-3. [`produtos_aula4.csv`](docs/exemplos/produtos_aula4.csv) e [`fichas_aula4.csv`](docs/exemplos/fichas_aula4.csv): Aula 4 (batatas). Só acrescenta a batata parmentier; as demais fichas já vêm da apostila e são ignoradas.
+2. [`produtos_apostila_1.csv`](docs/exemplos/produtos_apostila_1.csv) e [`produtos_apostila_2.csv`](docs/exemplos/produtos_apostila_2.csv), depois [`fichas_apostila_1.csv`](docs/exemplos/fichas_apostila_1.csv), [`_2`](docs/exemplos/fichas_apostila_2.csv) e [`_3`](docs/exemplos/fichas_apostila_3.csv): todas as 405 receitas da Apostila Cozinheiro 2024, divididas em partes por causa do limite de 500 produtos e 200 fichas por importação. Os produtos trazem o hortifrúti, os insumos que faltam no catálogo e um produto intermediário ou final para cada receita. O último arquivo também traz a ficha da batata parmentier, o corte usado no potage (FT 09), que a apostila não detalha.
 
 Sobre as fichas da apostila:
 
