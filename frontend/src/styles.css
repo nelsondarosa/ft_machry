@@ -194,3 +194,6 @@ main{min-width:0}header{height:78px;border-bottom:1px solid var(--line);display:
 .item-actions{display:flex;gap:14px;justify-content:flex-end}
 .item-actions .helper{margin:0}
 .brand-mark.has-logo,.login-mark.has-logo{border:0;overflow:hidden}.brand-mark img,.login-mark img{width:100%;height:100%;object-fit:contain}
+
+.form-row>label{min-width:0}
+.form-row input{width:100%;min-width:0}
