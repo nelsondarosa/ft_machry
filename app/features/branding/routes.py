@@ -5,6 +5,7 @@ o nome de uma subpasta de `branding/` na raiz do projeto ou um caminho
 absoluto. O padrão é `machry`; com a variável vazia, a rota devolve `{}` e o
 frontend usa os textos embutidos (os mesmos da pasta `machry`).
 """
+import hashlib
 import json
 import os
 
@@ -51,7 +52,7 @@ def obter():
         if not caminho.startswith(pasta + os.sep) or not os.path.isfile(caminho):
             current_app.logger.warning("BRANDING: arquivo %r de %r não encontrado", nome, campo)
             continue
-        versao = int(os.path.getmtime(caminho))
+        versao = hashlib.md5(open(caminho, "rb").read()).hexdigest()[:10]  # muda com o conteúdo, não com a data
         resposta[campo] = f"/api/branding/arquivos/{nome.replace(os.sep, '/')}?v={versao}"
     return resposta
 
