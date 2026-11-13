@@ -362,7 +362,7 @@ function LotModal({ lote, abaInicial, lotes, produtos, contexto, usuarioId, onCl
     <div className="dialog-body lot-body">
       {aba === 'ITENS' && lote && modo === 'VER' && <LotDetails lote={lote} contexto={contexto} usuarioId={usuarioId} itens={itens} erroItens={erroItens} onItemChanged={concluir} />}
       {aba === 'ITENS' && lote && modo === 'EDITAR' && <LotEditForm lote={lote} produto={produto} contexto={contexto} onSaving={setSalvando} onSaved={() => concluir(`Lote #${lote.id} atualizado.`)} />}
-      {aba === 'ITENS' && lote && modo === 'ADICIONAR' && <AddItemsForm lote={lote} unidade={unidade} validadeObrigatoria={Boolean(produto?.validade_obrigatoria)} usuarioId={usuarioId} onSaving={setSalvando} onSaved={(quantidade) => concluir(`${quantidade} ${quantidade === 1 ? 'item adicionado' : 'itens adicionados'} ao lote #${lote.id}.`)} />}
+      {aba === 'ITENS' && lote && modo === 'ADICIONAR' && <AddItemsForm lote={lote} unidade={unidade} validadeObrigatoria={Boolean(produto?.validade_obrigatoria)} validadePadraoDias={produto?.validade_padrao_dias} usuarioId={usuarioId} onSaving={setSalvando} onSaved={(quantidade) => concluir(`${quantidade} ${quantidade === 1 ? 'item adicionado' : 'itens adicionados'} ao lote #${lote.id}.`)} />}
       {aba === 'TRANSFERIR' && <>
         {!lote && <label className="field">
           Lote de origem
@@ -535,11 +535,23 @@ function destinoDoItem(item: ItemLote) {
   return '—'
 }
 
-type Grupo = { chave: number; unidades: string; conteudo: string; fabricante: string; fabricacao: string; validade: string }
+// validadeManual: o usuário editou a validade, então ela não é mais sugerida automaticamente.
+type Grupo = { chave: number; unidades: string; conteudo: string; fabricante: string; fabricacao: string; validade: string; validadeManual: boolean }
 
 let proximaChave = 1
-const grupoVazio = (): Grupo => ({ chave: proximaChave++, unidades: '1', conteudo: '', fabricante: '', fabricacao: '', validade: '' })
+const grupoVazio = (): Grupo => ({ chave: proximaChave++, unidades: '1', conteudo: '', fabricante: '', fabricacao: '', validade: '', validadeManual: false })
 const numeroDe = (texto: string) => Number(texto.replace(',', '.'))
+
+/** Validade sugerida = data base (AAAA-MM-DD) + validade padrão do produto em dias. */
+function sugerirValidade(base: string, dias: number | null | undefined): string {
+  if (!base || dias == null) return ''
+  const [ano, mes, dia] = base.split('-').map(Number)
+  if (!ano || !mes || !dia) return ''
+  return new Date(ano, mes - 1, dia + dias).toLocaleDateString('sv-SE')
+}
+
+const sugerirValidadeDosGrupos = (grupos: Grupo[], dias: number | null | undefined) =>
+  grupos.map((grupo) => grupo.validadeManual ? grupo : { ...grupo, validade: sugerirValidade(grupo.fabricacao, dias) })
 
 function gruposParaApi(grupos: Grupo[]) {
   return grupos.map((grupo) => ({
@@ -562,14 +574,18 @@ function Rotulo({ texto, opcional }: { texto: string; opcional?: boolean }) {
   return <span className="field-title">{texto}{opcional && <small className="optional"> (opcional)</small>}</span>
 }
 
-function GroupsEditor({ grupos, unidade, pedirValidade, validadeObrigatoria, onChange }: {
+function GroupsEditor({ grupos, unidade, pedirValidade, validadeObrigatoria, validadePadraoDias, onChange }: {
   grupos: Grupo[]
   unidade: string
   pedirValidade: boolean
   validadeObrigatoria: boolean
+  validadePadraoDias?: number | null
   onChange: (grupos: Grupo[]) => void
 }) {
   const atualizar = (chave: number, campos: Partial<Grupo>) => onChange(grupos.map((grupo) => grupo.chave === chave ? { ...grupo, ...campos } : grupo))
+  const trocarFabricacao = (grupo: Grupo, fabricacao: string) => atualizar(grupo.chave, grupo.validadeManual || !pedirValidade
+    ? { fabricacao }
+    : { fabricacao, validade: sugerirValidade(fabricacao, validadePadraoDias) })
   const remover = (chave: number) => onChange(grupos.filter((grupo) => grupo.chave !== chave))
 
   return <div className="groups">
@@ -582,17 +598,18 @@ function GroupsEditor({ grupos, unidade, pedirValidade, validadeObrigatoria, onC
       <label>Unidades<input type="number" min="1" max="500" step="1" required value={grupo.unidades} onChange={(event) => atualizar(grupo.chave, { unidades: event.target.value })} /></label>
       <label>Conteúdo por unidade ({unidade || 'un'})<input type="number" min="0.001" step="any" required value={grupo.conteudo} onChange={(event) => atualizar(grupo.chave, { conteudo: event.target.value })} placeholder="Ex.: 1000" /></label>
       <label><Rotulo texto="Fabricante / marca" opcional /><input maxLength={100} value={grupo.fabricante} onChange={(event) => atualizar(grupo.chave, { fabricante: event.target.value })} placeholder="Ex.: Tio João" /></label>
-      <label><Rotulo texto="Fabricação" opcional /><input type="date" value={grupo.fabricacao} onChange={(event) => atualizar(grupo.chave, { fabricacao: event.target.value })} /></label>
-      {pedirValidade && <label><Rotulo texto="Validade" opcional={!validadeObrigatoria} /><input type="date" required={validadeObrigatoria} value={grupo.validade} onChange={(event) => atualizar(grupo.chave, { validade: event.target.value })} /></label>}
+      <label><Rotulo texto="Fabricação" opcional /><input type="date" value={grupo.fabricacao} onChange={(event) => trocarFabricacao(grupo, event.target.value)} /></label>
+      {pedirValidade && <label><Rotulo texto="Validade" opcional={!validadeObrigatoria} /><input type="date" required={validadeObrigatoria} value={grupo.validade} onChange={(event) => atualizar(grupo.chave, { validade: event.target.value, validadeManual: true })} /></label>}
       {grupos.length > 1 && <button type="button" className="remove-row" aria-label={`Remover grupo ${indice + 1}`} onClick={() => remover(grupo.chave)}>×</button>}
     </fieldset>)}
   </div>
 }
 
-function AddItemsForm({ lote, unidade, validadeObrigatoria, usuarioId, onSaving, onSaved }: {
+function AddItemsForm({ lote, unidade, validadeObrigatoria, validadePadraoDias, usuarioId, onSaving, onSaved }: {
   lote: Lote
   unidade: string
   validadeObrigatoria: boolean
+  validadePadraoDias?: number | null
   usuarioId: number
   onSaving: (valor: boolean) => void
   onSaved: (quantidade: number) => Promise<void>
@@ -616,7 +633,7 @@ function AddItemsForm({ lote, unidade, validadeObrigatoria, usuarioId, onSaving,
   return <form id="add-items-form" className="lot-form" onSubmit={salvar}>
     {erro && <p className="form-error">{erro}</p>}
     <p className="helper">Cada unidade recebe um código próprio ({`FT-${String(lote.id).padStart(3, '0')}-…`}).{validadeObrigatoria && ' Grupos sem validade usam a validade do lote.'}</p>
-    <GroupsEditor grupos={grupos} unidade={unidade} pedirValidade={validadeObrigatoria} validadeObrigatoria={validadeObrigatoria && !lote.data_validade} onChange={setGrupos} />
+    <GroupsEditor grupos={grupos} unidade={unidade} pedirValidade={validadeObrigatoria} validadeObrigatoria={validadeObrigatoria && !lote.data_validade} validadePadraoDias={validadePadraoDias} onChange={setGrupos} />
     <label><Rotulo texto="Observação" opcional /><input value={observacao} onChange={(event) => setObservacao(event.target.value)} placeholder="Vai junto com a entrada" /></label>
     <div className="transfer-summary">
       <div><span>Unidades</span><strong>+{resumo.unidades}</strong></div>
@@ -640,6 +657,7 @@ function NewLotModal({ produtos, localizacoes, usuarioId, onClose, onSaved }: {
   const [localizacaoId, setLocalizacaoId] = useState<number | ''>('')
   const [entrada, setEntrada] = useState(hojeIso())
   const [validadeLote, setValidadeLote] = useState('')
+  const [validadeLoteManual, setValidadeLoteManual] = useState(false)
   const [fornecedor, setFornecedor] = useState('')
   const [notaFiscal, setNotaFiscal] = useState('')
   const [custo, setCusto] = useState('')
@@ -650,16 +668,28 @@ function NewLotModal({ produtos, localizacoes, usuarioId, onClose, onSaved }: {
 
   const resumo = resumoDosGrupos(grupos)
   const vencimento = resumo.menorValidade || validadeLote
-  const pedirValidade = Boolean(produto?.validade_obrigatoria)
+  const temValidade = (item?: Produto) => Boolean(item?.validade_obrigatoria) || item?.validade_padrao_dias != null
+  const pedirValidade = temValidade(produto)
+  const diasPadrao = produto?.validade_padrao_dias
 
   function trocarProduto(id: number | '') {
     setProdutoId(id)
     const escolhido = produtos.find((item) => item.id === id)
     setLocalizacaoId(localizacoes.find((item) => item.tipo === escolhido?.conservacao)?.id ?? '')
-    if (!escolhido?.validade_obrigatoria) {
+    // Outro produto tem outra validade padrão: descarta edições manuais e sugere de novo.
+    setValidadeLoteManual(false)
+    if (!temValidade(escolhido)) {
       setValidadeLote('')
-      setGrupos((atuais) => atuais.map((grupo) => ({ ...grupo, validade: '' })))
+      setGrupos((atuais) => atuais.map((grupo) => ({ ...grupo, validade: '', validadeManual: false })))
+      return
     }
+    setValidadeLote(sugerirValidade(entrada, escolhido?.validade_padrao_dias))
+    setGrupos((atuais) => sugerirValidadeDosGrupos(atuais.map((grupo) => ({ ...grupo, validadeManual: false })), escolhido?.validade_padrao_dias))
+  }
+
+  function trocarEntrada(valor: string) {
+    setEntrada(valor)
+    if (pedirValidade && !validadeLoteManual) setValidadeLote(sugerirValidade(valor, diasPadrao))
   }
 
   async function salvar(event: FormEvent) {
@@ -726,14 +756,15 @@ function NewLotModal({ produtos, localizacoes, usuarioId, onClose, onSaved }: {
           <label><Rotulo texto="Nota fiscal" opcional /><input maxLength={60} value={notaFiscal} onChange={(event) => setNotaFiscal(event.target.value)} /></label>
           <label><Rotulo texto="Custo unitário" opcional /><MoneyInput value={custo} onChange={setCusto} placeholder="R$ 0,00" /></label>
           <label>Tipo<input value={produto ? tipoLabels[produto.tipo] : ''} placeholder="Definido pelo produto" disabled /></label>
-          <label>Data de entrada<input type="date" value={entrada} onChange={(event) => setEntrada(event.target.value)} /></label>
-          {pedirValidade && <label><Rotulo texto="Validade do lote" opcional /><input type="date" value={validadeLote} onChange={(event) => setValidadeLote(event.target.value)} /></label>}
+          <label>Data de entrada<input type="date" value={entrada} onChange={(event) => trocarEntrada(event.target.value)} /></label>
+          {pedirValidade && <label><Rotulo texto="Validade do lote" opcional /><input type="date" value={validadeLote} onChange={(event) => { setValidadeLote(event.target.value); setValidadeLoteManual(true) }} /></label>}
         </div>
+        {pedirValidade && diasPadrao != null && <p className="helper">Validade sugerida pela validade padrão do produto ({diasPadrao} {diasPadrao === 1 ? 'dia' : 'dias'} a partir da entrada ou da fabricação do grupo). Pode ser alterada.</p>}
       </section>
 
       <section className="lot-section">
         <h3>Itens do lote</h3>
-        <GroupsEditor grupos={grupos} unidade={unidade} pedirValidade={pedirValidade} validadeObrigatoria={pedirValidade && !validadeLote} onChange={setGrupos} />
+        <GroupsEditor grupos={grupos} unidade={unidade} pedirValidade={pedirValidade} validadeObrigatoria={Boolean(produto?.validade_obrigatoria) && !validadeLote} validadePadraoDias={diasPadrao} onChange={setGrupos} />
         {pedirValidade && <p className="helper">O vencimento do lote passa a ser a validade mais próxima entre as unidades. Grupos sem validade usam a validade do lote.</p>}
         <label><Rotulo texto="Observação" opcional /><textarea rows={3} value={observacao} onChange={(event) => setObservacao(event.target.value)} /></label>
       </section>
