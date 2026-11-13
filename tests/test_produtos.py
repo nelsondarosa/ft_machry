@@ -16,7 +16,7 @@ def test_crud_completo(client):
     assert p["ativo"] == 1
 
     assert client.get(f"{URL}/{p['id']}").get_json() == p
-    assert client.get(URL).get_json() == [p]
+    assert client.get(URL).get_json()['items'] == [p]
 
     r = client.put(f"{URL}/{p['id']}", json={"conservacao": "RESFRIADO"})
     assert r.status_code == 200
@@ -25,14 +25,14 @@ def test_crud_completo(client):
 
     assert client.delete(f"{URL}/{p['id']}").status_code == 204
     assert client.get(f"{URL}/{p['id']}").status_code == 404
-    assert client.get(URL).get_json() == []
+    assert client.get(URL).get_json()['items'] == []
     assert client.delete(f"{URL}/{p['id']}").status_code == 404
 
 
 def test_lista_ordenada_por_nome(client):
     criar(client, nome="b")
     criar(client, nome="a")
-    assert [p["nome"] for p in client.get(URL).get_json()] == ["a", "b"]
+    assert [p["nome"] for p in client.get(URL).get_json()['items']] == ["A", "B"]
 
 
 def test_validacao(client):
@@ -42,6 +42,7 @@ def test_validacao(client):
     assert criar(client, nome=" ").status_code == 400
     assert criar(client, tipo="OUTRO").status_code == 400  # CHECK
     assert criar(client, conservacao="QUENTE").status_code == 400  # CHECK
+    assert criar(client, unidade_medida="xyz123").status_code == 400
     assert criar(client, grupo_id=999).status_code == 400  # FOREIGN KEY
 
     pid = criar(client).get_json()["id"]
@@ -61,7 +62,10 @@ def test_seeds(app):
         result = app.test_cli_runner().invoke(args=["init-db", "--seed"])
     assert result.exit_code == 0, result.output
     client = app.test_client()
-    assert len(client.get(URL).get_json()) == 10
+    assert client.post(
+        "/api/auth/login", json={"username": "dona", "password": "Teste@123"}
+    ).status_code == 200
+    assert len(client.get(URL).get_json()['items']) == 10
     assert client.get(f"{URL}/10").get_json()["nome"] == "Bolo de Nozes - Médio"
 
 
@@ -69,3 +73,66 @@ def test_docs(client):
     r = client.get("/openapi.yaml")
     assert r.status_code == 200 and b"/api/produtos" in r.data
     assert b"swagger-ui" in client.get("/docs").data
+
+
+def test_subdivisao(client):
+    r = criar(client, subdivisao="Farinhas")
+    assert r.status_code == 201
+    p = r.get_json()
+    assert p["subdivisao"] == "Farinhas"
+
+    r = client.put(f"{URL}/{p['id']}", json={"subdivisao": "Trigo"})
+    assert r.get_json()["subdivisao"] == "Trigo"
+
+    r = client.put(f"{URL}/{p['id']}", json={"subdivisao": None})
+    assert r.get_json()["subdivisao"] is None
+
+    assert criar(client, nome="Outra farinha").get_json()["subdivisao"] is None
+
+
+def test_criar_lote(client):
+    r = client.post(f"{URL}/lote", json={"produtos": [
+        FARINHA,
+        {"nome": "Bolo", "tipo": "FINAL", "unidade_medida": "un", "conservacao": "RESFRIADO"},
+    ]})
+    assert r.status_code == 201
+    assert r.get_json()["total"] == 2
+    assert sorted(p["nome"] for p in client.get(URL).get_json()["items"]) == ["Bolo", "Farinha"]
+
+    # Reimportar ignora nomes já cadastrados, mesmo com outra conservação.
+    r = client.post(f"{URL}/lote", json={"produtos": [{**FARINHA, "nome": " farinha "}, {**FARINHA, "conservacao": "CONGELADO"}, {**FARINHA, "nome": "Fubá"}]})
+    assert r.status_code == 201
+    assert r.get_json()["total"] == 1 and r.get_json()["ignorados"] == ["Farinha", "Farinha"]
+
+
+def test_criar_lote_ignora_repetidos_no_arquivo(client):
+    r = client.post(f"{URL}/lote", json={"produtos": [FARINHA, {**FARINHA, "nome": "FARINHA "}, FARINHA]})
+    assert r.status_code == 201
+    assert r.get_json()["total"] == 1 and r.get_json()["ignorados"] == ["Farinha", "Farinha"]
+    assert [p["nome"] for p in client.get(URL).get_json()["items"]] == ["Farinha"]
+
+
+def test_criar_lote_atomico(client):
+    r = client.post(f"{URL}/lote", json={"produtos": [FARINHA, {**FARINHA, "tipo": "OUTRO"}]})
+    assert r.status_code == 400
+    assert r.get_json()["erro"].startswith("produto 2: tipo")
+    r = client.post(f"{URL}/lote", json={"produtos": [FARINHA, {**FARINHA, "nome": "Fubá", "grupo_id": 999}]})
+    assert r.status_code == 400
+    assert r.get_json()["erro"].startswith("produto 2:")
+    assert client.get(URL).get_json()["items"] == []
+    assert client.post(f"{URL}/lote", json={"produtos": []}).status_code == 400
+
+
+def test_cadastro_manual_padroniza_nome_e_bloqueia_equivalentes(client):
+    primeiro = criar(client, nome="  RÚCULA  ")
+    assert primeiro.status_code == 201
+    assert primeiro.get_json()["nome"] == "Rúcula"
+
+    repetido = criar(client, nome="rucula")
+    assert repetido.status_code == 400
+    assert "nome equivalente" in repetido.get_json()["erro"]
+
+    outro = criar(client, nome="Alface")
+    assert outro.status_code == 201
+    conflito = client.put(f"{URL}/{outro.get_json()['id']}", json={"nome": "RUCULA"})
+    assert conflito.status_code == 400

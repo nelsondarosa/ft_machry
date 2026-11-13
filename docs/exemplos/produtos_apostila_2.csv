@@ -1,0 +1,183 @@
+﻿nome;tipo;unidade_medida;subdivisao;conservacao;validade_obrigatoria;validade_padrao_dias
+Coxinha;FINAL;kg;Pratos;RESFRIADO;1;2
+Dadinho de tapioca;FINAL;kg;Pratos;RESFRIADO;1;2
+Pastel;FINAL;kg;Pratos;RESFRIADO;1;2
+Ketchup caseiro;FINAL;kg;Pratos;RESFRIADO;1;2
+Mostarda;FINAL;kg;Pratos;RESFRIADO;1;2
+Geleia de pimenta;FINAL;kg;Pratos;RESFRIADO;1;2
+Bolovo;FINAL;kg;Pratos;RESFRIADO;1;2
+Caldinho de feijão;FINAL;L;Pratos;RESFRIADO;1;2
+Bolinho de arroz;FINAL;kg;Pratos;RESFRIADO;1;2
+Frango a passarinho;FINAL;kg;Pratos;RESFRIADO;1;2
+Pão de hamburguer;INTERMEDIARIO;kg;Preparos;RESFRIADO;1;3
+Hambúrguer;FINAL;kg;Pratos;RESFRIADO;1;2
+Fritas;FINAL;kg;Pratos;RESFRIADO;1;2
+Hambúrguer vegetariano;FINAL;kg;Pratos;RESFRIADO;1;2
+Molho tártaro;INTERMEDIARIO;L;Preparos;RESFRIADO;1;3
+Feijoada;FINAL;kg;Pratos;RESFRIADO;1;2
+Farofa de ovo;FINAL;kg;Pratos;RESFRIADO;1;2
+Couve refogada;FINAL;kg;Pratos;RESFRIADO;1;2
+Aipim frito;FINAL;kg;Pratos;RESFRIADO;1;2
+Quindim;FINAL;kg;Pratos;RESFRIADO;1;2
+Caldo bovino escuro;INTERMEDIARIO;L;Preparos;RESFRIADO;1;3
+Gazpacho;FINAL;L;Pratos;RESFRIADO;1;2
+Creme de ervilha e hortelã;INTERMEDIARIO;L;Preparos;RESFRIADO;1;3
+Vichyssoise;FINAL;L;Pratos;RESFRIADO;1;2
+Salada waldorf;FINAL;kg;Pratos;RESFRIADO;1;2
+Panzanella;FINAL;kg;Pratos;RESFRIADO;1;2
+Salada caesar;FINAL;kg;Pratos;RESFRIADO;1;2
+Massa para patê en croutê;INTERMEDIARIO;kg;Preparos;RESFRIADO;1;3
+Terrine a camponesa (recheio do paté en crouté);FINAL;kg;Pratos;RESFRIADO;1;2
+Roulade de filé suíno;FINAL;kg;Pratos;RESFRIADO;1;2
+Cinzas de cebola;INTERMEDIARIO;kg;Preparos;RESFRIADO;1;3
+Farce musseline de filé suíno;INTERMEDIARIO;kg;Preparos;RESFRIADO;1;3
+Gravlax;INTERMEDIARIO;kg;Preparos;RESFRIADO;1;3
+Salada grega com grão de bico;FINAL;kg;Pratos;RESFRIADO;1;2
+Consommé de carne;FINAL;L;Pratos;RESFRIADO;1;2
+Bagels;FINAL;kg;Pratos;RESFRIADO;1;2
+Baguete de parmesão e orégano;FINAL;kg;Pratos;RESFRIADO;1;2
+Pão de forma caseiro;FINAL;kg;Pratos;RESFRIADO;1;2
+Chutney de cebola roxa;INTERMEDIARIO;kg;Preparos;RESFRIADO;1;3
+Picles de pepino;INTERMEDIARIO;kg;Preparos;RESFRIADO;1;3
+Bagel de salmão;FINAL;kg;Pratos;RESFRIADO;1;2
+Sanduíche de rosbife;FINAL;kg;Pratos;RESFRIADO;1;2
+Rosbife;INTERMEDIARIO;kg;Preparos;RESFRIADO;1;3
+Katsu sando;FINAL;kg;Pratos;RESFRIADO;1;2
+Molho tonkatsu;INTERMEDIARIO;L;Preparos;RESFRIADO;1;3
+Canape de gravlax;FINAL;kg;Pratos;RESFRIADO;1;2
+Blinis;INTERMEDIARIO;kg;Preparos;RESFRIADO;1;3
+Creme azedo;INTERMEDIARIO;kg;Preparos;RESFRIADO;1;3
+Patacon e ceviche de banana;FINAL;kg;Pratos;RESFRIADO;1;2
+Vol au vent de cogumelos;FINAL;kg;Pratos;RESFRIADO;1;2
+Espetinho de camarão e mini batata;FINAL;kg;Pratos;RESFRIADO;1;2
+Filé de saint peter assado com crosta de oleaginosa;FINAL;kg;Pratos;RESFRIADO;1;2
+Salada de abóbora assada com rúcula, tomate secos e cebola roxa;FINAL;kg;Pratos;RESFRIADO;1;2
+Risoto mediterrâneo integral;FINAL;kg;Pratos;RESFRIADO;1;2
+Capaccio de beterraba com pesto de ervas;FINAL;kg;Pratos;RESFRIADO;1;2
+Lasanha de berinjela e abobrinha sem massa;FINAL;kg;Pratos;RESFRIADO;1;2
+Empada de cogumelo com massa de grão de bico;FINAL;kg;Pratos;RESFRIADO;1;2
+Pizza de couve-flor sem farinha;FINAL;kg;Pratos;RESFRIADO;1;2
+Bombom de tâmaras com chia;FINAL;kg;Pratos;RESFRIADO;1;2
+Ovo de linhaça e chia;INTERMEDIARIO;kg;Preparos;RESFRIADO;1;3
+Esfirra de “carne” vegana;FINAL;kg;Pratos;RESFRIADO;1;2
+Leite de amêndoas;INTERMEDIARIO;L;Preparos;RESFRIADO;1;3
+Leite condensado vegano;INTERMEDIARIO;L;Preparos;RESFRIADO;1;3
+Brigadeiro vegano;FINAL;kg;Pratos;RESFRIADO;1;2
+Patê de resíduos de leite de amêndoas;FINAL;kg;Pratos;RESFRIADO;1;2
+Leite de castanha de caju;INTERMEDIARIO;L;Preparos;RESFRIADO;1;3
+Cupcake vegano;FINAL;kg;Pratos;RESFRIADO;1;2
+Leite de nozes;INTERMEDIARIO;L;Preparos;RESFRIADO;1;3
+Massa brisee vegana;INTERMEDIARIO;kg;Preparos;RESFRIADO;1;3
+Quiche vegano - recheio;FINAL;kg;Pratos;RESFRIADO;1;2
+Moqueca de banana da terra;FINAL;kg;Pratos;RESFRIADO;1;2
+Pirão vegano;FINAL;kg;Pratos;RESFRIADO;1;2
+Estrogonofe de couve-flor;FINAL;kg;Pratos;RESFRIADO;1;2
+Feijoada vegana;FINAL;kg;Pratos;RESFRIADO;1;2
+Mini cheesecake vegana;FINAL;kg;Pratos;RESFRIADO;1;2
+Arroz integral cozido;FINAL;kg;Pratos;RESFRIADO;1;2
+Sopa de cebola gratinada;FINAL;L;Pratos;RESFRIADO;1;2
+Steak au poivre;FINAL;kg;Pratos;RESFRIADO;1;2
+Aligot;FINAL;kg;Pratos;RESFRIADO;1;2
+Crepe suzette;FINAL;kg;Pratos;RESFRIADO;1;2
+Crepe de sobremesa;FINAL;kg;Pratos;RESFRIADO;1;2
+Bouillabaise;FINAL;kg;Pratos;RESFRIADO;1;2
+Paupiette veronique;FINAL;kg;Pratos;RESFRIADO;1;2
+Tarte tatin;FINAL;kg;Pratos;RESFRIADO;1;2
+Sorvete de baunilha;FINAL;kg;Pratos;RESFRIADO;1;2
+Salada niçoise;FINAL;kg;Pratos;RESFRIADO;1;2
+Suflé de espinafre;FINAL;kg;Pratos;RESFRIADO;1;2
+Coq au vin;FINAL;kg;Pratos;RESFRIADO;1;2
+Massa folhada caseira;INTERMEDIARIO;kg;Preparos;RESFRIADO;1;3
+Fondant au chocoalt;FINAL;kg;Pratos;RESFRIADO;1;2
+Boeuf wellington;FINAL;kg;Pratos;RESFRIADO;1;2
+Ratatouille;FINAL;kg;Pratos;RESFRIADO;1;2
+Crème brûlée;INTERMEDIARIO;kg;Preparos;RESFRIADO;1;3
+Steak tartare;FINAL;kg;Pratos;RESFRIADO;1;2
+Chips de batata;FINAL;kg;Pratos;RESFRIADO;1;2
+Cordeiro assado com legumes;FINAL;kg;Pratos;RESFRIADO;1;2
+Salsa verde;FINAL;L;Pratos;RESFRIADO;1;2
+Suflês de panisse;FINAL;kg;Pratos;RESFRIADO;1;2
+Clafoutis;FINAL;kg;Pratos;RESFRIADO;1;2
+Chantilly caseiro;FINAL;kg;Pratos;RESFRIADO;1;2
+Massa de pizza napolitana;INTERMEDIARIO;kg;Preparos;RESFRIADO;1;3
+Massa de pizza pan;INTERMEDIARIO;kg;Preparos;RESFRIADO;1;3
+Molho de tomate rápido;INTERMEDIARIO;L;Preparos;RESFRIADO;1;3
+Pizza de cogumelos com gorgonzola;FINAL;kg;Pratos;RESFRIADO;1;2
+Pizza capricciosa;FINAL;kg;Pratos;RESFRIADO;1;2
+Pizza marguerita;FINAL;kg;Pratos;RESFRIADO;1;2
+Pizza quatro queijos;FINAL;kg;Pratos;RESFRIADO;1;2
+Pizza de linguiça e batata;FINAL;kg;Pratos;RESFRIADO;1;2
+Saltimboca;FINAL;kg;Pratos;RESFRIADO;1;2
+Focaccia;FINAL;kg;Pratos;RESFRIADO;1;2
+Espaguete a carbonara;FINAL;kg;Pratos;RESFRIADO;1;2
+Espaguete a cacio e pepe;FINAL;kg;Pratos;RESFRIADO;1;2
+Savoiardi;INTERMEDIARIO;kg;Preparos;RESFRIADO;1;3
+Tiramissu;FINAL;kg;Pratos;RESFRIADO;1;2
+Ossobuco alla milanese;FINAL;kg;Pratos;RESFRIADO;1;2
+Fundo bovino escuro;INTERMEDIARIO;L;Preparos;RESFRIADO;1;3
+Caponata;FINAL;kg;Pratos;RESFRIADO;1;2
+Gremolata;INTERMEDIARIO;kg;Preparos;RESFRIADO;1;3
+Risoto alla milanese;FINAL;kg;Pratos;RESFRIADO;1;2
+Risoto alla parmegiana;FINAL;kg;Pratos;RESFRIADO;1;2
+Cannoli;FINAL;kg;Pratos;RESFRIADO;1;2
+Berinjela alla parmegiana;FINAL;kg;Pratos;RESFRIADO;1;2
+Molho de tomate com manteiga;INTERMEDIARIO;L;Preparos;RESFRIADO;1;3
+Peperonata;FINAL;kg;Pratos;RESFRIADO;1;2
+Polpetas;FINAL;kg;Pratos;RESFRIADO;1;2
+Zabaglione;FINAL;kg;Pratos;RESFRIADO;1;2
+Cantucci;FINAL;kg;Pratos;RESFRIADO;1;2
+Massa folhada rápida (pastel de nata);INTERMEDIARIO;kg;Preparos;RESFRIADO;1;3
+Açorda à alentejana;FINAL;kg;Pratos;RESFRIADO;1;2
+Arroz de pato;FINAL;kg;Pratos;RESFRIADO;1;2
+Bacalhau às natas;FINAL;kg;Pratos;RESFRIADO;1;2
+Bacalhau à gomes de sá;FINAL;kg;Pratos;RESFRIADO;1;2
+Pastel de nata;FINAL;kg;Pratos;RESFRIADO;1;2
+Tapenade;FINAL;kg;Pratos;RESFRIADO;1;2
+Tortilla de papas;FINAL;kg;Pratos;RESFRIADO;1;2
+Aioli;FINAL;kg;Pratos;RESFRIADO;1;2
+Salmorejo;FINAL;L;Pratos;RESFRIADO;1;2
+Paella valenciana;FINAL;kg;Pratos;RESFRIADO;1;2
+Churros;FINAL;kg;Pratos;RESFRIADO;1;2
+Fundo escuro de ave;INTERMEDIARIO;L;Preparos;RESFRIADO;1;3
+Arepas;FINAL;kg;Pratos;RESFRIADO;1;2
+Chivitos;FINAL;kg;Pratos;RESFRIADO;1;2
+Empanadas;FINAL;kg;Pratos;RESFRIADO;1;2
+Pastel de choclo;FINAL;kg;Pratos;RESFRIADO;1;2
+Ceviche;FINAL;kg;Pratos;RESFRIADO;1;2
+Chilli con carne;FINAL;kg;Pratos;RESFRIADO;1;2
+Guacamole;FINAL;kg;Pratos;RESFRIADO;1;2
+Sour cream;INTERMEDIARIO;kg;Preparos;RESFRIADO;1;3
+Tortilla de milho;FINAL;kg;Pratos;RESFRIADO;1;2
+Tortilla de trigo;INTERMEDIARIO;kg;Preparos;RESFRIADO;1;3
+Burritos;FINAL;kg;Pratos;RESFRIADO;1;2
+Coalhada seca;FINAL;kg;Pratos;RESFRIADO;1;2
+Jambalaya;FINAL;kg;Pratos;RESFRIADO;1;2
+Mac and cheese;FINAL;kg;Pratos;RESFRIADO;1;2
+S’mores;FINAL;kg;Pratos;RESFRIADO;1;2
+Buffalo wings;FINAL;kg;Pratos;RESFRIADO;1;2
+Pão árabe ou pitta;FINAL;kg;Pratos;RESFRIADO;1;2
+Hummus bi tahine;FINAL;kg;Pratos;RESFRIADO;1;2
+Baba ganoush;FINAL;kg;Pratos;RESFRIADO;1;2
+Quibe cru;FINAL;kg;Pratos;RESFRIADO;1;2
+Quibe frito;FINAL;kg;Pratos;RESFRIADO;1;2
+Kafta;FINAL;kg;Pratos;RESFRIADO;1;2
+Falafel;FINAL;kg;Pratos;RESFRIADO;1;2
+Tagine de cordeiro;FINAL;kg;Pratos;RESFRIADO;1;2
+Cuscuz marroquino caseiro;FINAL;kg;Pratos;RESFRIADO;1;2
+Bobotie;FINAL;kg;Pratos;RESFRIADO;1;2
+Fufu de inhame com ensopado de carne;FINAL;kg;Pratos;RESFRIADO;1;2
+Samosas;FINAL;kg;Pratos;RESFRIADO;1;2
+Tikka masala;FINAL;kg;Pratos;RESFRIADO;1;2
+Garam masala caseiro;INTERMEDIARIO;kg;Preparos;RESFRIADO;1;3
+Naan;FINAL;kg;Pratos;RESFRIADO;1;2
+Dahl de lentilha;FINAL;kg;Pratos;RESFRIADO;1;2
+Chutney de manga;FINAL;kg;Pratos;RESFRIADO;1;2
+Guioza;FINAL;kg;Pratos;RESFRIADO;1;2
+Yakisoba;FINAL;kg;Pratos;RESFRIADO;1;2
+Baozi;FINAL;kg;Pratos;RESFRIADO;1;2
+Tonkatsu, gohan e sunomono;FINAL;kg;Pratos;RESFRIADO;1;2
+Pad thai;FINAL;kg;Pratos;RESFRIADO;1;2
+Tom kha gai;FINAL;L;Pratos;RESFRIADO;1;2
+Banh xeo;FINAL;kg;Pratos;RESFRIADO;1;2
+Pho bo;FINAL;L;Pratos;RESFRIADO;1;2
+Ovo;INSUMO;un;Ovos;RESFRIADO;1;21
