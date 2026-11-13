@@ -9,7 +9,7 @@ Sistema de operação para restaurante, com API Flask, frontend React com Vite e
 - Validações de domínio recuperadas do projeto anterior.
 - Lotes, localizações, movimentações e sugestão de saída por FEFO.
 - Estoque geral de insumos, produtos intermediários e produtos finais, com entradas, saídas e ajustes pela interface.
-- Consulta das solicitações de produção.
+- Planejamento e conclusão da produção com quantidade desejada, baixa FEFO dos componentes e entrada automática do produto final.
 - Interface responsiva para produtos e fichas técnicas.
 - Login por sessão com perfis de proprietária, gestor e cozinha.
 - Swagger em `/docs`.
@@ -249,6 +249,10 @@ Regras aplicadas:
 - Componentes só podem apontar para fases da própria ficha.
 - A atualização de cabeçalho, fases e componentes ocorre na mesma transação.
 - Fichas com histórico de produção não podem ser excluídas.
+
+## Produção e estoque
+
+Ao adicionar uma ficha à fila, o gestor informa a quantidade planejada e o local do produto final. Os componentes são proporcionais ao rendimento da ficha. Ao concluir, a API executa uma única transação: valida todo o saldo, consome lotes não vencidos por FEFO, registra `CONSUMO_PRODUCAO`, cria o lote final e registra `PRODUCAO`. Se faltar qualquer componente, nenhuma baixa é gravada e a solicitação permanece em produção.
 
 ## Testes
 

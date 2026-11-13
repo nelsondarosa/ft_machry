@@ -28,14 +28,19 @@ def listar_solicitacoes():
 @bp.post("/solicitacoes")
 def criar_solicitacao():
     dados = entrada(schemas.SolicitacaoCreate)
-    item = get_service().criar_solicitacao(dados.ficha_tecnica_id, g.usuario.id)
+    item = get_service().criar_solicitacao(
+        dados.ficha_tecnica_id,
+        g.usuario.id,
+        dados.quantidade_planejada,
+        dados.localizacao_destino_id,
+    )
     return schemas.SolicitacaoProducaoOut.model_validate(item).model_dump(), 201
 
 
 @bp.put("/solicitacoes/<int:sp_id>/status")
 def atualizar_status(sp_id: int):
     dados = entrada(schemas.SolicitacaoStatusUpdate)
-    item = get_service().atualizar_status(sp_id, dados.status)
+    item = get_service().atualizar_status(sp_id, dados.status, g.usuario.id)
     return schemas.SolicitacaoProducaoOut.model_validate(item).model_dump()
 
 

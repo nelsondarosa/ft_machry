@@ -580,6 +580,8 @@ paths:
               required: [ficha_tecnica_id]
               properties:
                 ficha_tecnica_id: {type: integer, minimum: 1}
+                quantidade_planejada: {type: number, exclusiveMinimum: 0, description: Quantidade do produto final; omissão usa o rendimento integral da ficha}
+                localizacao_destino_id: {type: integer, minimum: 1, description: Local do lote produzido; omissão usa o primeiro local compatível}
       responses:
         "201":
           description: Solicitação criada
@@ -866,6 +868,8 @@ components:
         id: {type: integer}
         ficha_tecnica_id: {type: integer}
         usuario_id: {type: integer}
+        quantidade_planejada: {type: number}
+        localizacao_destino_id: {type: integer, nullable: true}
         status: {type: string, enum: [ABERTA, EM_SEPARACAO, EM_PRODUCAO, CONCLUIDA, CANCELADA]}
         criado_em: {type: string, example: "2026-10-16 15:46:39"}
         concluido_em: {type: string, nullable: true}

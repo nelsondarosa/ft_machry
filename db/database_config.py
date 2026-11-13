@@ -72,6 +72,29 @@ def _migrar_lote() -> None:
     db.session.commit()
 
 
+def _migrar_producao() -> None:
+    colunas = {
+        coluna["name"]
+        for coluna in inspect(db.engine).get_columns("solicitacao_producao")
+    }
+    if "quantidade_planejada" not in colunas:
+        db.session.execute(text(
+            "ALTER TABLE solicitacao_producao "
+            "ADD COLUMN quantidade_planejada NUMERIC NOT NULL DEFAULT 1"
+        ))
+        db.session.execute(text(
+            "UPDATE solicitacao_producao SET quantidade_planejada = "
+            "COALESCE((SELECT rendimento FROM ficha_tecnica "
+            "WHERE ficha_tecnica.id = solicitacao_producao.ficha_tecnica_id), 1)"
+        ))
+    if "localizacao_destino_id" not in colunas:
+        db.session.execute(text(
+            "ALTER TABLE solicitacao_producao "
+            "ADD COLUMN localizacao_destino_id INTEGER REFERENCES localizacao(id)"
+        ))
+    db.session.commit()
+
+
 def _provisionar_usuarios_iniciais() -> None:
     from app.features.usuarios.models import Usuario
     from flask import current_app
@@ -159,6 +182,7 @@ def init_db_command(seed: bool):
         _migrar_autenticacao()
         _migrar_produto()
         _migrar_lote()
+        _migrar_producao()
         _provisionar_usuarios_iniciais()
         click.echo("Banco já criado e atualizado")
         return

@@ -302,7 +302,6 @@ function SheetDocument({ ficha }: { ficha: FichaTecnica }) {
   return <article className="sheet-document">
     <header className="sheet-document-head">
       <BrandMark className="sheet-brand-mark" variant="print" />
-      <div><span>{branding.nome}</span><small>{branding.subtitulo}</small></div>
       <strong>FICHA TÉCNICA #{ficha.id}</strong>
     </header>
     <div className="sheet-title-block">

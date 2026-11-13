@@ -12,6 +12,8 @@ class SolicitacaoCreate(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     ficha_tecnica_id: int = Field(gt=0)
+    quantidade_planejada: Optional[float] = Field(default=None, gt=0, allow_inf_nan=False)
+    localizacao_destino_id: Optional[int] = Field(default=None, gt=0)
 
 
 class SolicitacaoStatusUpdate(BaseModel):
@@ -26,6 +28,8 @@ class SolicitacaoProducaoOut(BaseModel):
     id: int
     ficha_tecnica_id: int
     usuario_id: int
+    quantidade_planejada: float
+    localizacao_destino_id: Optional[int] = None
     status: str
     criado_em: str
     concluido_em: Optional[str] = None

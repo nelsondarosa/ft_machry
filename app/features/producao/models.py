@@ -21,6 +21,12 @@ class SolicitacaoProducao(db.Model):
         db.Integer, db.ForeignKey("ficha_tecnica.id"), nullable=False
     )
     usuario_id = db.Column(db.Integer, db.ForeignKey("usuario.id"), nullable=False)
+    quantidade_planejada = db.Column(
+        db.Numeric(asdecimal=False), nullable=False, default=1, server_default="1"
+    )
+    localizacao_destino_id = db.Column(
+        db.Integer, db.ForeignKey("localizacao.id"), nullable=True
+    )
     status = db.Column(db.Text, nullable=False, default="ABERTA", server_default="ABERTA")
     criado_em = db.Column(
         db.String,

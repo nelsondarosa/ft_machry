@@ -63,8 +63,8 @@ export function App() {
   const stockChanged = async (message: string) => { if (usuario) await load(usuario, true); setToast({ text: message }) }
   const loggedIn = (loggedUser: Usuario) => { setUsuario(loggedUser); setView(loggedUser.papel === 'USER' ? 'producao' : 'inicio'); void load(loggedUser) }
   const logout = async () => { await api('/api/auth/logout', { method: 'POST' }).catch(() => undefined); setUsuario(null); setProdutos([]); setFichas([]); setLotes([]); setSolicitacoes([]) }
-  const createProduction = async (fichaId: number) => {
-    try { await api('/api/producao/solicitacoes', { method: 'POST', body: JSON.stringify({ ficha_tecnica_id: fichaId }) }); await load(usuario!); setToast({ text: 'Preparo adicionado à fila.' }) }
+  const createProduction = async (fichaId: number, quantidade: number, localizacaoId: number) => {
+    try { await api('/api/producao/solicitacoes', { method: 'POST', body: JSON.stringify({ ficha_tecnica_id: fichaId, quantidade_planejada: quantidade, localizacao_destino_id: localizacaoId }) }); await load(usuario!); setToast({ text: 'Preparo adicionado à fila.' }) }
     catch (reason) { setToast({ text: reason instanceof Error ? reason.message : 'Não foi possível adicionar o preparo.', error: true }) }
   }
   const updateProduction = async (id: number, status: string) => {
@@ -86,8 +86,8 @@ export function App() {
   else if (view === 'historico') page = <HistoryPage lotes={lotes} produtos={produtos} reload={() => void load(usuario)} />
   else if (view === 'locais') page = <LocationsPage locations={localizacoes} onChanged={() => load(usuario)} />
   else if (view === 'usuarios') page = usuario.papel === 'OWNER' ? <UsersPage current={usuario} /> : <section className="panel">Acesso restrito.</section>
-  else if (view === 'producao') page = <ProductionPage solicitacoes={solicitacoes} fichas={fichas} canPlan={usuario.papel !== 'USER'} onCreate={createProduction} onStatus={updateProduction} onViewSheet={setSheetModal} />
-  else page = <ProductionPage solicitacoes={solicitacoes} fichas={fichas} canPlan={usuario.papel !== 'USER'} onCreate={createProduction} onStatus={updateProduction} onViewSheet={setSheetModal} />
+  else if (view === 'producao') page = <ProductionPage solicitacoes={solicitacoes} fichas={fichas} produtos={produtos} localizacoes={localizacoes} canPlan={usuario.papel !== 'USER'} onCreate={createProduction} onStatus={updateProduction} onViewSheet={setSheetModal} />
+  else page = <ProductionPage solicitacoes={solicitacoes} fichas={fichas} produtos={produtos} localizacoes={localizacoes} canPlan={usuario.papel !== 'USER'} onCreate={createProduction} onStatus={updateProduction} onViewSheet={setSheetModal} />
 
   return <><Shell view={view} menuOpen={menuOpen} apiOnline={!loadError} usuario={usuario} onNavigate={navigate} onMenuToggle={() => setMenuOpen((open) => !open)} onLogout={() => void logout()}>{page}</Shell>
     {productModal && <ProductModal produto={productModal === 'new' ? null : productModal} onClose={() => setProductModal(null)} onSaved={() => void mutationDone('Produto salvo com sucesso.')} onDeleted={() => void mutationDone('Produto excluído.')} />}
