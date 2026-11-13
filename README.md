@@ -87,9 +87,24 @@ pnpm exec tsc --noEmit
 pnpm build
 ```
 
+### Limpar produtos e fichas para testar
+
+Para recomeçar a importação dos CSVs de exemplo com o Docker rodando:
+
+```bash
+docker compose exec api flask --app app limpar-catalogo
+```
+
+O comando pede confirmação antes de apagar. Use `--sim` para pular a confirmação.
+
+- **Apaga:** produtos, fichas técnicas e tudo que depende deles (lotes, movimentações de estoque e solicitações de produção).
+- **Mantém:** usuários, fases de produção, grupos e localizações.
+- **Bancos:** funciona com SQLite e PostgreSQL. Fora do Docker, rode `flask --app app limpar-catalogo` com o venv ativo.
+- **Primeira vez:** se o container foi criado antes deste comando existir, reconstrua a API com `docker compose up -d --build api`.
+
 ## Importação de produtos via CSV
 
-Na página **Produtos**, o botão **Importar CSV** cadastra vários produtos de uma vez. A tela mostra uma prévia com os erros de cada linha antes de enviar, e a importação é tudo ou nada (limite de 500 produtos por arquivo). Produtos com o mesmo nome e conservação de um produto já cadastrado são ignorados, então reimportar um arquivo não duplica o catálogo. O mesmo recurso está disponível na API em `POST /api/produtos/lote`.
+Na página **Produtos**, o botão **Importar CSV** cadastra vários produtos de uma vez. A tela mostra uma prévia com os erros de cada linha antes de enviar, e a importação é tudo ou nada (limite de 500 produtos por arquivo). Produtos com o mesmo nome de um produto já cadastrado, ou de uma linha anterior do arquivo, são ignorados, mesmo com outra conservação. Assim, reimportar um arquivo não duplica o catálogo, e cada nome continua único para as fichas técnicas. O mesmo recurso está disponível na API em `POST /api/produtos/lote`.
 
 Colunas (separador `;` ou `,`, UTF-8):
 
@@ -103,7 +118,7 @@ Colunas (separador `;` ou `,`, UTF-8):
 | `validade_obrigatoria` | não | `1`/`sim` ou `0`/`não` (padrão) |
 | `validade_padrao_dias` | não | número inteiro de dias |
 
-Exemplo completo: [`docs/exemplos/produtos_machry.csv`](docs/exemplos/produtos_machry.csv), com 366 insumos do estoque do Machry gerados a partir das planilhas de validade. Unidades e prazos de validade desse arquivo são estimativas por categoria; revise antes de usar em produção.
+Exemplo completo: [`docs/exemplos/produtos_machry.csv`](docs/exemplos/produtos_machry.csv), com os insumos do estoque do Machry (366 linhas; Bacalhau e Linguiça calabresa aparecem resfriados e congelados, e só a primeira linha de cada é importada) gerados a partir das planilhas de validade. Unidades e prazos de validade desse arquivo são estimativas por categoria; revise antes de usar em produção.
 
 ## Importação de fichas técnicas via CSV
 
@@ -121,7 +136,7 @@ O arquivo tem **uma linha por componente**; as linhas com o mesmo valor em `fich
 | `quantidade` | número (vírgula ou ponto); `q.b.` ou vazio vira "A gosto (q.b.)" na observação |
 | `unidade` | opcional; `mg`/`g`/`kg` e `ml`/`L` são convertidos para a unidade do produto |
 
-Produtos e fases são buscados pelo nome, sem diferenciar maiúsculas, acentos e espaços. Um nome que corresponda a mais de um produto (ex.: o mesmo item refrigerado e congelado) gera erro. Produtos que já têm ficha técnica são ignorados (e listados no aviso final), então arquivos com receitas em comum podem ser importados em sequência; a mesma ficha repetida dentro de um arquivo gera erro.
+Produtos e fases são buscados pelo nome, sem diferenciar maiúsculas, acentos e espaços. Um nome que corresponda a mais de um produto (ex.: dois produtos de mesmo nome cadastrados à mão) gera erro. Produtos que já têm ficha técnica são ignorados (e listados no aviso final), então arquivos com receitas em comum podem ser importados em sequência; a mesma ficha repetida dentro de um arquivo gera erro.
 
 Cada ficha de exemplo termina com linhas só de `observacao`: o código e a origem da receita, o modo de preparo e “Ajustes da importação: …”, que registra as diferenças em relação à ficha original (unidades convertidas, como 2 dentes de alho ≈ 10 g, e valores estimados, como rendimentos e tempos das fases). Uma linha com apenas `ficha` e `observacao` é válida para esse fim.
 

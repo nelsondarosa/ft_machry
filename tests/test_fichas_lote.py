@@ -9,9 +9,11 @@ def _produtos(client):
         {"nome": "Purê de batata", "tipo": "FINAL", "unidade_medida": "kg"},
         {"nome": "Gratin", "tipo": "FINAL", "unidade_medida": "kg"},
         {"nome": "Bacalhau", "tipo": "INSUMO", "unidade_medida": "kg", "conservacao": "RESFRIADO"},
-        {"nome": "Bacalhau", "tipo": "INSUMO", "unidade_medida": "kg", "conservacao": "CONGELADO"},
     ]
     assert client.post("/api/produtos/lote", json={"produtos": lote}).status_code == 201
+    # o lote ignora nomes repetidos; um homônimo só existe se cadastrado à mão
+    homonimo = {"nome": "Bacalhau", "tipo": "INSUMO", "unidade_medida": "kg", "conservacao": "CONGELADO"}
+    assert client.post("/api/produtos", json=homonimo).status_code == 201
 
 
 def _ficha(**extra):
